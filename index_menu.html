@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal LVMEL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'voley-blue': '#1e40af', // Azul fuerte (Blue 800)
+                        'voley-dark': '#1e3a8a', // Azul oscuro (Blue 900)
+                        'voley-light': '#eff6ff', // Azul muy claro (Blue 50)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilo para el contenedor principal y el fondo */
+        .hero-section {
+            /* Usamos una imagen de fondo de voleibol (placeholder) */
+            background-image: url('https://placehold.co/1920x1080/0e1b3e/ffffff?text=Voleibol');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            z-index: 0;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            /* Degradado de oscuro a transparente */
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(30, 64, 175, 0.7) 40%, rgba(30, 64, 175, 0.5) 100%);
+            z-index: -1;
+        }
+
+        /* Animación sutil para los botones al cargar */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-voley-light font-sans min-h-screen flex flex-col items-center">
+
+    <section class="hero-section w-full flex-grow flex flex-col items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+        
+        <div class="max-w-4xl w-full text-center p-8 md:p-12 rounded-xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20 relative">
+            
+            <div class="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-voley-dark/80 rounded-t-xl backdrop-blur-sm shadow-lg border-b border-white/20">
+                
+                <div class="flex items-center">
+                    <span class="text-sm sm:text-lg font-medium text-white/90 mr-3">Club Activo:</span>
+                    <span id="currentClubDisplay" class="text-base sm:text-xl font-bold text-voley-light py-1 px-3 bg-voley-blue rounded-full shadow-md">Cargando...</span>
+                </div>
+
+                <button id="logoutButton" class="py-2 px-3 sm:py-2 sm:px-4 bg-red-600 text-white font-semibold rounded-lg text-sm sm:text-base hover:bg-red-700 transition duration-200 flex items-center shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </div>
+            
+            <div class="pt-24">
+                
+                <div class="w-full mb-8">
+                    <img src="img/banner.png" alt="Banner Control Voley" class="w-full h-auto rounded-lg shadow-2xl" onerror="this.onerror=null;this.src='https://placehold.co/800x150/1e40af/ffffff?text=Banner+Control+Voley+Horizontal'">
+                </div>
+
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 drop-shadow-lg leading-tight">
+                    Gestiona y Controla tu equipo de Voleibol de manera Simplificada y Potenciada
+                </h1>
+
+                <div class="mb-10"></div>
+
+
+                <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl mb-12 transform transition duration-500 hover:scale-[1.02]">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-voley-dark mb-4">
+                        Administración Integral
+                    </h2>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Administra todos los aspectos cruciales de tu club: desde el **control de la nómina de atletas**, la **administración de pagos y vencimientos**, el análisis detallado de **estadísticas de juego**, y el seguimiento de **cumpleaños** para mantener la moral del equipo.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+                    
+                    <a href="index_atletas.html" class="animate-fade-in delay-100">
+                        <button class="w-full bg-voley-blue text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg hover:bg-voley-dark transition duration-300 transform hover:scale-105 border-b-4 border-blue-900">
+                            Nómina de Atletas
+                        </button>
+                    </a>
+
+                    <a href="index_estad.html" class="animate-fade-in delay-200">
+                        <button class="w-full bg-voley-blue text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg hover:bg-voley-dark transition duration-300 transform hover:scale-105 border-b-4 border-blue-900">
+                            Estadísticas de Juego
+                        </button>
+                    </a>
+
+                    <a href="index_pagos.html" class="animate-fade-in delay-300">
+                        <button class="w-full bg-voley-blue text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg hover:bg-voley-dark transition duration-300 transform hover:scale-105 border-b-4 border-blue-900">
+                            Gestión Financiera
+                        </button>
+                    </a>
+
+                    <a href="index_cumple.html" class="animate-fade-in delay-400">
+                        <button class="w-full bg-voley-blue text-white py-4 px-6 rounded-lg font-bold text-lg shadow-lg hover:bg-voley-dark transition duration-300 transform hover:scale-105 border-b-4 border-blue-900">
+                            Cumpleaños del Mes
+                        </button>
+                    </a>
+                </div>
+
+                <p class="mt-8 text-sm text-white/80">
+                    Haz clic en la función que deseas administrar.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="w-full py-4 text-center bg-voley-dark shadow-inner">
+        <p class="text-sm text-white/70">
+            &copy; 2023 Todos los derechos reservados a Sistematikos - Frank Hernandez
+        </p>
+    </footer>
+
+    <script>
+        const currentClubId = localStorage.getItem('currentClub');
+        const currentClubDisplay = document.getElementById('currentClubDisplay');
+        const logoutButton = document.getElementById('logoutButton');
+
+        /**
+         * 1. Verificar sesión y mostrar el nombre del club.
+         */
+        if (currentClubId && currentClubId !== 'null') {
+            currentClubDisplay.textContent = currentClubId;
+        } else {
+            currentClubDisplay.textContent = 'Acceso Denegado';
+            console.warn('No se encontró club en localStorage. Redirigiendo a login.');
+            // Redirigir si no hay club para evitar acceso no autorizado
+            setTimeout(() => {
+                 // Asumiendo que tu página de login es index.html
+                 window.location.href = 'index.html'; 
+            }, 500);
+        }
+
+        /**
+         * 2. Función para cerrar sesión.
+         */
+        logoutButton.addEventListener('click', () => {
+            // Limpiar el ID del club del almacenamiento local
+            localStorage.removeItem('currentClub'); 
+            
+            // Redirigir a la página de login (index.html)
+            window.location.href = 'index.html'; 
+        });
+    </script>
+
+</body>
+</html>

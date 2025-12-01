@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley Stats Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+      .card {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      }
+      .score-positive { color: #4ade80; } /* Verde */
+      .score-negative { color: #f87171; } /* Rojo */
+      .score-neutral { color: #facc15; } /* Ámbar/Amarillo */ 
+
+      input[type=number]::-webkit-inner-spin-button,
+      input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+      
+      input:focus, select:focus {
+        box-shadow: 0 0 0 2px #1f2937, 0 0 0 4px #4f46e5;
+      }
+
+      #actionSelect {
+        color: #d1d5db;
+      }
+      
+      /* Estilo básico para el footer */
+      footer {
+        padding: 1.5rem 0;
+        text-align: center;
+        width: 100%;
+        max-width: 5xl;
+        margin-top: 2rem;
+        border-top: 1px solid #374151; /* gray-700 */
+        font-size: 0.875rem; /* text-sm */
+        color: #9ca3af; /* gray-400 */
+      }
+      footer strong {
+        color: #d1d5db; /* gray-300 */
+        font-weight: 500;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-4">
+    <main class="w-full max-w-5xl mx-auto space-y-8 shadow-2xl">
+      <header class="text-center">
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">Control Voley Stats Tracker (Estadísticas)</h1>
+        <p class="mt-4 text-lg text-gray-400">Monitorea el rendimiento y la
+          eficiencia de tus atletas.</p>
+      </header>
+      
+      <div class="grid grid-cols-1 gap-8">
+        <div class="space-y-6">
+          <div class="card p-6 rounded-lg">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Agregar
+              Atleta</h2>
+            <div class="flex flex-col sm:flex-row gap-4"> 
+              <input id="playerNumberInput" placeholder="Nro." 
+                class="w-full sm:w-24 bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                type="number"> 
+              <input id="playerNameInput" placeholder="Nombre del Atleta"
+                class="flex-grow bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                type="text"> 
+              <button id="addPlayerBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                Agregar 
+              </button> 
+            </div>
+          </div>
+          
+          <div class="card p-6 rounded-lg">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Registrar
+              Acción</h2>
+            <form id="actionForm" class="space-y-4">
+              <div> 
+                <label for="playerSelect" class="block mb-2 text-sm font-medium text-gray-300">Seleccionar
+                  Atleta</label>
+                <select id="playerSelect" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option disabled="disabled" selected="selected">Agregar atleta
+                    primero</option>
+                </select>
+              </div>
+              <div> 
+                <label for="actionSelect" class="block mb-2 text-sm font-medium text-gray-300">Tipo
+                  de Acción</label>
+                <select id="actionSelect" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </select>
+              </div>
+              <div class="hidden"> 
+                <label for="quantityInput" class="block mb-2 text-sm font-medium text-gray-300">Cantidad</label>
+                <input id="quantityInput" value="1" min="1" 
+                  class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  type="number"> 
+              </div>
+              
+              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+                Registrar 
+              </button> 
+              
+              <button type="button" id="clearSetDataBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-md transition-colors mt-4">
+                Eliminar Datos del Set 
+              </button> 
+
+              <button type="button" id="clearGameDataBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-colors mt-4">
+                Eliminar Datos del Juego 
+              </button> 
+            </form>
+          </div>
+        </div>
+        
+        <div class="card p-6 rounded-lg">
+          <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Estadística por Atleta</h2>
+          <div id="scoresContainer" class="space-y-3">
+            <p class="text-gray-500 text-center py-8">Aún no hay atletas.
+              ¡Agrégalos para empezar!</p>
+          </div>
+        </div>
+        
+        <div class="card p-6 rounded-lg mt-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Estadística General por Equipo</h2>
+            <div id="generalStatsContainer" class="space-y-3">
+                <p class="text-gray-500 text-center py-8">Registra acciones para ver el resumen.</p>
+            </div>
+        </div>
+        
+        <div class="card p-6 rounded-lg mt-8">
+            <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">Gráfica General del Equipo (Positivos vs Negativos)</h2>
+            <div class="h-96">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+        
+      </div>
+    </main>
+
+    <footer class="mt-8 border-t border-gray-700 text-gray-400 text-sm w-full max-w-5xl">
+        <p>Copyright © Empresa Sistematikos. Todos los derechos reservados.</p>
+        <p>Diseñado por <strong>Sistematikos - Frank Hernandez</strong></p>
+    </footer>
+
+    <script>
+      let barChartInstance = null; // Variable para mantener la instancia del gráfico
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- Referencias a Elementos DOM ---
+        const playerNumberInput = document.getElementById('playerNumberInput');
+        const playerNameInput = document.getElementById('playerNameInput');
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        const playerSelect = document.getElementById('playerSelect');
+        const actionSelect = document.getElementById('actionSelect');
+        const quantityInput = document.getElementById('quantityInput');
+        const actionForm = document.getElementById('actionForm');
+        const scoresContainer = document.getElementById('scoresContainer');
+        const generalStatsContainer = document.getElementById('generalStatsContainer'); 
+        
+        const clearSetDataBtn = document.getElementById('clearSetDataBtn'); 
+        const clearGameDataBtn = document.getElementById('clearGameDataBtn'); 
+
+        let players = [];
+        let actionLog = []; 
+
+        // Acciones Positivas (+1) y Negativas (-1)
+        const actions = {
+            'S# Servicio Positivo': 1, 'A# Ataque Positivo': 1, 'B# Bloqueo Positivo': 1, 'R# Recepción Positiva': 1, 'C# Coloque Positivo': 1, 'D# Defensa Positiva': 1, 
+            'S= Servicio Negativo': -1, 'A= Ataque Negativo': -1, 'B= Bloqueo Negativo': -1, 'R= Recepción Negativo': -1, 'C= Coloque Negativo': -1, 'D= Defensa Negativa': -1, 
+        };
+        
+        // Mapeo para agrupar por tipo (ej: S# y S= se agrupan en "Servicio")
+        const actionGroups = {
+            'S': 'Servicio',
+            'A': 'Ataque',
+            'B': 'Bloqueo',
+            'R': 'Recepción',
+            'C': 'Coloque',
+            'D': 'Defensa'
+        };
+
+        // Funciones de LocalStorage
+        function savePlayers() {
+            localStorage.setItem('volleyballPlayers', JSON.stringify(players));
+            localStorage.setItem('volleyballActionLog', JSON.stringify(actionLog));
+        }
+        function loadPlayers() {
+            const storedPlayers = localStorage.getItem('volleyballPlayers');
+            if (storedPlayers) {
+                players = JSON.parse(storedPlayers);
+            }
+            const storedActionLog = localStorage.getItem('volleyballActionLog');
+            if (storedActionLog) {
+                actionLog = JSON.parse(storedActionLog);
+            }
+        }
+        
+        loadPlayers();
+
+        function setActionSelectColor() {
+            const selectedOption = actionSelect.options[actionSelect.selectedIndex];
+            const actionName = selectedOption ? selectedOption.value : null;
+            const actionValue = actionName ? actions[actionName] : 0; 
+
+            if (actionValue > 0) {
+                actionSelect.style.color = '#4ade80';
+            } else if (actionValue < 0) {
+                actionSelect.style.color = '#f87171';
+            } else {
+                actionSelect.style.color = '#facc15';
+            }
+        }
+
+        function populateActions() {
+            actionSelect.innerHTML = '';
+            
+            const sortedActions = Object.keys(actions).sort((a, b) => {
+                return actions[b] - actions[a]; 
+            });
+
+            sortedActions.forEach(actionName => {
+                const option = document.createElement('option');
+                const value = actions[actionName];
+                option.value = actionName;
+                option.textContent = `${actionName} (${value > 0 ? '+' : ''}${value})`;
+                
+                if (value > 0) {
+                    option.style.color = '#4ade80';
+                } else if (value < 0) {
+                    option.style.color = '#f87171';
+                } else { 
+                    option.style.color = '#facc15';
+                }
+                actionSelect.appendChild(option);
+            });
+            setActionSelectColor(); 
+        }
+
+        // --- FUNCIÓN PARA RENDERIZAR EL GRÁFICO DE BARRAS DOBLES ---
+        function renderBarChart(chartData) {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            
+            if (barChartInstance) {
+                barChartInstance.destroy();
+            }
+            
+            if (!chartData || chartData.labels.length === 0) {
+                return;
+            }
+            
+            barChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Acciones Positivas',
+                            data: chartData.positiveData,
+                            backgroundColor: 'rgba(76, 201, 76, 0.9)', // Verde
+                            borderColor: 'rgba(76, 201, 76, 1)',
+                            borderWidth: 1,
+                            barThickness: 15, 
+                            maxBarThickness: 20
+                        },
+                        {
+                            label: 'Acciones Negativas',
+                            data: chartData.negativeData,
+                            backgroundColor: 'rgba(240, 80, 80, 0.9)', // Rojo
+                            borderColor: 'rgba(240, 80, 80, 1)',
+                            borderWidth: 1,
+                            barThickness: 15, 
+                            maxBarThickness: 20
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.3)' },
+                            ticks: { 
+                                color: '#d1d5db',
+                                // Asegura que los ticks sean solo números enteros.
+                                callback: function(value) {
+                                    if (Number.isInteger(value)) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Conteo de Acciones',
+                                color: '#d1d5db'
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { 
+                                color: '#d1d5db'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: { color: '#d1d5db' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    return ` ${context.dataset.label}: ${context.formattedValue}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // --- FIN FUNCIÓN RENDERIZAR EL GRÁFICO DE BARRAS DOBLES ---
+
+        // --- FUNCIÓN PARA RENDERIZAR ESTADÍSTICAS GENERALES (TABLA Y PREPARACIÓN DE DATOS) ---
+        function renderGeneralStats() {
+            generalStatsContainer.innerHTML = '';
+            
+            if (actionLog.length === 0) {
+                generalStatsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Registra acciones para ver el resumen.</p>';
+                renderBarChart({}); 
+                return;
+            }
+
+            // 1. Inicializar el resumen por tipo de acción
+            const summary = {};
+            Object.values(actionGroups).forEach(groupName => {
+                summary[groupName] = { positive: 0, negative: 0, total: 0, score: 0 };
+            });
+
+            // 2. Procesar el log de acciones
+            actionLog.forEach(log => {
+                const actionCode = log.actionName.substring(0, 1);
+                const actionType = actionGroups[actionCode];
+                const value = actions[log.actionName];
+                const quantity = log.quantity;
+                
+                if (actionType) {
+                    summary[actionType].total += quantity;
+                    summary[actionType].score += (value * quantity);
+                    
+                    if (value > 0) {
+                        summary[actionType].positive += quantity;
+                    } else if (value < 0) {
+                        // Almacenamos el CONTEO de acciones negativas
+                        summary[actionType].negative += quantity; 
+                    }
+                }
+            });
+
+            // 3. Crear el encabezado de la tabla
+            const header = document.createElement('div');
+            header.className = 'grid grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))] gap-4 font-semibold text-gray-400 text-sm mb-2 px-3';
+            header.innerHTML = `
+                <span class="text-left">Acción</span>
+                <span class="text-center">Pos</span>
+                <span class="text-center">Neg</span>
+                <span class="text-center">Total</span>
+                <span class="text-right">Puntos</span>
+            `;
+            generalStatsContainer.appendChild(header);
+
+            // 4. Recolectar datos para el gráfico y renderizar filas
+            const chartData = { labels: [], positiveData: [], negativeData: [] };
+            
+            Object.keys(summary).sort().forEach(actionType => {
+                const stats = summary[actionType];
+                if (stats.total > 0) {
+                    
+                    // Datos para el gráfico: Conteo de Positivos y Negativos
+                    chartData.labels.push(actionType);
+                    chartData.positiveData.push(stats.positive);
+                    chartData.negativeData.push(stats.negative); 
+
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'grid grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))] gap-4 items-center bg-gray-700 p-3 rounded-md';
+
+                    const actionNameSpan = document.createElement('span');
+                    actionNameSpan.className = 'font-bold text-gray-300';
+                    actionNameSpan.textContent = actionType;
+                    rowDiv.appendChild(actionNameSpan);
+
+                    const positiveSpan = document.createElement('span');
+                    positiveSpan.className = 'text-center score-positive font-medium';
+                    positiveSpan.textContent = `+${stats.positive}`;
+                    rowDiv.appendChild(positiveSpan);
+
+                    const negativeSpan = document.createElement('span');
+                    negativeSpan.className = 'text-center score-negative font-medium';
+                    negativeSpan.textContent = stats.negative;
+                    rowDiv.appendChild(negativeSpan);
+                    
+                    const totalActionsSpan = document.createElement('span');
+                    totalActionsSpan.className = 'text-center text-gray-400 font-medium';
+                    totalActionsSpan.textContent = stats.total;
+                    rowDiv.appendChild(totalActionsSpan);
+                    
+                    const scoreSpan = document.createElement('span');
+                    scoreSpan.className = 'font-bold text-lg text-right score-neutral';
+                    scoreSpan.textContent = stats.score;
+                    rowDiv.appendChild(scoreSpan);
+
+                    generalStatsContainer.appendChild(rowDiv);
+                }
+            });
+            
+            // 5. Renderizar el gráfico con los datos separados
+            renderBarChart(chartData); 
+        }
+        // --- FIN FUNCIÓN RENDERIZAR ESTADÍSTICAS GENERALES ---
+
+
+        function render() {
+            // Renderizar tabla de atletas
+            playerSelect.innerHTML = '';
+            if (players.length === 0) {
+                playerSelect.innerHTML = '<option disabled selected>Agrega un atleta primero</option>';
+            } else {
+                players.forEach((player, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `#${player.number} - ${player.name}`;
+                    playerSelect.appendChild(option);
+                });
+            }
+
+            scoresContainer.innerHTML = '';
+            if (players.length === 0) {
+                scoresContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Aún no hay atletas. ¡Agrégalos para empezar!</p>';
+            } else {
+                const header = document.createElement('div');
+                header.className = 'grid grid-cols-[minmax(0,2fr)_repeat(5,minmax(0,1fr))] gap-4 font-semibold text-gray-400 text-sm mb-2 px-3';
+                header.innerHTML = `
+                    <span class="text-left">Atleta</span>
+                    <span class="text-center">Pos</span>
+                    <span class="text-center">Neg</span>
+                    <span class="text-center">Total</span> 
+                    <span class="text-right">Puntos</span>
+                    <span class="text-center"> % </span>
+                `;
+                scoresContainer.appendChild(header);
+
+                players.slice().sort((a, b) => b.score - a.score).forEach(player => {
+                    const scoreDiv = document.createElement('div');
+                    scoreDiv.className = 'grid grid-cols-[minmax(0,2fr)_repeat(5,minmax(0,1fr))] gap-4 items-center bg-gray-700 p-3 rounded-md';
+
+                    const playerInfo = document.createElement('span');
+                    playerInfo.className = 'truncate';
+                    playerInfo.innerHTML = `<span class="font-bold">#${player.number}</span> <span class="text-gray-300">${player.name}</span>`;
+
+                    const positiveScore = document.createElement('span');
+                    positiveScore.className = 'text-center score-positive font-medium';
+                    positiveScore.textContent = `+${player.positiveScore}`;
+
+                    const negativeScore = document.createElement('span');
+                    negativeScore.className = 'text-center score-negative font-medium';
+                    negativeScore.textContent = player.negativeScore;
+
+                    const totalActionsCount = document.createElement('span');
+                    totalActionsCount.className = 'text-center text-gray-400 font-medium'; 
+                    totalActionsCount.textContent = player.totalActions; 
+
+                    const totalScore = document.createElement('span');
+                    totalScore.className = 'font-bold text-xl text-right score-neutral'; 
+                    totalScore.textContent = player.score;
+
+                    const efficiencySpan = document.createElement('span');
+                    efficiencySpan.className = 'text-center font-semibold text-lg';
+                    let efficiency = 0;
+                    if (player.totalActions > 0) {
+                        efficiency = (player.positiveScore / player.totalActions) * 100;
+                    }
+                    efficiencySpan.textContent = `${efficiency.toFixed(1)}%`;
+                    if (efficiency >= 60) efficiencySpan.classList.add('score-positive');
+                    else if (efficiency < 40 && efficiency > 0) efficiencySpan.classList.add('score-negative');
+                    else efficiencySpan.classList.add('score-neutral'); 
+
+                    scoreDiv.appendChild(playerInfo);
+                    scoreDiv.appendChild(positiveScore);
+                    scoreDiv.appendChild(negativeScore);
+                    scoreDiv.appendChild(totalActionsCount); 
+                    scoreDiv.appendChild(totalScore);       
+                    scoreDiv.appendChild(efficiencySpan); 
+                    scoresContainer.appendChild(scoreDiv);
+                });
+            }
+            
+            // Llamar a la función de renderizado de estadísticas generales y gráfico
+            renderGeneralStats();
+        }
+
+        // --- FUNCIONES DE REINICIO ---
+
+        function clearSetData() {
+            if (confirm('¿Estás seguro de que deseas reiniciar las estadísticas del Set (Puntos y Acciones)? El número y nombre de los atletas se mantendrán.')) {
+                actionLog = []; 
+                players = players.map(player => ({
+                    number: player.number,
+                    name: player.name,
+                    score: 0,
+                    positiveScore: 0,
+                    negativeScore: 0,
+                    totalActions: 0
+                }));
+                savePlayers(); 
+                render();
+            }
+        }
+        
+        function clearGameData() {
+            if (confirm('ADVERTENCIA: ¿Estás seguro de que deseas reiniciar TODO (Eliminar Datos del Juego), incluyendo atletas y estadísticas? Esta acción es irreversible.')) {
+                players = []; 
+                actionLog = [];
+                localStorage.removeItem('volleyballPlayers'); 
+                localStorage.removeItem('volleyballActionLog'); 
+                playerNumberInput.value = '';
+                playerNameInput.value = '';
+                playerSelect.innerHTML = '<option disabled selected>Agregar atleta primero</option>'; 
+                actionForm.reset(); 
+                render(); 
+            }
+        }
+        
+        function addPlayer() {
+            const number = playerNumberInput.value;
+            const name = playerNameInput.value.trim();
+
+            if (number && name && !players.some(p => p.number === number)) {
+                players.push({
+                    number: number,
+                    name: name,
+                    score: 0,
+                    positiveScore: 0,
+                    negativeScore: 0,
+                    totalActions: 0
+                });
+                players.sort((a,b) => parseInt(a.number, 10) - parseInt(b.number, 10));
+                playerNumberInput.value = '';
+                playerNameInput.value = '';
+                savePlayers(); 
+                render();
+            } else if (!number || !name) {
+                alert('Por favor, ingresa el número y el nombre del atleta.');
+            } else {
+                alert('Este número de atleta ya existe.');
+            }
+            playerNumberInput.focus();
+        }
+
+        // --- LISTENERS ---
+        
+        actionSelect.addEventListener('change', setActionSelectColor);
+
+        addPlayerBtn.addEventListener('click', addPlayer);
+        playerNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addPlayer(); });
+        playerNumberInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') playerNameInput.focus(); });
+        
+        clearSetDataBtn.addEventListener('click', clearSetData); 
+        clearGameDataBtn.addEventListener('click', clearGameData); 
+
+        actionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (players.length === 0) return alert('Debes agregar al menos un atleta.');
+
+            const playerIndex = playerSelect.value;
+            const actionName = actionSelect.value;
+            const quantity = parseInt(quantityInput.value, 10);
+
+            if (playerIndex !== null && actionName && quantity >= 1) {
+                const actionValue = actions[actionName];
+                const points = actionValue * quantity;
+
+                // 1. Actualizar estadísticas del atleta
+                players[playerIndex].score += points;
+                players[playerIndex].totalActions += quantity;
+
+                if (actionValue > 0) players[playerIndex].positiveScore += points;
+                // Contar acciones negativas para el score del atleta (no puntos)
+                else if (actionValue < 0) players[playerIndex].negativeScore += quantity;
+                
+                // 2. Registrar la acción en el log para el resumen general
+                actionLog.push({
+                    playerIndex: playerIndex,
+                    actionName: actionName,
+                    quantity: quantity
+                });
+
+                savePlayers(); 
+                render();
+            } else {
+                alert('Por favor, selecciona un atleta y una acción válida.');
+            }
+        });
+
+        populateActions();
+        render();
+        
+        // Bloqueo de clics y teclas
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault(); 
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+      });
+    </script>
+  </body>
+</html>

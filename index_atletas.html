@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Nómina LVMEL - Nómina de Atletas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados del tema Azul Marino/Eléctrico */
+        :root {
+            --color-azul-marino: #001F3F;    /* Azul Marino */
+            --color-azul-electrico: #0074D9; /* Azul Eléctrico */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+        }
+        .azul-marino-bg { background-color: var(--color-azul-marino); }
+        .azul-marino-hover:hover { background-color: #001a33; }
+        .azul-electrico-text { color: var(--color-azul-electrico); }
+        .azul-electrico-border { border-color: var(--color-azul-electrico); }
+        .rounded-xl { border-radius: 0.75rem; }
+        .shadow-lg-azul { box-shadow: 0 10px 15px -3px rgba(0, 31, 63, 0.2), 0 4px 6px -2px rgba(0, 31, 63, 0.1); }
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="app-screen" class="flex-grow p-4 md:p-8 flex flex-col">
+        
+        <header class="mb-6 border-b pb-4">
+            <div class="flex justify-between items-center mb-4">
+                <a href="index_menu.html" class="py-2 px-4 azul-marino-bg text-white font-semibold rounded-lg azul-marino-hover transition duration-200 shadow-md flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Regresar al Menú
+                </a>
+                
+                <div class="flex flex-col md:flex-row justify-end items-end md:items-center">
+                    <h1 class="text-3xl font-extrabold text-gray-800 text-right">Gestión de Nómina y Atletas</h1>
+                    <div class="flex items-center mt-2 md:mt-0 ml-4">
+                        <span class="text-lg font-medium text-gray-600 mr-2">Club Activo:</span>
+                        <span id="currentClubDisplay" class="text-lg font-bold azul-electrico-text py-1 px-3 bg-blue-50 rounded-full border azul-electrico-border"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-xs text-gray-400 mt-2">
+                Estado de Auth: <span id="authStatus">Inicializando...</span> | 
+                <span title="ID de usuario, crucial para las reglas de seguridad de Firestore">UserID: <span id="currentUserId">N/A</span></span>
+            </p>
+        </header>
+
+
+        <div id="data-table-view" class="main-view flex-grow">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-gray-800">Atletas Registrados (<span id="athleteCount">0</span>)</h2>
+                <button onclick="navigateTo('form')" class="py-2 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-200 shadow-md">
+                    + Registrar Nuevo Atleta
+                </button>
+            </div>
+            
+            <div class="bg-white p-4 rounded-xl shadow-lg-azul overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Edad</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Físico (IMC)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salario</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Últ. Pago</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="athletesTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <p id="loadingMessage" class="mt-4 text-center text-gray-500">Cargando datos...</p>
+            <p id="firestoreErrorMessage" class="mt-2 text-center text-red-600 font-semibold hidden">
+                </p>
+        </div>
+
+        <div id="form-edit-view" class="main-view hidden">
+            <div class="mb-6 flex justify-end">
+                <button onclick="navigateTo('table')" class="py-2 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-200 shadow-md">
+                    <span class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Regresar a la Consulta
+                    </span>
+                </button>
+            </div>
+
+            <section class="bg-white p-6 rounded-xl shadow-lg-azul w-full max-w-2xl mx-auto">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2 azul-electrico-text">Registro de Nuevo Atleta</h2>
+                <form id="athleteForm" onsubmit="saveAthlete(event)">
+
+                    <h3 class="font-semibold mt-4 mb-2 azul-marino-bg text-white p-2 rounded-md">1. Datos del Atleta</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="nombre" placeholder="Nombre" required class="p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                        <input type="text" id="apellido" placeholder="Apellido" required class="p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                        <div>
+                            <label class="block text-xs text-gray-500 mb-1">Fecha de Nacimiento</label>
+                            <input type="date" id="fechaNacimiento" required class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                        </div>
+                        <input type="tel" id="telefono" placeholder="Teléfono" class="p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                    </div>
+
+                    <h3 class="font-semibold mt-6 mb-2 azul-marino-bg text-white p-2 rounded-md">2. Datos Físicos</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative">
+                            <input type="number" id="peso" placeholder="Peso" step="0.1" required class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico pr-10">
+                            <span class="absolute right-0 top-0 mt-2 mr-3 text-gray-500">kg</span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="talla" placeholder="Talla" step="0.01" required class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico pr-10">
+                            <span class="absolute right-0 top-0 mt-2 mr-3 text-gray-500">m</span>
+                        </div>
+                    </div>
+
+                    <h3 class="font-semibold mt-6 mb-2 azul-marino-bg text-white p-2 rounded-md">3. Datos de Nómina</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <input type="number" id="montoPago" placeholder="Monto del Pago (USD)" required min="0" step="0.01" class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico pr-10">
+                            <span class="absolute right-0 top-0 mt-2 mr-3 text-gray-500">$</span>
+                        </div>
+                        <select id="frecuenciaPago" required class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                            <option value="" disabled selected>Frecuencia de Pago</option>
+                            <option value="mensual">Mensual</option>
+                            <option value="quincenal">Quincenal</option>
+                            <option value="semanal">Semanal</option>
+                        </select>
+                        <div>
+                             <label class="block text-xs text-gray-500 mb-1">Última Fecha de Pago Registrada</label>
+                            <input type="date" id="ultimaFechaPago" class="w-full p-2 border rounded-lg focus:ring-azul-electrico focus:border-azul-electrico">
+                        </div>
+                    </div>
+                    
+                    <p id="connectionStatus" class="mt-4 text-sm text-center font-medium text-yellow-600">
+                        Conectando con el servidor...
+                    </p>
+
+                    <button type="submit" id="saveButton" class="w-full mt-3 py-3 azul-marino-bg text-white font-semibold rounded-lg azul-marino-hover transition duration-200" disabled>
+                        Guardar Atleta y Nómina
+                    </button>
+                    <div id="saveMessage" class="text-center mt-3 text-sm hidden"></div>
+                </form>
+            </section>
+        </div>
+        
+    </div>
+
+    <script type="module">
+        // Importaciones de Firebase SDK (v11.6.1)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, query, where, deleteDoc, setLogLevel, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Establecer nivel de log para depuración de Firestore
+        setLogLevel('Debug');
+
+        // --- Configuración de Firebase y Variables Globales ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        let firebaseConfig = {
+            apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
+            authDomain: "datacontrolvoley-ff556.firebaseapp.com",
+            projectId: "datacontrolvoley-ff556",
+            storageBucket: "datacontrolvoley-ff556.firebasestorage.app",
+            messagingSenderId: "516409072606",
+            appId: "1:516409072606:web:132538dba358a077d71b4f" 
+        };
+        
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                const injectedConfig = JSON.parse(__firebase_config);
+                if (injectedConfig && injectedConfig.apiKey) {
+                    firebaseConfig = injectedConfig;
+                }
+            }
+        } catch (e) {
+            console.error("Error al usar la configuración inyectada. Usando la configuración estática proporcionada.", e);
+        }
+
+        let app, db, auth;
+        let userId = null;
+        let isAuthReady = false; 
+        let isSaving = false; 
+        
+        // ** Club ID Dinámico (Recuperado de localStorage) **
+        let currentClubId = localStorage.getItem('currentClub') || 'Angeles'; 
+
+        // Elementos de UI
+        const saveButton = document.getElementById('saveButton');
+        const connectionStatusElement = document.getElementById('connectionStatus');
+        const currentClubDisplay = document.getElementById('currentClubDisplay');
+
+        // Inicializar la visualización del club
+        currentClubDisplay.textContent = currentClubId;
+
+        // --- Funciones de Utilidad y Navegación ---
+
+        /**
+         * Navega entre las vistas principales: 'table' (tabla de atletas) o 'form' (formulario de registro).
+         */
+        window.navigateTo = function(viewName) {
+            // Ocultar todas las vistas principales
+            document.querySelectorAll('.main-view').forEach(el => el.classList.add('hidden'));
+
+            if (viewName === 'table') {
+                document.getElementById('data-table-view').classList.remove('hidden');
+                // Al volver a la tabla, aseguramos que los datos estén cargados si el club está seleccionado
+                if (currentClubId && isAuthReady && userId) {
+                    loadAthletes(); 
+                }
+            } else if (viewName === 'form') {
+                document.getElementById('form-edit-view').classList.remove('hidden');
+                document.getElementById('athleteForm').reset(); // Limpiar formulario
+                document.getElementById('saveMessage').classList.add('hidden'); // Ocultar mensajes de guardado previos
+            }
+        }
+
+        /**
+         * Actualiza el estado del botón Guardar y el mensaje de conexión.
+         */
+        function updateSaveButtonState() {
+            if (!currentClubId || currentClubId === 'null') { // Maneja el caso en que currentClubId sea "null" (string)
+                saveButton.disabled = true;
+                connectionStatusElement.textContent = 'ERROR: Club ID no definido. Inicie sesión.';
+                connectionStatusElement.className = 'mt-4 text-sm text-center font-medium text-red-600';
+            } else if (!isAuthReady) {
+                saveButton.disabled = true;
+                connectionStatusElement.textContent = 'Conectando con el servidor...';
+                connectionStatusElement.className = 'mt-4 text-sm text-center font-medium text-yellow-600';
+            } else if (isAuthReady && db && userId) {
+                saveButton.disabled = false;
+                connectionStatusElement.textContent = `¡Conexión lista! Club: ${currentClubId}.`;
+                connectionStatusElement.className = 'mt-4 text-sm text-center font-medium text-green-600';
+            } else {
+                saveButton.disabled = true;
+                connectionStatusElement.textContent = 'ERROR: Autenticación fallida.';
+                connectionStatusElement.className = 'mt-4 text-sm text-center font-medium text-red-600';
+            }
+        }
+
+        function calculateAge(dateOfBirth) {
+            const dob = new Date(dateOfBirth);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const monthDifference = today.getMonth() - dob.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function calculateIMC(peso, talla) {
+            if (talla > 0) {
+                const imc = peso / (talla * talla);
+                return imc.toFixed(2);
+            }
+            return 'N/A';
+        }
+
+        function getIMCStatus(imc) {
+            const imcValue = parseFloat(imc);
+            if (isNaN(imcValue)) return 'bg-gray-200 text-gray-800';
+            
+            if (imcValue < 18.5) return 'bg-blue-200 text-blue-800'; 
+            if (imcValue >= 18.5 && imcValue < 25) return 'bg-green-200 text-green-800'; 
+            if (imcValue >= 25 && imcValue < 30) return 'bg-yellow-200 text-yellow-800'; 
+            return 'bg-red-200 text-red-800'; 
+        }
+
+        /**
+         * Calcula el estado de pago basándose en la última fecha de pago.
+         * Status: Solvente (< 23 días), Por Vencer (23-30 días), Vencido (> 30 días).
+         */
+        function getPaymentStatus(lastPaymentDateStr) {
+            if (!lastPaymentDateStr || lastPaymentDateStr === 'N/A') {
+                return { status: 'Pendiente', class: 'bg-gray-400 text-white' };
+            }
+
+            const lastPayment = new Date(lastPaymentDateStr);
+            const today = new Date();
+            
+            // Ajustar para comparar solo días
+            lastPayment.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            const diffTime = today.getTime() - lastPayment.getTime();
+            // Calcula días transcurridos. Usa Math.floor para ser más estricto con días exactos.
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+
+            let status = '';
+            let statusClass = '';
+
+            if (diffDays > 30) {
+                status = 'Vencido';
+                statusClass = 'bg-red-500 text-white font-bold';
+            } else if (diffDays >= 23 && diffDays <= 30) {
+                status = 'Por Vencer';
+                statusClass = 'bg-yellow-400 text-gray-900 font-bold';
+            } else if (diffDays >= 0) {
+                // Incluye el día de hoy hasta 22 días antes.
+                status = 'Solvente';
+                statusClass = 'bg-green-500 text-white font-bold';
+            } else {
+                 // Si la fecha de pago es futura (error de ingreso)
+                status = 'Futuro'; 
+                statusClass = 'bg-blue-500 text-white';
+            }
+
+            return { status, class: statusClass };
+        }
+
+
+        // --- Inicialización y Autenticación de Firebase ---
+
+        async function setupFirebase() {
+            const authStatusElement = document.getElementById('authStatus');
+            const userIdElement = document.getElementById('currentUserId');
+            updateSaveButtonState(); 
+
+            try {
+                if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
+                    authStatusElement.textContent = 'ERROR: Configuración vacía';
+                    document.getElementById('loadingMessage').textContent = 'Error: Firebase no pudo inicializarse (configuración inválida).';
+                    isAuthReady = true;
+                    updateSaveButtonState();
+                    return;
+                }
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Configurar el listener de estado ANTES del intento de sign-in
+                onAuthStateChanged(auth, (user) => {
+                    isAuthReady = true;
+                    if (user) {
+                        userId = user.uid;
+                        authStatusElement.textContent = 'Conectado';
+                        userIdElement.textContent = userId;
+                        console.log("Firebase Auth listo. UserID:", userId);
+                    } else {
+                        userId = null;
+                        authStatusElement.textContent = 'Anónimo/Desconectado';
+                        console.log("Sesión anónima/no autenticada. UserID es null.");
+                    }
+                    
+                    updateSaveButtonState(); 
+                    
+                    // Cargar datos tan pronto como la auth esté lista
+                    if (currentClubId && isAuthReady && userId) {
+                        navigateTo('table'); // Asegura que la tabla se muestre y se carguen los datos
+                    } else if (currentClubId && isAuthReady && !userId) {
+                         document.getElementById('loadingMessage').textContent = 'Fallo al autenticar. Por favor, verifique las Reglas de Seguridad y Auth Anónimo.';
+                    }
+                });
+
+                await signInAnonymously(auth);
+
+            } catch (error) {
+                console.error("Error CRÍTICO al inicializar o autenticar Firebase:", error);
+                authStatusElement.textContent = 'ERROR Crítico';
+                document.getElementById('loadingMessage').textContent = `Error CRÍTICO de Firebase: ${error.code || error.message}. Revise la consola.`;
+                isAuthReady = true;
+                userId = null; 
+                updateSaveButtonState();
+            }
+        }
+        setupFirebase();
+
+        // --- Funciones de Datos (Firestore) ---
+
+        /**
+         * Guarda un nuevo atleta en Firestore y regresa a la vista de tabla.
+         */
+        window.saveAthlete = async function(event) {
+            event.preventDefault();
+            
+            if (isSaving || saveButton.disabled || !currentClubId || !db || !userId) {
+                document.getElementById('saveMessage').textContent = connectionStatusElement.textContent;
+                document.getElementById('saveMessage').classList.remove('hidden');
+                document.getElementById('saveMessage').style.color = 'red';
+                return;
+            }
+
+            const saveMessage = document.getElementById('saveMessage');
+            
+            saveMessage.classList.add('hidden');
+            saveButton.disabled = true; 
+            saveButton.textContent = 'Guardando...';
+            isSaving = true;
+
+            try {
+                const athleteData = {
+                    clubId: currentClubId,
+                    nombre: document.getElementById('nombre').value.trim(),
+                    apellido: document.getElementById('apellido').value.trim(),
+                    fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                    telefono: document.getElementById('telefono').value.trim(),
+                    peso: parseFloat(document.getElementById('peso').value),
+                    talla: parseFloat(document.getElementById('talla').value),
+                    montoPago: parseFloat(document.getElementById('montoPago').value), 
+                    frecuenciaPago: document.getElementById('frecuenciaPago').value,
+                    ultimaFechaPago: document.getElementById('ultimaFechaPago').value || 'N/A',
+                    createdAt: serverTimestamp(),
+                    userId: userId, 
+                };
+
+                const publicCollectionPath = `artifacts/${appId}/public/data/athletes`;
+
+                await addDoc(collection(db, publicCollectionPath), athleteData);
+
+                saveMessage.textContent = `Atleta ${athleteData.nombre} registrado con éxito. Regresando a la tabla...`;
+                saveMessage.classList.remove('hidden');
+                saveMessage.style.color = 'green';
+                
+                // Retraso para que el usuario vea el mensaje de éxito antes de navegar
+                setTimeout(() => {
+                    navigateTo('table');
+                }, 1000); 
+
+            } catch (error) {
+                console.error("Error al guardar el atleta en Firestore:", error);
+                saveMessage.textContent = `Error al guardar: ${error.message}. Revise la consola.`;
+                saveMessage.classList.remove('hidden');
+                saveMessage.style.color = 'red';
+            } finally {
+                saveButton.textContent = 'Guardar Atleta y Nómina';
+                isSaving = false;
+                updateSaveButtonState(); 
+            }
+        }
+        
+        /**
+         * Carga los atletas del club actual en tiempo real usando onSnapshot.
+         */
+        let unsubscribeAthletes = null; 
+
+        function loadAthletes() {
+            if (unsubscribeAthletes) {
+                unsubscribeAthletes();
+                unsubscribeAthletes = null;
+            }
+            
+            document.getElementById('firestoreErrorMessage').classList.add('hidden');
+
+            if (!isAuthReady || !currentClubId || !db || !userId) {
+                 document.getElementById('loadingMessage').textContent = 'Error: No se puede cargar. Base de datos no lista o club no seleccionado.';
+                 return;
+            }
+
+            document.getElementById('loadingMessage').textContent = `Cargando atletas de ${currentClubId}...`;
+            
+            const publicCollectionPath = `artifacts/${appId}/public/data/athletes`;
+            const q = query(
+                collection(db, publicCollectionPath),
+                where('clubId', '==', currentClubId)
+            );
+
+            // Listener en tiempo real
+            unsubscribeAthletes = onSnapshot(q, (snapshot) => {
+                const athletes = [];
+                snapshot.forEach((doc) => {
+                    athletes.push({ id: doc.id, ...doc.data() });
+                });
+                
+                athletes.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+                renderAthletesTable(athletes);
+                document.getElementById('athleteCount').textContent = athletes.length;
+                document.getElementById('loadingMessage').textContent = ''; 
+                document.getElementById('firestoreErrorMessage').classList.add('hidden');
+
+            }, (error) => {
+                console.error("Error al escuchar cambios en Firestore:", error);
+                document.getElementById('loadingMessage').textContent = 'Fallo de carga en tiempo real.';
+                document.getElementById('firestoreErrorMessage').textContent = `ERROR DE FIRESTORE: ${error.message}. Verifica las reglas de seguridad.`;
+                document.getElementById('firestoreErrorMessage').classList.remove('hidden');
+                
+            });
+        }
+        
+        /**
+         * Renderiza los atletas en la tabla HTML.
+         */
+        function renderAthletesTable(athletes) {
+            const tableBody = document.getElementById('athletesTableBody');
+            tableBody.innerHTML = ''; 
+
+            if (athletes.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">No hay atletas registrados para este club. ¡Regista uno nuevo!</td></tr>';
+                return;
+            }
+
+            athletes.forEach(athlete => {
+                const imc = calculateIMC(athlete.peso, athlete.talla);
+                const imcStatusClass = getIMCStatus(imc);
+                const age = calculateAge(athlete.fechaNacimiento);
+                
+                const paymentAmount = athlete.montoPago || athlete.salarioBase || 0; 
+                
+                const salaryFormatted = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                }).format(paymentAmount);
+
+                const lastPayment = athlete.ultimaFechaPago || 'N/A';
+                
+                // CÁLCULO DEL STATUS DE PAGO
+                const paymentStatus = getPaymentStatus(lastPayment);
+
+
+                const row = `
+                    <tr class="hover:bg-gray-100">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${athlete.nombre} ${athlete.apellido}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${age} años</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${imcStatusClass}">
+                                IMC: ${imc}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">${salaryFormatted}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastPayment}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                             <span class="px-2 inline-flex text-xs leading-5 rounded-full ${paymentStatus.class}">
+                                ${paymentStatus.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="#" class="text-indigo-600 hover:text-indigo-900 transition">Editar</a>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    </script>
+
+</body>
+</html>

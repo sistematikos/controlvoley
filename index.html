@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley - Gestión de Equipos de Voleibol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'voley-blue': '#1e40af', // Azul fuerte (Blue 800)
+                        'voley-dark': '#1e3a8a', // Azul oscuro (Blue 900)
+                        'voley-light': '#eff6ff', // Azul muy claro (Blue 50)
+                        // Definiciones de color para el login, usando la paleta existente
+                        'login-primary': '#1e40af', // voley-blue
+                        'login-dark': '#1e3a8a', // voley-dark
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilo para el contenedor principal y el fondo */
+        .hero-section {
+            /* Usamos una imagen de fondo de voleibol (placeholder) */
+            background-image: url('https://placehold.co/1920x1080/0e1b3e/ffffff?text=Voleibol');
+            background-size: cover;
+            background-position: center;
+            /* Aplicamos un degradado azul oscuro sobre la imagen para mejorar la legibilidad y el estilo */
+            position: relative;
+            z-index: 0;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            /* Degradado de oscuro a transparente */
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(30, 64, 175, 0.7) 40%, rgba(30, 64, 175, 0.5) 100%);
+            z-index: -1;
+        }
+
+        /* Animación sutil para los botones al cargar */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-voley-light font-sans min-h-screen flex flex-col items-center justify-center">
+
+    <section class="hero-section w-full flex-grow flex flex-col items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+        
+        <div class="w-full max-w-4xl mb-8">
+            <img src="img/banner.png" alt="Banner Control Voley" class="w-full h-auto rounded-lg shadow-2xl" onerror="this.onerror=null;this.src='https://placehold.co/800x150/1e40af/ffffff?text=Banner+Control+Voley+Horizontal'">
+        </div>
+
+        <div class="max-w-4xl w-full text-center p-8 md:p-12 rounded-xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20 relative">
+            
+            <h1 class="text-5xl sm:text-7xl font-extrabold text-white mb-4 drop-shadow-lg">
+                Control <span class="text-voley-light">Voley</span>
+            </h1>
+
+            <p class="text-xl sm:text-2xl text-voley-light font-medium mb-10 drop-shadow-md">
+                Tu gestión de equipo de voleibol, simplificada y potenciada.
+            </p>
+
+            <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl mb-12 transform transition duration-500 hover:scale-[1.02]">
+                <h2 class="text-2xl sm:text-3xl font-bold text-voley-dark mb-4">
+                    Administración Integral
+                </h2>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    Control Voley te permite gestionar todos los aspectos cruciales de tu club: desde el **control de la nómina de atletas**, la **administración de pagos y vencimientos**, el análisis detallado de **estadísticas de juego**, y el seguimiento de **cumpleaños** para mantener la moral del equipo.
+                </p>
+            </div>
+
+            <div id="login-form-container" class="w-full max-w-sm mx-auto bg-voley-light p-6 rounded-xl shadow-2xl transform transition duration-500 hover:scale-[1.02]">
+                
+                <h2 class="text-2xl font-bold mb-6 text-center text-voley-dark">Acceso a Clubes</h2>
+                
+                <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
+                    <div class="mb-4 text-left">
+                        <label for="clubNameInput" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Club</label>
+                        <input type="text" id="clubNameInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-login-primary focus:border-login-primary" placeholder="Ej: Pumas" required>
+                    </div>
+                    
+                    <div class="mb-6 text-left">
+                        <label for="clubKeyInput" class="block text-sm font-medium text-gray-700 mb-1">Clave de Acceso</label>
+                        <input type="password" id="clubKeyInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-login-primary focus:border-login-primary" placeholder="Ingresa la clave" required>
+                    </div>
+
+                    <div id="loginMessage" class="text-sm text-red-600 mb-4 text-center hidden font-medium"></div>
+
+                    <button type="submit" id="loginButton" class="w-full py-3 bg-login-primary text-white font-semibold rounded-lg shadow-md hover:bg-login-dark transition duration-300 transform hover:scale-[1.01] border-b-4 border-voley-dark">
+                        Iniciar Sesión
+                    </button>
+                </form>
+
+            </div>
+            
+        </div>
+    </section>
+
+    <footer class="w-full py-4 text-center bg-voley-dark shadow-inner">
+        <p class="text-sm text-white/70">
+            &copy; 2023 Todos los derechos reservados a Sistematikos - Frank Hernandez
+        </p>
+    </footer>
+
+    <script>
+        // Simulación de Claves de Club (Tomado de su referencia)
+        const clubCredentials = {
+            'Angeles': 'aguilas2025',
+            'Pumas': 'pumas2025',
+            'Estrellas': 'estrellas2025'
+        };
+
+        window.handleLogin = function() {
+            const clubName = document.getElementById('clubNameInput').value.trim();
+            const clubKey = document.getElementById('clubKeyInput').value.trim();
+            const loginMessage = document.getElementById('loginMessage');
+            const loginButton = document.getElementById('loginButton');
+            
+            loginMessage.classList.add('hidden');
+            loginButton.disabled = true;
+            loginButton.textContent = 'Verificando...';
+
+            if (clubCredentials[clubName] === clubKey) {
+                // ÉXITO: Redirigir a index_menu.html
+                
+                // NOTA: Para mantener la sesión del club, podría usar localStorage o sessionStorage
+                // Se recomienda guardar el nombre del club para usarlo en la siguiente página.
+                localStorage.setItem('currentClub', clubName);
+
+                loginMessage.textContent = '¡Acceso Concedido! Redirigiendo...';
+                loginMessage.style.color = 'green';
+                loginMessage.classList.remove('hidden');
+
+                setTimeout(() => {
+                    // REDIRECCIÓN A LA PÁGINA DEL MENÚ
+                    window.location.href = 'index_menu.html';
+                }, 1000); // Retraso de 1 segundo para mostrar el mensaje de éxito
+
+            } else {
+                // FALLO: Mostrar mensaje de error
+                loginMessage.textContent = 'Nombre del club o clave incorrecta.';
+                loginMessage.style.color = 'red';
+                loginMessage.classList.remove('hidden');
+                loginButton.disabled = false;
+                loginButton.textContent = 'Iniciar Sesión';
+            }
+        }
+    </script>
+
+</body>
+</html>
