@@ -172,29 +172,29 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const _0xa = i => document.getElementById(i);
 let _aL = [];
 
-// Bloqueo de inspección estándar
+// Deshabilitar inspección
 window.addEventListener('keydown', function(e) {
   if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 88)) {
     e.preventDefault(); return false;
   }
 });
 
-// 1. Obtener credenciales dinámicas de Supabase desde localStorage
+// Lectura de credenciales dinámicas de localStorage
 const supaUrl = localStorage.getItem('control_voley_supa_url');
 const supaKey = localStorage.getItem('control_voley_supa_key');
-const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
 const clubID = localStorage.getItem('control_voley_club_id');
 const clubNombre = localStorage.getItem('control_voley_club_nombre');
 
-if (licenciaValidada !== 'true' || !supaUrl || !supaKey) {
-    alert("Sesión no autorizada o credenciales faltantes.");
+// Verificación de sesión flexible para prevenir rebotes innecesarios
+if (!supaUrl || !supaKey) {
+    console.warn("Faltan credenciales de Supabase. Redirigiendo a activación.");
     window.location.href = 'index.html';
 }
 
 // Inicializar cliente Supabase exclusivo del club
 const supabase = createClient(supaUrl, supaKey);
 
-// Función para cálculo de edad
+// Cálculo de edad
 const calcularEdad = (fecha) => {
     if (!fecha) return 'N/A';
     const a = new Date(fecha), o = new Date();
@@ -203,9 +203,9 @@ const calcularEdad = (fecha) => {
     return s;
 };
 
-// Cargar atletas
+// Cargar atletas desde Supabase
 async function cargarFichas() {
-    _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre || clubID}`;
+    _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre || clubID || 'Activo'}`;
 
     try {
         const { data, error } = await supabase
@@ -221,12 +221,12 @@ async function cargarFichas() {
         _0xa('aLc').innerHTML = `
             <div class="col-span-full text-center py-12 glass-card rounded-2xl border border-rose-200">
                 <i class="fas fa-exclamation-triangle text-3xl text-rose-500 mb-2"></i>
-                <p class="text-rose-600 font-bold text-sm">Error al conectar con Supabase. Verifica la tabla de atletas.</p>
+                <p class="text-rose-600 font-bold text-sm">Error al conectar con Supabase (${err.message}).</p>
             </div>`;
     }
 }
 
-// Renderizar Tarjetas de Ficha con el nuevo estilo Deportivo
+// Renderizar Tarjetas de Ficha
 function _rL(p) {
     const c = _0xa('aLc');
     c.innerHTML = '';
@@ -241,11 +241,15 @@ function _rL(p) {
     }
 
     p.forEach(k => {
-        const age = calcularEdad(k.fechaNacimiento);
+        const age = calcularEdad(k.fechaNacimiento || k.fecha_nacimiento);
+        const foto = k.fotoUrl || k.foto_url;
+        const cedula = k.cedulaIdentidad || k.cedula_identidad;
+        const nombre = k.nombre || '';
+        const apellido = k.apellido || '';
         
-        const avatar = k.fotoUrl 
-            ? `<img src="${k.fotoUrl}" class="w-24 h-24 rounded-full object-cover shadow-electric border-2 border-brand-cyan mx-auto mb-3">` 
-            : `<div class="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center font-black justify-center text-2xl mx-auto mb-3 shadow-electric border-2 border-white">${(k.nombre?.[0]||'')+(k.apellido?.[0]||'')}</div>`;
+        const avatar = foto 
+            ? `<img src="${foto}" class="w-24 h-24 rounded-full object-cover shadow-electric border-2 border-brand-cyan mx-auto mb-3">` 
+            : `<div class="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center font-black justify-center text-2xl mx-auto mb-3 shadow-electric border-2 border-white">${(nombre[0]||'')+(apellido[0]||'')}</div>`;
 
         const card = document.createElement('div');
         card.className = "glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric text-center flex flex-col justify-between group relative overflow-hidden cursor-pointer";
@@ -254,13 +258,13 @@ function _rL(p) {
             <div class="absolute top-0 right-0 w-20 h-20 bg-brand-electric/5 rounded-bl-full transition-all group-hover:scale-110 group-hover:bg-brand-electric/10"></div>
             <div>
                 ${avatar}
-                <h4 class="text-lg font-black text-slate-900 leading-tight group-hover:text-brand-electric transition-colors mb-1">${k.nombre || ''} ${k.apellido || ''}</h4>
+                <h4 class="text-lg font-black text-slate-900 leading-tight group-hover:text-brand-electric transition-colors mb-1">${nombre} ${apellido}</h4>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4"><i class="fas fa-location-dot text-brand-electric"></i> ${k.sede || 'Sin Sede'}</p>
                 
                 <div class="text-xs text-slate-600 space-y-2 text-left bg-slate-50/80 p-3.5 rounded-xl border border-slate-100 font-semibold mb-2">
                     <div class="flex justify-between border-b border-slate-200/60 pb-1">
                         <span class="text-slate-400">Cédula:</span>
-                        <span class="font-black text-slate-800">${k.cedulaIdentidad || 'N/A'}</span>
+                        <span class="font-black text-slate-800">${cedula || 'N/A'}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-200/60 pb-1">
                         <span class="text-slate-400">Edad:</span>
@@ -287,17 +291,18 @@ function _rL(p) {
     });
 }
 
-// Búsqueda interactiva
+// Búsqueda en tiempo real
 window.fAl = () => {
     const t = _0xa('sAi').value.toLowerCase();
-    const f = _aL.filter(x => 
-        (x.nombre + ' ' + x.apellido).toLowerCase().includes(t) || 
-        (x.cedulaIdentidad && x.cedulaIdentidad.toString().includes(t))
-    );
+    const f = _aL.filter(x => {
+        const nom = (x.nombre + ' ' + x.apellido).toLowerCase();
+        const ci = (x.cedulaIdentidad || x.cedula_identidad || '').toString();
+        return nom.includes(t) || ci.includes(t);
+    });
     _rL(f);
 };
 
-// Cierre de sesión
+// Cerrar Sesión
 document.getElementById('btnLogout').addEventListener('click', () => {
     if (confirm("¿Deseas salir del menú del club?")) {
         localStorage.removeItem('control_voley_licencia_validada');
@@ -305,7 +310,7 @@ document.getElementById('btnLogout').addEventListener('click', () => {
     }
 });
 
-// Iniciar consulta
+// Inicializar la carga al renderizar
 cargarFichas();
 </script>
 </body>
