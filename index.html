@@ -20,17 +20,35 @@
         input:focus, textarea:focus { border-color: var(--c2); }
         button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); }
         button:hover { background: var(--c2); transform: translateY(-1px); }
+        .btn-install { background: #10B981; margin-bottom: 12px; display: none; align-items: center; justify-content: center; gap: 8px; }
+        .btn-install:hover { background: #059669; }
         .hidden { display: none !important; }
         .error-msg { color: var(--error); font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
         .banner-logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 15px auto; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid var(--c2); display: flex; align-items: center; justify-content: center; background: #fff; }
     </style>
 
     <script>
-        window.deferredPrompt = null;
+        let deferredPrompt = null;
+
+        // Capturar el evento de instalación PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            window.deferredPrompt = e;
+            deferredPrompt = e;
+            // Mostrar los botones de instalación en pantalla
+            document.querySelectorAll('.btn-install').forEach(btn => btn.style.display = 'flex');
         });
+
+        async function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('El usuario aceptó instalar el acceso directo.');
+                }
+                deferredPrompt = null;
+                document.querySelectorAll('.btn-install').forEach(btn => btn.style.display = 'none');
+            }
+        }
 
         // 1. VALIDACIÓN AUTOMÁTICA DE LICENCIA PREVIA
         document.addEventListener('DOMContentLoaded', () => {
@@ -45,7 +63,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW no disponible:', err));
             });
         }
     </script>
@@ -55,12 +73,14 @@
     <!-- TARJETA 1: ACTIVACIÓN DE LICENCIA -->
     <div class="card" id="cardActivacion">
         <div class="banner-logo">
-            <i class="fas fa-volleyball-ball text-3xl" style="color: var(--c2); font-size: 2.5rem;"></i>
+            <i class="fas fa-volleyball-ball" style="color: var(--c2); font-size: 2.5rem;"></i>
         </div>
         <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Control Voley</h2>
         <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
         
         <textarea id="tokenInput" placeholder="Pega el código de licencia aquí..."></textarea>
+        
+        <button class="btn-install" onclick="instalarApp()"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
         <button id="btnActivar">ACTIVAR SISTEMA</button>
         <p id="errActivacion" class="error-msg hidden"></p>
     </div>
@@ -68,10 +88,12 @@
     <!-- TARJETA 2: INICIO DE SESIÓN / ACCESO AL SISTEMA -->
     <div class="card hidden" id="cardLogin">
         <div class="banner-logo">
-            <i class="fas fa-user-shield text-3xl" style="color: var(--c2); font-size: 2.5rem;"></i>
+            <i class="fas fa-user-shield" style="color: var(--c2); font-size: 2.5rem;"></i>
         </div>
         <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
         <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Dispositivo autorizado para el club</p>
+        
+        <button class="btn-install" onclick="instalarApp()"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
         
         <form id="loginForm">
             <button type="submit" id="btnLogin">INGRESAR A MI CLUB</button>
@@ -80,8 +102,6 @@
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
         // --- PROCESO DE ACTIVACIÓN DE LICENCIA CON SUPABASE ---
         async function procesarActivacion() {
             const rawToken = document.getElementById('tokenInput').value.trim();
@@ -99,12 +119,11 @@
                 const jsonString = atob(rawToken);
                 const data = JSON.parse(jsonString);
 
-                // Validar que el token empaquetado tenga los parámetros esenciales
                 if (!data.activation_id || !data.supaUrl || !data.supaKey) {
                     throw new Error("El token no contiene credenciales válidas.");
                 }
 
-                // 2. Guardar variables de sesión y configuración en localStorage
+                // 2. Guardar datos en localStorage
                 localStorage.setItem('control_voley_club_id', data.activation_id);
                 localStorage.setItem('control_voley_club_nombre', data.n || '');
                 localStorage.setItem('control_voley_supa_url', data.supaUrl);
@@ -112,14 +131,7 @@
                 localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
                 localStorage.setItem('control_voley_licencia_validada', 'true');
 
-                // 3. Solicitar instalación PWA tras activar
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    await window.deferredPrompt.userChoice;
-                    window.deferredPrompt = null;
-                }
-
-                // 4. Cambiar a la tarjeta de inicio de sesión / acceso
+                // 3. Cambiar a la tarjeta de acceso
                 document.getElementById('cardActivacion').classList.add('hidden');
                 document.getElementById('cardLogin').classList.remove('hidden');
 
@@ -132,7 +144,7 @@
 
         document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
 
-        // --- PROCESO DE INICIO DE SESIÓN / ACCESO AL MENÚ ---
+        // --- PROCESO DE ACCESO AL MENÚ ---
         const loginForm = document.getElementById('loginForm');
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -140,7 +152,6 @@
             btnLogin.disabled = true;
             btnLogin.textContent = "Cargando...";
 
-            // Redirigir directamente al menú principal utilizando las credenciales cargadas
             window.location.replace('index_menu.html');
         };
     </script>
