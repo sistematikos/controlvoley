@@ -55,7 +55,7 @@
     <!-- TARJETA 1: ACTIVACIÓN DE LICENCIA -->
     <div class="card" id="cardActivacion">
         <div class="banner-logo">
-            <i class="fas fa-volleyball-ball text-3xl" style="color: var(--c2);"></i>
+            <i class="fas fa-volleyball-ball text-3xl" style="color: var(--c2); font-size: 2.5rem;"></i>
         </div>
         <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Control Voley</h2>
         <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
@@ -65,44 +65,24 @@
         <p id="errActivacion" class="error-msg hidden"></p>
     </div>
 
-    <!-- TARJETA 2: INICIO DE SESIÓN Y CREDENCIALES (Se muestra si ya está activado) -->
+    <!-- TARJETA 2: INICIO DE SESIÓN / ACCESO AL SISTEMA -->
     <div class="card hidden" id="cardLogin">
         <div class="banner-logo">
-            <i class="fas fa-user-shield text-3xl" style="color: var(--c2);"></i>
+            <i class="fas fa-user-shield text-3xl" style="color: var(--c2); font-size: 2.5rem;"></i>
         </div>
         <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
-        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales autorizadas:</p>
+        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Dispositivo autorizado para el club</p>
         
         <form id="loginForm">
-            <input type="email" id="email" placeholder="Correo electrónico..." required>
-            <input type="password" id="password" placeholder="Contraseña..." required>
-            <button type="submit" id="btnLogin">INICIAR SESIÓN</button>
+            <button type="submit" id="btnLogin">INGRESAR A MI CLUB</button>
             <p id="errLogin" class="error-msg hidden"></p>
         </form>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // Configuración de la Base de Datos Principal de Control Voley
-        const firebaseConfig = {
-            apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
-            authDomain: "datacontrolvoley-ff556.firebaseapp.com",
-            projectId: "datacontrolvoley-ff556",
-            storageBucket: "datacontrolvoley-ff556.firebasestorage.app",
-            messagingSenderId: "516409072606",
-            appId: "1:516409072606:web:132538dba358a077d71b4f"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
-
-        // --- PROCESO DE ACTIVACIÓN DE LICENCIA ---
+        // --- PROCESO DE ACTIVACIÓN DE LICENCIA CON SUPABASE ---
         async function procesarActivacion() {
             const rawToken = document.getElementById('tokenInput').value.trim();
             const errEl = document.getElementById('errActivacion');
@@ -115,117 +95,53 @@
             }
             
             try {
-                const data = JSON.parse(atob(rawToken));
-                const hwID = getHardwareID();
-                const activationId = data.activation_id;
+                // 1. Decodificar el Token Base64 de Supabase
+                const jsonString = atob(rawToken);
+                const data = JSON.parse(jsonString);
 
-                if (!activationId) throw new Error("Token malformado");
-
-                const licenciaRef = doc(db, "licencias", activationId);
-                const snapLicencia = await getDoc(licenciaRef);
-
-                let equiposLicencia = [];
-                let limiteLicencia = data.l || 1;
-
-                if (snapLicencia.exists()) {
-                    const dbData = snapLicencia.data();
-                    equiposLicencia = Array.isArray(dbData.equipos) ? dbData.equipos : [];
-                    limiteLicencia = dbData.limite || limiteLicencia;
-
-                    if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
-                        errEl.textContent = "Error: Límite de dispositivos alcanzado en esta licencia.";
-                        errEl.classList.remove('hidden');
-                        return;
-                    }
-
-                    if (!equiposLicencia.includes(hwID)) {
-                        equiposLicencia.push(hwID);
-                        await updateDoc(licenciaRef, { equipos: equiposLicencia });
-                    }
-                } else {
-                    equiposLicencia = [hwID];
-                    await setDoc(licenciaRef, { 
-                        cliente: data.n || "", 
-                        limite: limiteLicencia, 
-                        equipos: equiposLicencia, 
-                        fecha_registro: new Date().toISOString() 
-                    });
+                // Validar que el token empaquetado tenga los parámetros esenciales
+                if (!data.activation_id || !data.supaUrl || !data.supaKey) {
+                    throw new Error("El token no contiene credenciales válidas.");
                 }
 
-                // Guardar variables de sesión de licencia
-                localStorage.setItem('control_voley_club_id', activationId);
+                // 2. Guardar variables de sesión y configuración en localStorage
+                localStorage.setItem('control_voley_club_id', data.activation_id);
+                localStorage.setItem('control_voley_club_nombre', data.n || '');
+                localStorage.setItem('control_voley_supa_url', data.supaUrl);
+                localStorage.setItem('control_voley_supa_key', data.supaKey);
+                localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
                 localStorage.setItem('control_voley_licencia_validada', 'true');
 
-                // Solicitar instalación PWA justo aquí tras activar correctamente la licencia
+                // 3. Solicitar instalación PWA tras activar
                 if (window.deferredPrompt) {
                     window.deferredPrompt.prompt();
                     await window.deferredPrompt.userChoice;
                     window.deferredPrompt = null;
                 }
 
-                // Cambiar a la tarjeta de inicio de sesión
+                // 4. Cambiar a la tarjeta de inicio de sesión / acceso
                 document.getElementById('cardActivacion').classList.add('hidden');
                 document.getElementById('cardLogin').classList.remove('hidden');
 
             } catch (e) {
                 console.error("Error al activar:", e);
-                errEl.textContent = "Código de licencia inválido o error de conexión.";
+                errEl.textContent = "Código de licencia inválido o formato incorrecto.";
                 errEl.classList.remove('hidden');
             }
         }
 
         document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
 
-        // --- PROCESO DE INICIO DE SESIÓN Y VERIFICACIÓN DE APROBACIÓN ---
+        // --- PROCESO DE INICIO DE SESIÓN / ACCESO AL MENÚ ---
         const loginForm = document.getElementById('loginForm');
         loginForm.onsubmit = async (e) => {
             e.preventDefault();
-            const errLogin = document.getElementById('errLogin');
             const btnLogin = document.getElementById('btnLogin');
-            errLogin.classList.add('hidden');
             btnLogin.disabled = true;
-            btnLogin.textContent = "Verificando...";
+            btnLogin.textContent = "Cargando...";
 
-            try {
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Validar estatus de aprobación en la colección 'users'
-                const userDocRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    const isApproved = userData.aprobado === true || userData.status === 'approved';
-
-                    if (isApproved) {
-                        // Todo correcto: Licencia activa, sesión autenticada y usuario aprobado -> Al menú
-                        window.location.replace('index_menu.html');
-                    } else {
-                        await signOut(auth);
-                        errLogin.textContent = "Tu cuenta está pendiente de aprobación por el administrador.";
-                        errLogin.classList.remove('hidden');
-                        btnLogin.disabled = false;
-                        btnLogin.textContent = "INICIAR SESIÓN";
-                    }
-                } else {
-                    await signOut(auth);
-                    errLogin.textContent = "No se encontraron datos de usuario asociados.";
-                    errLogin.classList.remove('hidden');
-                    btnLogin.disabled = false;
-                    btnLogin.textContent = "INICIAR SESIÓN";
-                }
-
-            } catch (error) {
-                console.error(error);
-                errLogin.textContent = "Credenciales incorrectas o error de acceso.";
-                errLogin.classList.remove('hidden');
-                btnLogin.disabled = false;
-                btnLogin.textContent = "INICIAR SESIÓN";
-            }
+            // Redirigir directamente al menú principal utilizando las credenciales cargadas
+            window.location.replace('index_menu.html');
         };
     </script>
 </body>
