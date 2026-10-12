@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Maestro de Licencias | Control Voley (Supabase)</title>
+    <title>Panel de Usuario y Licencias | Control Voley</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
@@ -48,8 +48,8 @@
 <body>
 
     <div class="container">
-        <h1><i class="fas fa-shield-alt"></i> Panel Maestro</h1>
-        <p class="subtitle">Creación de Clubes y Licencias Supabase | Control Voley</p>
+        <h1><i class="fas fa-shield-alt"></i> Panel de Gestión</h1>
+        <p class="subtitle">Administración de Clubes y Licencias Supabase | Control Voley</p>
 
         <!-- Buscador -->
         <div class="search-wrapper">
@@ -70,7 +70,7 @@
 
             <div class="form-group">
                 <label>ID del Club / Activación</label>
-                <input type="text" id="empresaID" placeholder="Ej: CV-LARA-001" style="font-weight: 600; color: #001F3F;">
+                <input type="text" id="empresaID" placeholder="Ej: YCDEP-CIAR" style="font-weight: 600; color: #001F3F;">
             </div>
 
             <div class="form-row">
@@ -105,7 +105,7 @@
         <!-- Credenciales de Supabase por Club -->
         <div class="section-box" style="border: 1px dashed var(--supa);">
             <div class="section-title" style="color: #10B981;"><i class="fas fa-database"></i> Proyecto Supabase del Club (Base de Datos + Fotos)</div>
-            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Pega aquí la URL y Anon Key del proyecto Supabase destinado a este club.</p>
+            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Pega aquí la URL limpia y la Anon Key del proyecto Supabase destinado a este club.</p>
             
             <div class="form-row">
                 <div class="form-group">
@@ -139,22 +139,94 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // PROYECTO MAESTRO DE SUPABASE (Donde tú gestionas la lista global de licencias y clubes)
-        const MASTER_SUPABASE_URL = "https://TU_PROYECTO_MAESTRO.supabase.co";
-        const MASTER_SUPABASE_KEY = "TU_MASTER_ANON_KEY";
-        const masterSupabase = createClient(MASTER_SUPABASE_URL, MASTER_SUPABASE_KEY);
+        // CONEXIÓN MAESTRA A SUPABASE (Usa las credenciales de tu proyecto Supabase principal)
+        const SUPABASE_URL = "https://zgkbjpesmgqiprvfowju.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_VC9fuoRhlPpJ-8ZrERYFiA_TT_FyciK..."; // Pega tu Anon Key completa aquí
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let cacheClubes = [];
 
         async function cargarCache() {
             try {
-                const { data, error } = await masterSupabase.from('licencias_master').select('*');
+                const { data, error } = await supabase.from('licencias_master').select('*');
                 if (!error && data) cacheClubes = data;
             } catch (e) {
                 console.error("Error cargando licencias maestras:", e);
             }
         }
         cargarCache();
+
+        const inputBusqueda = document.getElementById('busquedaInput');
+        const listaResultados = document.getElementById('lista-resultados-busqueda');
+
+        inputBusqueda.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            if (term.length === 0) {
+                listaResultados.style.display = 'none';
+                return;
+            }
+
+            const filtrados = cacheClubes.filter(emp => 
+                (emp.nombre && emp.nombre.toLowerCase().includes(term)) ||
+                (emp.club_id && emp.club_id.toLowerCase().includes(term)) ||
+                (emp.rif && emp.rif.toLowerCase().includes(term))
+            );
+
+            if (filtrados.length > 0) {
+                listaResultados.style.display = 'block';
+                listaResultados.innerHTML = filtrados.map(emp => `
+                    <div class="item-res-busqueda" onclick="window.seleccionarClub('${emp.club_id}')">
+                        <strong>${emp.nombre}</strong><br>
+                        <small style="color: #64748B;">ID: ${emp.club_id} | RIF: ${emp.rif || 'N/A'}</small>
+                    </div>
+                `).join('');
+            } else {
+                listaResultados.style.display = 'block';
+                listaResultados.innerHTML = `<div style="padding: 10px; color: #94A3B8; font-size: 0.85rem;">No se encontraron clubes coincidentes.</div>`;
+            }
+        });
+
+        window.seleccionarClub = async (clubId) => {
+            listaResultados.style.display = 'none';
+            const club = cacheClubes.find(c => c.club_id === clubId);
+            if (!club) return;
+
+            document.getElementById('empresaID').value = club.club_id;
+            document.getElementById('nombreEmpresa').value = club.nombre;
+            document.getElementById('rif').value = club.rif || "";
+            document.getElementById('email').value = club.email || "";
+            document.getElementById('limite').value = club.limite_dispositivos || 3;
+            document.getElementById('supaUrl').value = club.supabase_url || "";
+            document.getElementById('supaKey').value = club.supabase_key || "";
+            document.getElementById('supaBucket').value = club.bucket_name || "control-voley";
+
+            if (club.token_licencia) {
+                document.getElementById('tokenResult').value = club.token_licencia;
+                document.getElementById('resultBox').style.display = 'block';
+            }
+            document.getElementById('status').innerText = "✅ Club cargado correctamente.";
+        };
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                listaResultados.style.display = 'none';
+            }
+        });
+
+        document.getElementById('btnNuevo').addEventListener('click', () => {
+            document.getElementById('empresaID').value = "";
+            document.getElementById('nombreEmpresa').value = "";
+            document.getElementById('rif').value = "";
+            document.getElementById('email').value = "";
+            document.getElementById('limite').value = "3";
+            document.getElementById('supaUrl').value = "";
+            document.getElementById('supaKey').value = "";
+            document.getElementById('supaBucket').value = "control-voley";
+            document.getElementById('resultBox').style.display = 'none';
+            inputBusqueda.value = "";
+            document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
+        });
 
         document.getElementById('btnGuardar').addEventListener('click', async () => {
             const clubId = document.getElementById('empresaID').value.trim();
@@ -163,7 +235,7 @@
             const email = document.getElementById('email').value.trim();
             const limite = parseInt(document.getElementById('limite').value);
 
-            const supaUrl = document.getElementById('supaUrl').value.trim();
+            let supaUrl = document.getElementById('supaUrl').value.trim().replace(/^\[\vert{}\]$/g, '');
             const supaKey = document.getElementById('supaKey').value.trim();
             const supaBucket = document.getElementById('supaBucket').value.trim();
 
@@ -171,7 +243,6 @@
                 return alert("Completa el ID del Club, Nombre y las credenciales de Supabase.");
             }
 
-            // Crear Token encriptado en Base64
             const tokenData = {
                 activation_id: clubId,
                 n: nombre,
@@ -183,31 +254,30 @@
             };
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
-            // Guardar en la base de datos maestra
-            const payloadMaster = {
-                club_id: clubId,
-                nombre: nombre,
-                rif: rif,
-                email: email,
-                limite_dispositivos: limite,
-                supabase_url: supaUrl,
-                supabase_key: supaKey,
-                bucket_name: supaBucket,
-                token_licencia: tokenBase64,
-                updated_at: new Date().toISOString()
-            };
+            try {
+                const { error } = await supabase
+                    .from('licencias_master')
+                    .upsert([{
+                        club_id: clubId,
+                        nombre: nombre,
+                        rif: rif,
+                        email: email,
+                        limite_dispositivos: limite,
+                        supabase_url: supaUrl,
+                        supabase_key: supaKey,
+                        bucket_name: supaBucket || "control-voley",
+                        token_licencia: tokenBase64,
+                        updated_at: new Date().toISOString()
+                    }], { onConflict: 'club_id' });
 
-            const { error } = await masterSupabase
-                .from('licencias_master')
-                .upsert([payloadMaster], { onConflict: 'club_id' });
+                if (error) throw error;
 
-            if (error) {
-                alert("Error al guardar la licencia: " + error.message);
-            } else {
+                cargarCache();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').style.display = 'block';
-                document.getElementById('status').innerText = "🚀 ¡Club registrado exitosamente! Copia el token para el usuario.";
-                cargarCache();
+                document.getElementById('status').innerText = "🚀 ¡Club registrado y guardado en Supabase con éxito!";
+            } catch (err) {
+                alert("Error al guardar en Supabase: " + err.message);
             }
         });
 
