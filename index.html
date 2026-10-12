@@ -3,208 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Maestro de Licencias | Control Voley</title>
+    <title>Control Voley | Activación y Acceso</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#001F3F">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --c1: #001F3F; --c2: #0074D9; --bg: #F1F5F9; --success: #10B981; --warning: #F59E0B; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { max-width: 680px; width: 100%; background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.1); border-top: 8px solid var(--c1); box-sizing: border-box; }
-        h1 { color: var(--c1); font-weight: 900; margin-bottom: 5px; text-align: center; font-size: 1.6rem; }
-        p.subtitle { text-align: center; color: #64748B; margin-bottom: 25px; font-size: 0.9rem; }
-        
-        .section-box { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 20px; border-radius: 14px; margin-bottom: 20px; }
-        .section-title { font-size: 0.85rem; font-weight: 700; color: var(--c1); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-weight: 600; color: #334155; margin-bottom: 5px; font-size: 0.8rem; }
-        input, select { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-family: inherit; font-size: 0.9rem; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus, select:focus { border-color: var(--c2); }
-        
-        .btn-action { width: 100%; background: var(--c1); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
-        .btn-action:hover { background: var(--c2); transform: translateY(-1px); }
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #059669; }
-        
-        /* BUSCADOR Y DESPLEGABLE FLOTANTE */
-        .search-wrapper { position: relative; width: 100%; }
-        .search-container { display: flex; gap: 8px; margin-bottom: 15px; }
-        
-        #lista-resultados-busqueda {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 148px;
-            background: white;
-            border: 2px solid #E2E8F0;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 220px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            display: none;
-        }
-        .item-res-busqueda {
-            padding: 10px 14px;
-            cursor: pointer;
-            border-bottom: 1px solid #F1F5F9;
-            font-size: 0.85rem;
-        }
-        .item-res-busqueda:hover {
-            background: #F1F5F9;
-        }
-        
-        .result-box { margin-top: 20px; padding: 15px; background: #FFF; border: 2px dashed #CBD5E1; border-radius: 12px; display: none; position: relative; }
-        textarea { width: 100%; height: 90px; border: none; background: #F8FAFC; padding: 8px; font-family: monospace; font-size: 0.75rem; resize: none; color: #475569; border-radius: 6px; box-sizing: border-box; }
-        .btn-copy { position: absolute; right: 18px; top: 25px; background: var(--c2); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
-        
-        .preview-logo { width: 60px; height: 60px; object-fit: contain; border: 1px solid #E2E8F0; border-radius: 8px; background: #fff; display: block; margin: 0 auto 10px auto; }
-        #status { text-align: center; font-weight: 600; font-size: 0.85rem; margin-top: 10px; color: var(--success); }
+        :root { --c1: #001F3F; --c2: #0074D9; --bg: #f0f8ff; --success: #10B981; --error: #EF4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.12); width: 100%; max-width: 420px; text-align: center; border-top: 8px solid var(--c1); }
+        textarea, input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: inherit; transition: 0.3s; }
+        textarea { height: 90px; resize: none; font-family: monospace; font-size: 0.8rem; }
+        input:focus, textarea:focus { border-color: var(--c2); }
+        button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); }
+        button:hover { background: var(--c2); transform: translateY(-1px); }
+        .hidden { display: none !important; }
+        .error-msg { color: var(--error); font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
+        .banner-logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 15px auto; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid var(--c2); display: flex; align-items: center; justify-content: center; background: #fff; }
     </style>
+
+    <script>
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+        });
+
+        // 1. VALIDACIÓN AUTOMÁTICA DE LICENCIA PREVIA
+        document.addEventListener('DOMContentLoaded', () => {
+            const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
+            const clubID = localStorage.getItem('control_voley_club_id');
+
+            if (licenciaValidada === 'true' && clubID) {
+                document.getElementById('cardActivacion').classList.add('hidden');
+                document.getElementById('cardLogin').classList.remove('hidden');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
+            });
+        }
+    </script>
 </head>
-<body>
+<body oncontextmenu="return false">
 
-    <div class="container">
-        <h1><i class="fas fa-shield-alt"></i> Panel Maestro</h1>
-        <p class="subtitle">Gestión de Clubes y Licencias | Control Voley</p>
-
-        <!-- BUSCADOR CON DESPLEGABLE DE COINCIDENCIAS -->
-        <div class="search-wrapper">
-            <div class="search-container">
-                <input type="text" id="busquedaInput" placeholder="Buscar por ID de Licencia o Nombre del Club..." autocomplete="off" style="margin:0;">
-                <button class="btn-action" id="btnBuscar" style="width: 140px; margin:0;"><i class="fas fa-search"></i> Buscar</button>
-            </div>
-            <div id="lista-resultados-busqueda"></div>
+    <!-- TARJETA 1: ACTIVACIÓN DE LICENCIA -->
+    <div class="card" id="cardActivacion">
+        <div class="banner-logo">
+            <i class="fas fa-volleyball-ball text-3xl" style="color: var(--c2);"></i>
         </div>
+        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Control Voley</h2>
+        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
+        
+        <textarea id="tokenInput" placeholder="Pega el código de licencia aquí..."></textarea>
+        <button id="btnActivar">ACTIVAR SISTEMA</button>
+        <p id="errActivacion" class="error-msg hidden"></p>
+    </div>
 
-        <div style="text-align: center; margin-bottom: 15px; margin-top: 10px;">
-            <button class="btn-action btn-success" id="btnNuevo" style="display:inline-block; width: auto; padding: 10px 20px;"><i class="fas fa-plus-circle"></i> Generar Nueva Licencia / Club</button>
+    <!-- TARJETA 2: INICIO DE SESIÓN Y CREDENCIALES (Se muestra si ya está activado) -->
+    <div class="card hidden" id="cardLogin">
+        <div class="banner-logo">
+            <i class="fas fa-user-shield text-3xl" style="color: var(--c2);"></i>
         </div>
-
-        <!-- FORMULARIO DE DATOS -->
-        <div class="section-box">
-            <div class="section-title"><i class="fas fa-volleyball-ball"></i> Datos del Club y Configuración de Licencia</div>
-            
-            <div style="text-align: center;">
-                <img id="previewLogo" class="preview-logo" onerror="this.style.display='none'">
-            </div>
-
-            <div class="form-group">
-                <label>ID de Activación / Club (Documento en Firebase)</label>
-                <input type="text" id="empresaID" placeholder="Ej: CV-LARA-001" style="font-weight: 600; color: #001F3F;">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nombre del Club / Organización</label>
-                    <input type="text" id="nombreEmpresa" placeholder="Ej: Club Voleibol Lara">
-                </div>
-                <div class="form-group">
-                    <label>RIF / Identificación</label>
-                    <input type="text" id="rif" placeholder="Ej: J-12345678-9">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Dirección</label>
-                    <input type="text" id="dir" placeholder="Ubicación de la sede">
-                </div>
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" id="tel" placeholder="Número de contacto">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="correo@clubvoley.com">
-                </div>
-                <div class="form-group">
-                    <label>Límite de Dispositivos (Licencia)</label>
-                    <select id="limite">
-                        <option value="1">1 Dispositivo</option>
-                        <option value="2">2 Dispositivos</option>
-                        <option value="3" selected>3 Dispositivos</option>
-                        <option value="5">5 Dispositivos</option>
-                        <option value="10">10 Dispositivos</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN: CONFIGURACIÓN FIREBASE INDEPENDIENTE (OPCIONAL) -->
-        <div class="section-box" style="border: 1px dashed var(--c2);">
-            <div class="section-title" style="color: var(--c2);"><i class="fas fa-database"></i> Base de Datos Firebase Independiente (Opcional)</div>
-            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Si dejas estos campos vacíos, el club utilizará la base de datos principal compartida de Control Voley.</p>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Firebase API Key</label>
-                    <input type="text" id="fbApiKey" placeholder="AIzaSy...">
-                </div>
-                <div class="form-group">
-                    <label>Firebase Project ID</label>
-                    <input type="text" id="fbProjectId" placeholder="proyecto-cliente">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Firebase Storage Bucket</label>
-                    <input type="text" id="fbStorageBucket" placeholder="proyecto.firebasestorage.app">
-                </div>
-                <div class="form-group">
-                    <label>Firebase App ID</label>
-                    <input type="text" id="fbAppId" placeholder="1:5164090...:web:...">
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN: CONFIGURACIÓN SUPABASE (IMÁGENES / LOGOS / FOTOS) -->
-        <div class="section-box" style="border: 1px dashed #10B981;">
-            <div class="section-title" style="color: #10B981;"><i class="fas fa-images"></i> Almacenamiento Supabase (Fotos y Logos)</div>
-            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Configura el bucket de Supabase donde este club almacenará las fotos de los atletas y el logo corporativo.</p>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Supabase URL</label>
-                    <input type="text" id="supaUrl" placeholder="https://tu-proyecto.supabase.co">
-                </div>
-                <div class="form-group">
-                    <label>Supabase Anon Key</label>
-                    <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c...">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nombre del Bucket</label>
-                    <input type="text" id="supaBucket" placeholder="Ej: control-voley" value="control-voley">
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-action" id="btnGuardar"><i class="fas fa-save"></i> Guardar en Firebase y Generar Token</button>
-        <div id="status"></div>
-
-        <!-- RESULTADO DEL TOKEN DE LICENCIA -->
-        <div id="resultBox" class="result-box">
-            <button class="btn-copy" onclick="copiarToken()">COPIAR</button>
-            <div class="section-title" style="margin-bottom: 5px;"><i class="fas fa-key"></i> Código de Licencia para el Index</div>
-            <textarea id="tokenResult" readonly></textarea>
-            <p style="font-size: 0.7rem; color: #94A3B8; margin: 5px 0 0 0;">Este código largo se ha registrado en Firebase y es el que activará el cliente en su aplicación.</p>
-        </div>
+        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
+        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales autorizadas:</p>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Correo electrónico..." required>
+            <input type="password" id="password" placeholder="Contraseña..." required>
+            <button type="submit" id="btnLogin">INICIAR SESIÓN</button>
+            <p id="errLogin" class="error-msg hidden"></p>
+        </form>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Conexión a la Base de Datos Principal de Control Voley
+        // Configuración de la Base de Datos Principal de Control Voley
         const firebaseConfig = {
             apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
             authDomain: "datacontrolvoley-ff556.firebaseapp.com",
@@ -216,26 +98,135 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        let cacheEmpresas = [];
+        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
 
-        async function cargarCacheEmpresas() {
+        // --- PROCESO DE ACTIVACIÓN DE LICENCIA ---
+        async function procesarActivacion() {
+            const rawToken = document.getElementById('tokenInput').value.trim();
+            const errEl = document.getElementById('errActivacion');
+            errEl.classList.add('hidden');
+
+            if (!rawToken) {
+                errEl.textContent = "Por favor pega el código de licencia.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            
             try {
-                const snap = await getDocs(collection(db, "empresas_config"));
-                cacheEmpresas = snap.docs.map(d => ({ 
-                    uid: d.id, 
-                    ...d.data() 
-                }));
+                const data = JSON.parse(atob(rawToken));
+                const hwID = getHardwareID();
+                const activationId = data.activation_id;
+
+                if (!activationId) throw new Error("Token malformado");
+
+                const licenciaRef = doc(db, "licencias", activationId);
+                const snapLicencia = await getDoc(licenciaRef);
+
+                let equiposLicencia = [];
+                let limiteLicencia = data.l || 1;
+
+                if (snapLicencia.exists()) {
+                    const dbData = snapLicencia.data();
+                    equiposLicencia = Array.isArray(dbData.equipos) ? dbData.equipos : [];
+                    limiteLicencia = dbData.limite || limiteLicencia;
+
+                    if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
+                        errEl.textContent = "Error: Límite de dispositivos alcanzado en esta licencia.";
+                        errEl.classList.remove('hidden');
+                        return;
+                    }
+
+                    if (!equiposLicencia.includes(hwID)) {
+                        equiposLicencia.push(hwID);
+                        await updateDoc(licenciaRef, { equipos: equiposLicencia });
+                    }
+                } else {
+                    equiposLicencia = [hwID];
+                    await setDoc(licenciaRef, { 
+                        cliente: data.n || "", 
+                        limite: limiteLicencia, 
+                        equipos: equiposLicencia, 
+                        fecha_registro: new Date().toISOString() 
+                    });
+                }
+
+                // Guardar variables de sesión de licencia
+                localStorage.setItem('control_voley_club_id', activationId);
+                localStorage.setItem('control_voley_licencia_validada', 'true');
+
+                // Solicitar instalación PWA justo aquí tras activar correctamente la licencia
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    await window.deferredPrompt.userChoice;
+                    window.deferredPrompt = null;
+                }
+
+                // Cambiar a la tarjeta de inicio de sesión
+                document.getElementById('cardActivacion').classList.add('hidden');
+                document.getElementById('cardLogin').classList.remove('hidden');
+
             } catch (e) {
-                console.error("Error al precargar clubes:", e);
+                console.error("Error al activar:", e);
+                errEl.textContent = "Código de licencia inválido o error de conexión.";
+                errEl.classList.remove('hidden');
             }
         }
-        cargarCacheEmpresas();
 
-        function llenarFormulario(id, data, licenciaData = null) {
-            document.getElementById('empresaID').value = id;
-            document.getElementById('nombreEmpresa').value = data.nombre || data.cliente || "";
-            document.getElementById('rif').value = data.rif || "";
-            document.getElementById('dir').value = data.direccion || "";
-            document.getElementById('tel').value = data.telefono || "";
-            document.getElementById('email').value =
+        document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
+
+        // --- PROCESO DE INICIO DE SESIÓN Y VERIFICACIÓN DE APROBACIÓN ---
+        const loginForm = document.getElementById('loginForm');
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const errLogin = document.getElementById('errLogin');
+            const btnLogin = document.getElementById('btnLogin');
+            errLogin.classList.add('hidden');
+            btnLogin.disabled = true;
+            btnLogin.textContent = "Verificando...";
+
+            try {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Validar estatus de aprobación en la colección 'users'
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const isApproved = userData.aprobado === true || userData.status === 'approved';
+
+                    if (isApproved) {
+                        // Todo correcto: Licencia activa, sesión autenticada y usuario aprobado -> Al menú
+                        window.location.replace('index_menu.html');
+                    } else {
+                        await signOut(auth);
+                        errLogin.textContent = "Tu cuenta está pendiente de aprobación por el administrador.";
+                        errLogin.classList.remove('hidden');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = "INICIAR SESIÓN";
+                    }
+                } else {
+                    await signOut(auth);
+                    errLogin.textContent = "No se encontraron datos de usuario asociados.";
+                    errLogin.classList.remove('hidden');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = "INICIAR SESIÓN";
+                }
+
+            } catch (error) {
+                console.error(error);
+                errLogin.textContent = "Credenciales incorrectas o error de acceso.";
+                errLogin.classList.remove('hidden');
+                btnLogin.disabled = false;
+                btnLogin.textContent = "INICIAR SESIÓN";
+            }
+        };
+    </script>
+</body>
+</html>
