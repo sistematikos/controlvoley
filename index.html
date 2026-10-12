@@ -29,18 +29,28 @@
     <script>
         let deferredPrompt = null;
 
-        // Capturar el evento de instalación PWA si el navegador lo permite
+        // Capturar el evento de instalación PWA si el navegador lo emite
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
         });
 
-        // 1. VALIDACIÓN AUTOMÁTICA DE LICENCIA PREVIA
+        // VERIFICACIÓN AUTOMÁTICA DE LICENCIA Y REDIRECCIÓN PWA
         document.addEventListener('DOMContentLoaded', () => {
             const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
             const clubID = localStorage.getItem('control_voley_club_id');
 
+            // Comprobar si se está ejecutando desde la App / Acceso Directo instalado
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
             if (licenciaValidada === 'true' && clubID) {
+                // Si viene desde la App instalada, entra directo al menú sin detenerse en esta pantalla
+                if (isPWA) {
+                    window.location.replace('index_menu.html');
+                    return;
+                }
+
+                // Si se abre desde un navegador web normal, muestra la tarjeta de acceso/instalación
                 document.getElementById('cardActivacion').classList.add('hidden');
                 document.getElementById('cardLogin').classList.remove('hidden');
             }
@@ -68,7 +78,7 @@
         <p id="errActivacion" class="error-msg hidden"></p>
     </div>
 
-    <!-- TARJETA 2: INSTALAR / ACCEDER AL SISTEMA (ÚNICA OPCIÓN) -->
+    <!-- TARJETA 2: INSTALAR / ACCEDER AL SISTEMA -->
     <div class="card hidden" id="cardLogin">
         <div class="banner-logo">
             <i class="fas fa-user-shield" style="color: var(--c2); font-size: 2.5rem;"></i>
@@ -93,7 +103,7 @@
             }
             
             try {
-                // Decodificar el Token Base64
+                // Decodificar el Token Base64 de Supabase
                 const jsonString = atob(rawToken);
                 const data = JSON.parse(jsonString);
 
@@ -101,45 +111,9 @@
                     throw new Error("El token no contiene credenciales válidas.");
                 }
 
-                // Guardar datos en localStorage
+                // Guardar los datos del club y la licencia en localStorage
                 localStorage.setItem('control_voley_club_id', data.activation_id);
                 localStorage.setItem('control_voley_club_nombre', data.n || '');
                 localStorage.setItem('control_voley_supa_url', data.supaUrl);
                 localStorage.setItem('control_voley_supa_key', data.supaKey);
-                localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
-                localStorage.setItem('control_voley_licencia_validada', 'true');
-
-                // Cambiar a la tarjeta de acceso
-                document.getElementById('cardActivacion').classList.add('hidden');
-                document.getElementById('cardLogin').classList.remove('hidden');
-
-            } catch (e) {
-                console.error("Error al activar:", e);
-                errEl.textContent = "Código de licencia inválido o formato incorrecto.";
-                errEl.classList.remove('hidden');
-            }
-        }
-
-        document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
-
-        // --- BOTÓN ÚNICO: INSTALAR APP Y ENTRAR ---
-        document.getElementById('btnInstalarEntrar').addEventListener('click', async () => {
-            const btn = document.getElementById('btnInstalarEntrar');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Abriendo...`;
-
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('PWA instalada.');
-                }
-                deferredPrompt = null;
-            }
-
-            // Entrar al menú principal del club
-            window.location.replace('index_menu.html');
-        });
-    </script>
-</body>
-</html>
+                localStorage.setItem('control_voley_supa_bucket', data.bucket || '
