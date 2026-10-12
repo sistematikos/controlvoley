@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal LVMEL</title>
+    <title>Menú Principal | Control Voley</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <script>
@@ -11,9 +11,9 @@
             theme: {
                 extend: {
                     colors: {
-                        'voley-blue': '#1e40af', // Azul fuerte (Blue 800)
-                        'voley-dark': '#1e3a8a', // Azul oscuro (Blue 900)
-                        'voley-light': '#eff6ff', // Azul muy claro (Blue 50)
+                        'voley-blue': '#1e40af',
+                        'voley-dark': '#1e3a8a',
+                        'voley-light': '#eff6ff',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -23,9 +23,7 @@
         }
     </script>
     <style>
-        /* Estilo para el contenedor principal y el fondo */
         .hero-section {
-            /* Usamos una imagen de fondo de voleibol (placeholder) */
             background-image: url('https://placehold.co/1920x1080/0e1b3e/ffffff?text=Voleibol');
             background-size: cover;
             background-position: center;
@@ -36,16 +34,11 @@
         .hero-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            /* Degradado de oscuro a transparente */
+            top: 0; right: 0; bottom: 0; left: 0;
             background: linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(30, 64, 175, 0.7) 40%, rgba(30, 64, 175, 0.5) 100%);
             z-index: -1;
         }
 
-        /* Animación sutil para los botones al cargar */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -87,7 +80,6 @@
                 </h1>
 
                 <div class="mb-10"></div>
-
 
                 <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl mb-12 transform transition duration-500 hover:scale-[1.02]">
                     <h2 class="text-2xl sm:text-3xl font-bold text-voley-dark mb-4">
@@ -134,39 +126,40 @@
 
     <footer class="w-full py-4 text-center bg-voley-dark shadow-inner">
         <p class="text-sm text-white/70">
-            &copy; 2023 Todos los derechos reservados a Sistematikos - Frank Hernandez
+            &copy; 2026 Todos los derechos reservados a Sistematikos - Frank Hernandez
         </p>
     </footer>
 
     <script>
-        const currentClubId = localStorage.getItem('currentClub');
+        // 1. Obtener los datos del club guardados en Supabase por index.html
+        const clubId = localStorage.getItem('control_voley_club_id');
+        const clubNombre = localStorage.getItem('control_voley_club_nombre');
+        const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
+
         const currentClubDisplay = document.getElementById('currentClubDisplay');
         const logoutButton = document.getElementById('logoutButton');
 
-        /**
-         * 1. Verificar sesión y mostrar el nombre del club.
-         */
-        if (currentClubId && currentClubId !== 'null') {
-            currentClubDisplay.textContent = currentClubId;
+        // 2. Verificar que la licencia esté activa
+        if (licenciaValidada === 'true' && clubId) {
+            // Mostrar Nombre del club (o ID en caso de que no tenga nombre registrado)
+            currentClubDisplay.textContent = clubNombre || clubId;
         } else {
             currentClubDisplay.textContent = 'Acceso Denegado';
-            console.warn('No se encontró club en localStorage. Redirigiendo a login.');
-            // Redirigir si no hay club para evitar acceso no autorizado
+            console.warn('Licencia no validada. Redirigiendo al login.');
             setTimeout(() => {
-                 // Asumiendo que tu página de login es index.html
-                 window.location.href = 'index.html'; 
+                window.location.href = 'index.html'; 
             }, 500);
         }
 
-        /**
-         * 2. Función para cerrar sesión.
-         */
+        // 3. Función para cerrar sesión / desacoplar el dispositivo
         logoutButton.addEventListener('click', () => {
-            // Limpiar el ID del club del almacenamiento local
-            localStorage.removeItem('currentClub'); 
-            
-            // Redirigir a la página de login (index.html)
-            window.location.href = 'index.html'; 
+            if (confirm("¿Estás seguro de que deseas salir del club? Se requerirá volver a ingresar.")) {
+                // Si solo quieres salir del menú pero mantener la activación, borra únicamente la validación.
+                localStorage.removeItem('control_voley_licencia_validada');
+                
+                // Redirigir al acceso
+                window.location.href = 'index.html'; 
+            }
         });
     </script>
 
