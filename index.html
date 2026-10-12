@@ -15,12 +15,11 @@
         :root { --c1: #001F3F; --c2: #0074D9; --bg: #f0f8ff; --success: #10B981; --error: #EF4444; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.12); width: 100%; max-width: 420px; text-align: center; border-top: 8px solid var(--c1); }
-        textarea, input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: inherit; transition: 0.3s; }
-        textarea { height: 90px; resize: none; font-family: monospace; font-size: 0.8rem; }
-        input:focus, textarea:focus { border-color: var(--c2); }
-        button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); }
-        button:hover { background: var(--c2); transform: translateY(-1px); }
-        .btn-install { background: #10B981; margin-bottom: 12px; display: none; align-items: center; justify-content: center; gap: 8px; }
+        textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: monospace; font-size: 0.8rem; height: 90px; resize: none; transition: 0.3s; }
+        textarea:focus { border-color: var(--c2); }
+        button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        button:hover { transform: translateY(-1px); }
+        .btn-install { background: #10B981; }
         .btn-install:hover { background: #059669; }
         .hidden { display: none !important; }
         .error-msg { color: var(--error); font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
@@ -30,25 +29,11 @@
     <script>
         let deferredPrompt = null;
 
-        // Capturar el evento de instalación PWA
+        // Capturar el evento de instalación PWA si el navegador lo permite
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Mostrar los botones de instalación en pantalla
-            document.querySelectorAll('.btn-install').forEach(btn => btn.style.display = 'flex');
         });
-
-        async function instalarApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('El usuario aceptó instalar el acceso directo.');
-                }
-                deferredPrompt = null;
-                document.querySelectorAll('.btn-install').forEach(btn => btn.style.display = 'none');
-            }
-        }
 
         // 1. VALIDACIÓN AUTOMÁTICA DE LICENCIA PREVIA
         document.addEventListener('DOMContentLoaded', () => {
@@ -79,13 +64,11 @@
         <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
         
         <textarea id="tokenInput" placeholder="Pega el código de licencia aquí..."></textarea>
-        
-        <button class="btn-install" onclick="instalarApp()"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
-        <button id="btnActivar">ACTIVAR SISTEMA</button>
+        <button id="btnActivar"><i class="fas fa-key"></i> ACTIVAR SISTEMA</button>
         <p id="errActivacion" class="error-msg hidden"></p>
     </div>
 
-    <!-- TARJETA 2: INICIO DE SESIÓN / ACCESO AL SISTEMA -->
+    <!-- TARJETA 2: INSTALAR / ACCEDER AL SISTEMA (ÚNICA OPCIÓN) -->
     <div class="card hidden" id="cardLogin">
         <div class="banner-logo">
             <i class="fas fa-user-shield" style="color: var(--c2); font-size: 2.5rem;"></i>
@@ -93,12 +76,7 @@
         <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
         <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Dispositivo autorizado para el club</p>
         
-        <button class="btn-install" onclick="instalarApp()"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
-        
-        <form id="loginForm">
-            <button type="submit" id="btnLogin">INGRESAR A MI CLUB</button>
-            <p id="errLogin" class="error-msg hidden"></p>
-        </form>
+        <button class="btn-install" id="btnInstalarEntrar"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
     </div>
 
     <script type="module">
@@ -115,7 +93,7 @@
             }
             
             try {
-                // 1. Decodificar el Token Base64 de Supabase
+                // Decodificar el Token Base64
                 const jsonString = atob(rawToken);
                 const data = JSON.parse(jsonString);
 
@@ -123,7 +101,7 @@
                     throw new Error("El token no contiene credenciales válidas.");
                 }
 
-                // 2. Guardar datos en localStorage
+                // Guardar datos en localStorage
                 localStorage.setItem('control_voley_club_id', data.activation_id);
                 localStorage.setItem('control_voley_club_nombre', data.n || '');
                 localStorage.setItem('control_voley_supa_url', data.supaUrl);
@@ -131,7 +109,7 @@
                 localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
                 localStorage.setItem('control_voley_licencia_validada', 'true');
 
-                // 3. Cambiar a la tarjeta de acceso
+                // Cambiar a la tarjeta de acceso
                 document.getElementById('cardActivacion').classList.add('hidden');
                 document.getElementById('cardLogin').classList.remove('hidden');
 
@@ -144,16 +122,24 @@
 
         document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
 
-        // --- PROCESO DE ACCESO AL MENÚ ---
-        const loginForm = document.getElementById('loginForm');
-        loginForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const btnLogin = document.getElementById('btnLogin');
-            btnLogin.disabled = true;
-            btnLogin.textContent = "Cargando...";
+        // --- BOTÓN ÚNICO: INSTALAR APP Y ENTRAR ---
+        document.getElementById('btnInstalarEntrar').addEventListener('click', async () => {
+            const btn = document.getElementById('btnInstalarEntrar');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Abriendo...`;
 
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('PWA instalada.');
+                }
+                deferredPrompt = null;
+            }
+
+            // Entrar al menú principal del club
             window.location.replace('index_menu.html');
-        };
+        });
     </script>
 </body>
 </html>
