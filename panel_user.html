@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Usuario - Control Voley</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --c1: #001F3F; /* Azul Marino Principal */
+    --c2: #0074D9; /* Azul Eléctrico */
+    --bg: #f0f8ff;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.banner-header {
+    background-image: url('img/banner.png');
+    background-size: cover;
+    background-position: center;
+    min-height: 220px;
+    width: 100%;
+}
+.panel-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid rgba(0, 116, 217, 0.15);
+    box-shadow: 0 10px 25px -5px rgba(0, 31, 63, 0.08);
+}
+</style>
+</head>
+<body oncontextmenu="return false">
+    <div class="banner-header"></div>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-center border-b border-gray-200 pb-4">
+            <div class="flex items-center space-x-4">
+                <a href="index_menu.html" class="text-gray-500 hover:text-blue-900 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/></svg>
+                </a>
+                <h1 class="text-3xl font-black" style="color: var(--c1);">Panel del Club</h1>
+            </div>
+            <button onclick="logout()" class="mt-4 md:mt-0 py-2 px-4 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 shadow-sm transition text-sm">Cerrar Sesión</button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Columna Izquierda: Resumen del Club -->
+            <div class="md:col-span-1 panel-card p-6 rounded-2xl text-center flex flex-col items-center">
+                <div class="w-20 h-20 bg-blue-50 text-blue-900 rounded-full flex items-center justify-center text-3xl font-black mb-4 border-2 border-blue-200 shadow-inner">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2 id="clubNameDisplay" class="text-xl font-black text-gray-900 mb-1">Cargando...</h2>
+                <p id="clubIdDisplay" class="text-xs text-gray-500 font-semibold mb-4">ID: ...</p>
+                
+                <div class="w-full bg-blue-50 border border-blue-100 rounded-xl p-3 text-left text-xs space-y-2 mb-4">
+                    <p class="text-gray-700 font-semibold"><i class="fas fa-check-circle text-emerald-500 mr-1"></i> Estado: <span class="text-emerald-600 font-bold">Licencia Activa</span></p>
+                    <p class="text-gray-700 font-semibold"><i class="fas fa-desktop text-blue-600 mr-1"></i> Dispositivos: <span id="deviceCount" class="text-blue-900 font-bold">Verificando...</span></p>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Detalles y Licencia -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="panel-card p-6 rounded-2xl">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2" style="color: var(--c1);">
+                        <i class="fas fa-info-circle text-blue-600"></i> Información del Club
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <span class="block text-xs font-semibold text-gray-400 uppercase">Correo Autorizado</span>
+                            <span id="userEmailDisplay" class="font-bold text-gray-800">Cargando...</span>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <span class="block text-xs font-semibold text-gray-400 uppercase">Sede / Identificador</span>
+                            <span id="clubLocationDisplay" class="font-bold text-gray-800">Control Voley Pro</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card p-6 rounded-2xl">
+                    <h3 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2" style="color: var(--c1);">
+                        <i class="fas fa-key text-blue-600"></i> Token de Activación Actual
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-3">Este es el código cifrado que vincula tu dispositivo con la base de datos de tu club.</p>
+                    
+                    <div class="relative">
+                        <textarea id="tokenDisplay" rows="3" readonly class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs font-mono text-gray-600 outline-none resize-none"></textarea>
+                        <button onclick="copiarToken()" class="absolute right-3 top-3 py-1.5 px-3 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 shadow transition">
+                            <i class="fas fa-copy mr-1"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
+    authDomain: "datacontrolvoley-ff556.firebaseapp.com",
+    projectId: "datacontrolvoley-ff556",
+    storageBucket: "datacontrolvoley-ff556.firebasestorage.app",
+    messagingSenderId: "516409072606",
+    appId: "1:516409072606:web:132538dba358a077d71b4f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Cargar datos al iniciar la sesión
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        document.getElementById('userEmailDisplay').textContent = user.email;
+
+        // Leer licencia guardada en localStorage
+        const storedLicencia = localStorage.getItem("control_voley_licencia") || localStorage.getItem("control_voley_licencia_validada");
+        const clubId = localStorage.getItem("control_voley_club_id") || localStorage.getItem("currentClub");
+
+        if (clubId) {
+            document.getElementById('clubIdDisplay').textContent = `ID: ${clubId}`;
+            
+            try {
+                const docSnap = await getDoc(doc(db, "empresas_config", clubId));
+                const licenciaSnap = await getDoc(doc(db, "licencias", clubId));
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('clubNameDisplay').textContent = data.nombre || "Club Deportivo";
+                    if (data.licencia_token) {
+                        document.getElementById('tokenDisplay').value = data.licencia_token;
+                    }
+                } else {
+                    document.getElementById('clubNameDisplay').textContent = "Control Voley Club";
+                }
+
+                if (licenciaSnap.exists()) {
+                    const licData = licenciaSnap.data();
+                    const numEquipos = Array.isArray(licData.equipos) ? licData.equipos.length : 1;
+                    const limite = licData.limite || 3;
+                    document.getElementById('deviceCount').textContent = `${numEquipos} de ${limite} permitidos`;
+                }
+            } catch (e) {
+                console.error("Error al cargar detalles del club:", e);
+            }
+        } else {
+            document.getElementById('clubNameDisplay').textContent = "Organización Independiente";
+            document.getElementById('clubIdDisplay').textContent = "ID no sincronizado";
+        }
+    } else {
+        window.location.replace('index.html');
+    }
+});
+
+window.copiarToken = function() {
+    const copyText = document.getElementById("tokenDisplay");
+    copyText.select();
+    document.execCommand("copy");
+    alert("¡Token de licencia copiado al portapapeles!");
+};
+
+window.logout = async () => {
+    await signOut(auth);
+    localStorage.removeItem('currentClub');
+    window.location.replace('index.html');
+};
+
+document.addEventListener("contextmenu", e => e.preventDefault());
+</script>
+</body>
+</html>
