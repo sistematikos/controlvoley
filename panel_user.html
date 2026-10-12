@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Maestro de Licencias | Control Voley</title>
+    <title>Panel Maestro de Licencias | Control Voley (Supabase)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root { --c1: #001F3F; --c2: #0074D9; --bg: #F1F5F9; --success: #10B981; --warning: #F59E0B; }
+        :root { --c1: #001F3F; --c2: #0074D9; --supa: #3ECF8E; --bg: #F1F5F9; --success: #10B981; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { max-width: 680px; width: 100%; background: white; padding: 35px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.1); border-top: 8px solid var(--c1); box-sizing: border-box; }
         h1 { color: var(--c1); font-weight: 900; margin-bottom: 5px; text-align: center; font-size: 1.6rem; }
@@ -27,40 +27,21 @@
         .btn-success { background: var(--success); }
         .btn-success:hover { background: #059669; }
         
-        /* BUSCADOR Y DESPLEGABLE FLOTANTE */
         .search-wrapper { position: relative; width: 100%; }
         .search-container { display: flex; gap: 8px; margin-bottom: 15px; }
         
         #lista-resultados-busqueda {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 148px;
-            background: white;
-            border: 2px solid #E2E8F0;
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 220px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            display: none;
+            position: absolute; top: 100%; left: 0; right: 148px;
+            background: white; border: 2px solid #E2E8F0; border-top: none;
+            border-radius: 0 0 10px 10px; max-height: 220px; overflow-y: auto;
+            z-index: 1000; box-shadow: 0 10px 15px rgba(0,0,0,0.1); display: none;
         }
-        .item-res-busqueda {
-            padding: 10px 14px;
-            cursor: pointer;
-            border-bottom: 1px solid #F1F5F9;
-            font-size: 0.85rem;
-        }
-        .item-res-busqueda:hover {
-            background: #F1F5F9;
-        }
+        .item-res-busqueda { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #F1F5F9; font-size: 0.85rem; }
+        .item-res-busqueda:hover { background: #F1F5F9; }
         
         .result-box { margin-top: 20px; padding: 15px; background: #FFF; border: 2px dashed #CBD5E1; border-radius: 12px; display: none; position: relative; }
-        textarea { width: 100%; height: 90px; border: none; background: #F8FAFC; padding: 8px; font-family: monospace; font-size: 0.75rem; resize: none; color: #475569; border-radius: 6px; box-sizing: border-box; }
+        textarea { width: 100%; height: 95px; border: none; background: #F8FAFC; padding: 8px; font-family: monospace; font-size: 0.75rem; resize: none; color: #475569; border-radius: 6px; box-sizing: border-box; }
         .btn-copy { position: absolute; right: 18px; top: 25px; background: var(--c2); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
-        
-        .preview-logo { width: 60px; height: 60px; object-fit: contain; border: 1px solid #E2E8F0; border-radius: 8px; background: #fff; display: block; margin: 0 auto 10px auto; }
         #status { text-align: center; font-weight: 600; font-size: 0.85rem; margin-top: 10px; color: var(--success); }
     </style>
 </head>
@@ -68,63 +49,48 @@
 
     <div class="container">
         <h1><i class="fas fa-shield-alt"></i> Panel Maestro</h1>
-        <p class="subtitle">Gestión de Clubes y Licencias | Control Voley</p>
+        <p class="subtitle">Creación de Clubes y Licencias Supabase | Control Voley</p>
 
-        <!-- BUSCADOR CON DESPLEGABLE DE COINCIDENCIAS -->
+        <!-- Buscador -->
         <div class="search-wrapper">
             <div class="search-container">
-                <input type="text" id="busquedaInput" placeholder="Buscar por ID de Licencia o Nombre del Club..." autocomplete="off" style="margin:0;">
+                <input type="text" id="busquedaInput" placeholder="Buscar ID de Licencia o Club..." autocomplete="off" style="margin:0;">
                 <button class="btn-action" id="btnBuscar" style="width: 140px; margin:0;"><i class="fas fa-search"></i> Buscar</button>
             </div>
             <div id="lista-resultados-busqueda"></div>
         </div>
 
-        <div style="text-align: center; margin-bottom: 15px; margin-top: 10px;">
-            <button class="btn-action btn-success" id="btnNuevo" style="display:inline-block; width: auto; padding: 10px 20px;"><i class="fas fa-plus-circle"></i> Generar Nueva Licencia / Club</button>
+        <div style="text-align: center; margin-bottom: 15px;">
+            <button class="btn-action btn-success" id="btnNuevo" style="display:inline-block; width: auto; padding: 10px 20px;"><i class="fas fa-plus-circle"></i> Nuevo Club / Licencia</button>
         </div>
 
-        <!-- FORMULARIO DE DATOS -->
+        <!-- Datos del Club -->
         <div class="section-box">
-            <div class="section-title"><i class="fas fa-volleyball-ball"></i> Datos del Club y Configuración de Licencia</div>
-            
-            <div style="text-align: center;">
-                <img id="previewLogo" class="preview-logo" onerror="this.style.display='none'">
-            </div>
+            <div class="section-title"><i class="fas fa-volleyball-ball"></i> Configuración del Club</div>
 
             <div class="form-group">
-                <label>ID de Activación / Club (Documento en Firebase)</label>
+                <label>ID del Club / Activación</label>
                 <input type="text" id="empresaID" placeholder="Ej: CV-LARA-001" style="font-weight: 600; color: #001F3F;">
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Nombre del Club / Organización</label>
+                    <label>Nombre del Club</label>
                     <input type="text" id="nombreEmpresa" placeholder="Ej: Club Voleibol Lara">
                 </div>
                 <div class="form-group">
-                    <label>RIF / Identificación</label>
+                    <label>RIF / Identificación Fiscal</label>
                     <input type="text" id="rif" placeholder="Ej: J-12345678-9">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Dirección</label>
-                    <input type="text" id="dir" placeholder="Ubicación de la sede">
+                    <label>Correo Autorizado (Admin)</label>
+                    <input type="email" id="email" placeholder="admin@clubvoley.com">
                 </div>
                 <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" id="tel" placeholder="Número de contacto">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="email" placeholder="correo@clubvoley.com">
-                </div>
-                <div class="form-group">
-                    <label>Límite de Dispositivos (Licencia)</label>
+                    <label>Límite de Dispositivos</label>
                     <select id="limite">
                         <option value="1">1 Dispositivo</option>
                         <option value="2">2 Dispositivos</option>
@@ -136,106 +102,121 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: CONFIGURACIÓN FIREBASE INDEPENDIENTE (OPCIONAL) -->
-        <div class="section-box" style="border: 1px dashed var(--c2);">
-            <div class="section-title" style="color: var(--c2);"><i class="fas fa-database"></i> Base de Datos Firebase Independiente (Opcional)</div>
-            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Si dejas estos campos vacíos, el club utilizará la base de datos principal compartida de Control Voley.</p>
+        <!-- Credenciales de Supabase por Club -->
+        <div class="section-box" style="border: 1px dashed var(--supa);">
+            <div class="section-title" style="color: #10B981;"><i class="fas fa-database"></i> Proyecto Supabase del Club (Base de Datos + Fotos)</div>
+            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Pega aquí la URL y Anon Key del proyecto Supabase destinado a este club.</p>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label>Firebase API Key</label>
-                    <input type="text" id="fbApiKey" placeholder="AIzaSy...">
-                </div>
-                <div class="form-group">
-                    <label>Firebase Project ID</label>
-                    <input type="text" id="fbProjectId" placeholder="proyecto-cliente">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Firebase Storage Bucket</label>
-                    <input type="text" id="fbStorageBucket" placeholder="proyecto.firebasestorage.app">
-                </div>
-                <div class="form-group">
-                    <label>Firebase App ID</label>
-                    <input type="text" id="fbAppId" placeholder="1:5164090...:web:...">
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN: CONFIGURACIÓN SUPABASE (IMÁGENES / LOGOS / FOTOS) -->
-        <div class="section-box" style="border: 1px dashed #10B981;">
-            <div class="section-title" style="color: #10B981;"><i class="fas fa-images"></i> Almacenamiento Supabase (Fotos y Logos)</div>
-            <p style="font-size: 0.75rem; color: #64748B; margin-top: 0; margin-bottom: 12px;">Configura el bucket de Supabase donde este club almacenará las fotos de los atletas y el logo corporativo.</p>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Supabase URL</label>
+                    <label>Supabase Project URL</label>
                     <input type="text" id="supaUrl" placeholder="https://tu-proyecto.supabase.co">
                 </div>
                 <div class="form-group">
-                    <label>Supabase Anon Key</label>
-                    <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c...">
+                    <label>Supabase Bucket</label>
+                    <input type="text" id="supaBucket" value="control-voley">
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nombre del Bucket</label>
-                    <input type="text" id="supaBucket" placeholder="Ej: control-voley" value="control-voley">
-                </div>
+            <div class="form-group">
+                <label>Supabase Anon Key (Llave Pública)</label>
+                <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c...">
             </div>
         </div>
 
-        <button class="btn-action" id="btnGuardar"><i class="fas fa-save"></i> Guardar en Firebase y Generar Token</button>
+        <button class="btn-action" id="btnGuardar"><i class="fas fa-save"></i> Generar Licencia y Aprovisionar Club</button>
         <div id="status"></div>
 
-        <!-- RESULTADO DEL TOKEN DE LICENCIA -->
+        <!-- Token Generado -->
         <div id="resultBox" class="result-box">
             <button class="btn-copy" onclick="copiarToken()">COPIAR</button>
-            <div class="section-title" style="margin-bottom: 5px;"><i class="fas fa-key"></i> Código de Licencia para el Index</div>
+            <div class="section-title" style="margin-bottom: 5px;"><i class="fas fa-key"></i> Token de Licencia para el Cliente</div>
             <textarea id="tokenResult" readonly></textarea>
-            <p style="font-size: 0.7rem; color: #94A3B8; margin: 5px 0 0 0;">Este código largo se ha registrado en Firebase y es el que activará el cliente en su aplicación.</p>
+            <p style="font-size: 0.7rem; color: #94A3B8; margin: 5px 0 0 0;">Entrega este código al usuario para que active su aplicación.</p>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // Conexión a la Base de Datos Principal de Control Voley
-        const firebaseConfig = {
-            apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
-            authDomain: "datacontrolvoley-ff556.firebaseapp.com",
-            projectId: "datacontrolvoley-ff556",
-            storageBucket: "datacontrolvoley-ff556.firebasestorage.app",
-            messagingSenderId: "516409072606",
-            appId: "1:516409072606:web:132538dba358a077d71b4f"
-        };
+        // PROYECTO MAESTRO DE SUPABASE (Donde tú gestionas la lista global de licencias y clubes)
+        const MASTER_SUPABASE_URL = "https://TU_PROYECTO_MAESTRO.supabase.co";
+        const MASTER_SUPABASE_KEY = "TU_MASTER_ANON_KEY";
+        const masterSupabase = createClient(MASTER_SUPABASE_URL, MASTER_SUPABASE_KEY);
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        let cacheClubes = [];
 
-        let cacheEmpresas = [];
-
-        async function cargarCacheEmpresas() {
+        async function cargarCache() {
             try {
-                const snap = await getDocs(collection(db, "empresas_config"));
-                cacheEmpresas = snap.docs.map(d => ({ 
-                    uid: d.id, 
-                    ...d.data() 
-                }));
+                const { data, error } = await masterSupabase.from('licencias_master').select('*');
+                if (!error && data) cacheClubes = data;
             } catch (e) {
-                console.error("Error al precargar clubes:", e);
+                console.error("Error cargando licencias maestras:", e);
             }
         }
-        cargarCacheEmpresas();
+        cargarCache();
 
-        function llenarFormulario(id, data, licenciaData = null) {
-            document.getElementById('empresaID').value = id;
-            document.getElementById('nombreEmpresa').value = data.nombre || data.cliente || "";
-            document.getElementById('rif').value = data.rif || "";
-            document.getElementById('dir').value = data.direccion || "";
-            document.getElementById('tel').value = data.telefono || "";
-            document.getElementById('email').value =
+        document.getElementById('btnGuardar').addEventListener('click', async () => {
+            const clubId = document.getElementById('empresaID').value.trim();
+            const nombre = document.getElementById('nombreEmpresa').value.trim();
+            const rif = document.getElementById('rif').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const limite = parseInt(document.getElementById('limite').value);
+
+            const supaUrl = document.getElementById('supaUrl').value.trim();
+            const supaKey = document.getElementById('supaKey').value.trim();
+            const supaBucket = document.getElementById('supaBucket').value.trim();
+
+            if (!clubId || !nombre || !supaUrl || !supaKey) {
+                return alert("Completa el ID del Club, Nombre y las credenciales de Supabase.");
+            }
+
+            // Crear Token encriptado en Base64
+            const tokenData = {
+                activation_id: clubId,
+                n: nombre,
+                rif: rif,
+                l: limite,
+                supaUrl: supaUrl,
+                supaKey: supaKey,
+                bucket: supaBucket || "control-voley"
+            };
+            const tokenBase64 = btoa(JSON.stringify(tokenData));
+
+            // Guardar en la base de datos maestra
+            const payloadMaster = {
+                club_id: clubId,
+                nombre: nombre,
+                rif: rif,
+                email: email,
+                limite_dispositivos: limite,
+                supabase_url: supaUrl,
+                supabase_key: supaKey,
+                bucket_name: supaBucket,
+                token_licencia: tokenBase64,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await masterSupabase
+                .from('licencias_master')
+                .upsert([payloadMaster], { onConflict: 'club_id' });
+
+            if (error) {
+                alert("Error al guardar la licencia: " + error.message);
+            } else {
+                document.getElementById('tokenResult').value = tokenBase64;
+                document.getElementById('resultBox').style.display = 'block';
+                document.getElementById('status').innerText = "🚀 ¡Club registrado exitosamente! Copia el token para el usuario.";
+                cargarCache();
+            }
+        });
+
+        window.copiarToken = function() {
+            const copyText = document.getElementById("tokenResult");
+            copyText.select();
+            document.execCommand("copy");
+            alert("¡Token de licencia copiado al portapapeles!");
+        };
+    </script>
+</body>
+</html>
