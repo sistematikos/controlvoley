@@ -3,165 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley - Gestión de Equipos de Voleibol</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Control Voley | Activación y Acceso</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#001F3F">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="img/icon-192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --c1: #001F3F; --c2: #0074D9; --bg: #f0f8ff; --success: #10B981; --error: #EF4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.12); width: 100%; max-width: 420px; text-align: center; border-top: 8px solid var(--c1); }
+        textarea, input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: inherit; transition: 0.3s; }
+        textarea { height: 90px; resize: none; font-family: monospace; font-size: 0.8rem; }
+        input:focus, textarea:focus { border-color: var(--c2); }
+        button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); }
+        button:hover { background: var(--c2); transform: translateY(-1px); }
+        .hidden { display: none !important; }
+        .error-msg { color: var(--error); font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
+        .banner-logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 15px auto; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid var(--c2); display: flex; align-items: center; justify-content: center; background: #fff; }
+    </style>
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'voley-blue': '#1e40af', // Azul fuerte (Blue 800)
-                        'voley-dark': '#1e3a8a', // Azul oscuro (Blue 900)
-                        'voley-light': '#eff6ff', // Azul muy claro (Blue 50)
-                        // Definiciones de color para el login, usando la paleta existente
-                        'login-primary': '#1e40af', // voley-blue
-                        'login-dark': '#1e3a8a', // voley-dark
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+        });
+
+        // 1. VALIDACIÓN AUTOMÁTICA DE LICENCIA PREVIA
+        document.addEventListener('DOMContentLoaded', () => {
+            const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
+            const clubID = localStorage.getItem('control_voley_club_id');
+
+            if (licenciaValidada === 'true' && clubID) {
+                document.getElementById('cardActivacion').classList.add('hidden');
+                document.getElementById('cardLogin').classList.remove('hidden');
             }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
+            });
         }
     </script>
-    <style>
-        /* Estilo para el contenedor principal y el fondo */
-        .hero-section {
-            /* Usamos una imagen de fondo de voleibol (placeholder) */
-            background-image: url('https://placehold.co/1920x1080/0e1b3e/ffffff?text=Voleibol');
-            background-size: cover;
-            background-position: center;
-            /* Aplicamos un degradado azul oscuro sobre la imagen para mejorar la legibilidad y el estilo */
-            position: relative;
-            z-index: 0;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            /* Degradado de oscuro a transparente */
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.9) 0%, rgba(30, 64, 175, 0.7) 40%, rgba(30, 64, 175, 0.5) 100%);
-            z-index: -1;
-        }
-
-        /* Animación sutil para los botones al cargar */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-    </style>
 </head>
-<body class="bg-voley-light font-sans min-h-screen flex flex-col items-center justify-center">
+<body oncontextmenu="return false">
 
-    <section class="hero-section w-full flex-grow flex flex-col items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
+    <!-- TARJETA 1: ACTIVACIÓN DE LICENCIA -->
+    <div class="card" id="cardActivacion">
+        <div class="banner-logo">
+            <i class="fas fa-volleyball-ball text-3xl" style="color: var(--c2);"></i>
+        </div>
+        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Control Voley</h2>
+        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
         
-        <div class="w-full max-w-4xl mb-8">
-            <img src="img/banner.png" alt="Banner Control Voley" class="w-full h-auto rounded-lg shadow-2xl" onerror="this.onerror=null;this.src='https://placehold.co/800x150/1e40af/ffffff?text=Banner+Control+Voley+Horizontal'">
+        <textarea id="tokenInput" placeholder="Pega el código de licencia aquí..."></textarea>
+        <button id="btnActivar">ACTIVAR SISTEMA</button>
+        <p id="errActivacion" class="error-msg hidden"></p>
+    </div>
+
+    <!-- TARJETA 2: INICIO DE SESIÓN Y CREDENCIALES (Se muestra si ya está activado) -->
+    <div class="card hidden" id="cardLogin">
+        <div class="banner-logo">
+            <i class="fas fa-user-shield text-3xl" style="color: var(--c2);"></i>
         </div>
+        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
+        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Ingresa tus credenciales autorizadas:</p>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Correo electrónico..." required>
+            <input type="password" id="password" placeholder="Contraseña..." required>
+            <button type="submit" id="btnLogin">INICIAR SESIÓN</button>
+            <p id="errLogin" class="error-msg hidden"></p>
+        </form>
+    </div>
 
-        <div class="max-w-4xl w-full text-center p-8 md:p-12 rounded-xl shadow-2xl backdrop-blur-sm bg-white/10 border border-white/20 relative">
-            
-            <h1 class="text-5xl sm:text-7xl font-extrabold text-white mb-4 drop-shadow-lg">
-                Control <span class="text-voley-light">Voley</span>
-            </h1>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            <p class="text-xl sm:text-2xl text-voley-light font-medium mb-10 drop-shadow-md">
-                Tu gestión de equipo de voleibol, simplificada y potenciada.
-            </p>
-
-            <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl mb-12 transform transition duration-500 hover:scale-[1.02]">
-                <h2 class="text-2xl sm:text-3xl font-bold text-voley-dark mb-4">
-                    Administración Integral
-                </h2>
-                <p class="text-lg text-gray-700 leading-relaxed">
-                    Control Voley te permite gestionar todos los aspectos cruciales de tu club: desde el **control de la nómina de atletas**, la **administración de pagos y vencimientos**, el análisis detallado de **estadísticas de juego**, y el seguimiento de **cumpleaños** para mantener la moral del equipo.
-                </p>
-            </div>
-
-            <div id="login-form-container" class="w-full max-w-sm mx-auto bg-voley-light p-6 rounded-xl shadow-2xl transform transition duration-500 hover:scale-[1.02]">
-                
-                <h2 class="text-2xl font-bold mb-6 text-center text-voley-dark">Acceso a Clubes</h2>
-                
-                <form id="loginForm" onsubmit="event.preventDefault(); handleLogin();">
-                    <div class="mb-4 text-left">
-                        <label for="clubNameInput" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Club</label>
-                        <input type="text" id="clubNameInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-login-primary focus:border-login-primary" placeholder="Ej: Pumas" required>
-                    </div>
-                    
-                    <div class="mb-6 text-left">
-                        <label for="clubKeyInput" class="block text-sm font-medium text-gray-700 mb-1">Clave de Acceso</label>
-                        <input type="password" id="clubKeyInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-login-primary focus:border-login-primary" placeholder="Ingresa la clave" required>
-                    </div>
-
-                    <div id="loginMessage" class="text-sm text-red-600 mb-4 text-center hidden font-medium"></div>
-
-                    <button type="submit" id="loginButton" class="w-full py-3 bg-login-primary text-white font-semibold rounded-lg shadow-md hover:bg-login-dark transition duration-300 transform hover:scale-[1.01] border-b-4 border-voley-dark">
-                        Iniciar Sesión
-                    </button>
-                </form>
-
-            </div>
-            
-        </div>
-    </section>
-
-    <footer class="w-full py-4 text-center bg-voley-dark shadow-inner">
-        <p class="text-sm text-white/70">
-            &copy; 2023 Todos los derechos reservados a Sistematikos - Frank Hernandez
-        </p>
-    </footer>
-
-    <script>
-        // Simulación de Claves de Club (Tomado de su referencia)
-        const clubCredentials = {
-            'Angeles': 'aguilas2025',
-            'Pumas': 'pumas2025',
-            'Estrellas': 'estrellas2025'
+        // Configuración de la Base de Datos Principal de Control Voley
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5RB7mm1j-0gjCNTUEJTkyEqLjyZ3C7ws",
+            authDomain: "datacontrolvoley-ff556.firebaseapp.com",
+            projectId: "datacontrolvoley-ff556",
+            storageBucket: "datacontrolvoley-ff556.firebasestorage.app",
+            messagingSenderId: "516409072606",
+            appId: "1:516409072606:web:132538dba358a077d71b4f"
         };
 
-        window.handleLogin = function() {
-            const clubName = document.getElementById('clubNameInput').value.trim();
-            const clubKey = document.getElementById('clubKeyInput').value.trim();
-            const loginMessage = document.getElementById('loginMessage');
-            const loginButton = document.getElementById('loginButton');
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
+
+        // --- PROCESO DE ACTIVACIÓN DE LICENCIA ---
+        async function procesarActivacion() {
+            const rawToken = document.getElementById('tokenInput').value.trim();
+            const errEl = document.getElementById('errActivacion');
+            errEl.classList.add('hidden');
+
+            if (!rawToken) {
+                errEl.textContent = "Por favor pega el código de licencia.";
+                errEl.classList.remove('hidden');
+                return;
+            }
             
-            loginMessage.classList.add('hidden');
-            loginButton.disabled = true;
-            loginButton.textContent = 'Verificando...';
+            try {
+                const data = JSON.parse(atob(rawToken));
+                const hwID = getHardwareID();
+                const activationId = data.activation_id;
 
-            if (clubCredentials[clubName] === clubKey) {
-                // ÉXITO: Redirigir a index_menu.html
-                
-                // NOTA: Para mantener la sesión del club, podría usar localStorage o sessionStorage
-                // Se recomienda guardar el nombre del club para usarlo en la siguiente página.
-                localStorage.setItem('currentClub', clubName);
+                if (!activationId) throw new Error("Token malformado");
 
-                loginMessage.textContent = '¡Acceso Concedido! Redirigiendo...';
-                loginMessage.style.color = 'green';
-                loginMessage.classList.remove('hidden');
+                const licenciaRef = doc(db, "licencias", activationId);
+                const snapLicencia = await getDoc(licenciaRef);
 
-                setTimeout(() => {
-                    // REDIRECCIÓN A LA PÁGINA DEL MENÚ
-                    window.location.href = 'index_menu.html';
-                }, 1000); // Retraso de 1 segundo para mostrar el mensaje de éxito
+                let equiposLicencia = [];
+                let limiteLicencia = data.l || 1;
 
-            } else {
-                // FALLO: Mostrar mensaje de error
-                loginMessage.textContent = 'Nombre del club o clave incorrecta.';
-                loginMessage.style.color = 'red';
-                loginMessage.classList.remove('hidden');
-                loginButton.disabled = false;
-                loginButton.textContent = 'Iniciar Sesión';
+                if (snapLicencia.exists()) {
+                    const dbData = snapLicencia.data();
+                    equiposLicencia = Array.isArray(dbData.equipos) ? dbData.equipos : [];
+                    limiteLicencia = dbData.limite || limiteLicencia;
+
+                    if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
+                        errEl.textContent = "Error: Límite de dispositivos alcanzado en esta licencia.";
+                        errEl.classList.remove('hidden');
+                        return;
+                    }
+
+                    if (!equiposLicencia.includes(hwID)) {
+                        equiposLicencia.push(hwID);
+                        await updateDoc(licenciaRef, { equipos: equiposLicencia });
+                    }
+                } else {
+                    equiposLicencia = [hwID];
+                    await setDoc(licenciaRef, { 
+                        cliente: data.n || "", 
+                        limite: limiteLicencia, 
+                        equipos: equiposLicencia, 
+                        fecha_registro: new Date().toISOString() 
+                    });
+                }
+
+                // Guardar variables de sesión de licencia
+                localStorage.setItem('control_voley_club_id', activationId);
+                localStorage.setItem('control_voley_licencia_validada', 'true');
+
+                // Solicitar instalación PWA justo aquí tras activar correctamente la licencia
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    await window.deferredPrompt.userChoice;
+                    window.deferredPrompt = null;
+                }
+
+                // Cambiar a la tarjeta de inicio de sesión
+                document.getElementById('cardActivacion').classList.add('hidden');
+                document.getElementById('cardLogin').classList.remove('hidden');
+
+            } catch (e) {
+                console.error("Error al activar:", e);
+                errEl.textContent = "Código de licencia inválido o error de conexión.";
+                errEl.classList.remove('hidden');
             }
         }
-    </script>
 
+        document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
+
+        // --- PROCESO DE INICIO DE SESIÓN Y VERIFICACIÓN DE APROBACIÓN ---
+        const loginForm = document.getElementById('loginForm');
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const errLogin = document.getElementById('errLogin');
+            const btnLogin = document.getElementById('btnLogin');
+            errLogin.classList.add('hidden');
+            btnLogin.disabled = true;
+            btnLogin.textContent = "Verificando...";
+
+            try {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Validar estatus de aprobación en la colección 'users'
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const isApproved = userData.aprobado === true || userData.status === 'approved';
+
+                    if (isApproved) {
+                        // Todo correcto: Licencia activa, sesión autenticada y usuario aprobado -> Al menú
+                        window.location.replace('index_menu.html');
+                    } else {
+                        await signOut(auth);
+                        errLogin.textContent = "Tu cuenta está pendiente de aprobación por el administrador.";
+                        errLogin.classList.remove('hidden');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = "INICIAR SESIÓN";
+                    }
+                } else {
+                    await signOut(auth);
+                    errLogin.textContent = "No se encontraron datos de usuario asociados.";
+                    errLogin.classList.remove('hidden');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = "INICIAR SESIÓN";
+                }
+
+            } catch (error) {
+                console.error(error);
+                errLogin.textContent = "Credenciales incorrectas o error de acceso.";
+                errLogin.classList.remove('hidden');
+                btnLogin.disabled = false;
+                btnLogin.textContent = "INICIAR SESIÓN";
+            }
+        };
+    </script>
 </body>
 </html>
