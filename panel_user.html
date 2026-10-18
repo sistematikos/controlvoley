@@ -89,7 +89,7 @@
             </div>
 
             <div class="text-center">
-                <button id="btnNuevo" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold rounded-xl text-xs uppercase tracking-wider transition">
+                <button id="btnNuevo" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold rounded-xl text-xs uppercase tracking-wider transition cursor-pointer">
                     <i class="fas fa-plus-circle mr-1"></i> Registrar Nuevo Club / Licencia
                 </button>
             </div>
@@ -163,14 +163,14 @@
                 </div>
             </div>
 
-            <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+            <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
                 <i class="fas fa-key"></i> Generar Licencia y Aprovisionar Club
             </button>
             <div id="status" class="text-center font-bold text-xs text-emerald-600"></div>
 
             <!-- TOKEN RESULTADO -->
             <div id="resultBox" class="hidden p-4 bg-white border border-slate-200 rounded-2xl relative shadow-sm">
-                <button onclick="copiarToken()" class="absolute right-4 top-4 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition">Copiar</button>
+                <button onclick="copiarToken()" class="absolute right-4 top-4 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition cursor-pointer">Copiar</button>
                 <p class="text-xs font-bold text-slate-700 mb-2"><i class="fas fa-key text-brand-electric"></i> Token de Licencia Generado</p>
                 <textarea id="tokenResult" readonly class="w-full h-20 bg-slate-50 border border-slate-200 rounded-xl p-2 font-mono text-[11px] text-slate-600 resize-none outline-none"></textarea>
             </div>
@@ -287,7 +287,12 @@
             };
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
+            const btn = document.getElementById('btnGuardar');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Aprovisionando tablas y guardando...`;
+
             try {
+                // 1. Guardar en la tabla maestra general
                 const { error } = await supabase
                     .from('licencias_master')
                     .upsert([{
@@ -305,12 +310,23 @@
 
                 if (error) throw error;
 
+                // 2. Conexión automática al Supabase del club para ejecutar la función RPC que crea las tablas
+                const supabaseClub = createClient(supaUrl, supaKey);
+                const { error: rpcError } = await supabaseClub.rpc('inicializar_esquema_club');
+                
+                if (rpcError) {
+                    console.warn("Aviso de esquema automático (asegúrate de haber creado la función RPC en el proyecto del club una vez):", rpcError.message);
+                }
+
                 cargarCache();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').classList.remove('hidden');
-                document.getElementById('status').innerText = "🚀 ¡Club registrado y guardado en Supabase con éxito!";
+                document.getElementById('status').innerText = "🚀 ¡Club registrado, aprovisionado y listo con éxito!";
             } catch (err) {
-                alert("Error al guardar en Supabase: " + err.message);
+                alert("Error al guardar o aprovisionar en Supabase: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-key"></i> Generar Licencia y Aprovisionar Club`;
             }
         });
 
