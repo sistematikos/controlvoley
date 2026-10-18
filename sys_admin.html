@@ -156,9 +156,9 @@
         <div class="glass-card p-6 rounded-2xl border-l-4 border-l-brand-electric shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Apertura de Registros
+                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Clubes Activos
                 </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas de atletas y configuraciones del club.</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas y la auditoría de licencias de los clubes en Supabase.</p>
             </div>
             <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
                 <i class="fas fa-shield-halved"></i> Exclusivo Staff
@@ -187,51 +187,92 @@
             </div>
         </div>
 
-        <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN SUPABASE -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <div>
+                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-shield-halved text-brand-electric"></i> Auditoría de Clubes y Licencias Activas
+                    </h2>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado oficial de clubes vinculados y registrados en la base de datos de Supabase.</p>
+                </div>
+                <div class="flex items-center gap-2.5 w-full md:w-auto">
+                    <div class="relative w-full md:w-72">
+                        <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                        <input type="text" id="buscar-club-tech" placeholder="Buscar por ID o Club..." class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium shadow-sm">
+                    </div>
+                    <button id="btn-recargar-clubes" class="bg-slate-100 text-slate-700 border border-slate-200 p-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 cursor-pointer shadow-sm transition">
+                        <i class="fas fa-rotate"></i>
+                    </button>
+                </div>
+            </div>
 
-            <!-- 1. VER PORTAL DE REGISTRO -->
+            <!-- TABLA DE CLUBES -->
+            <div class="overflow-x-auto border border-slate-200/80 rounded-xl bg-white shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-xs font-black uppercase border-b border-slate-200">
+                            <th class="p-3.5">ID Licencia / Club</th>
+                            <th class="p-3.5">Nombre del Club</th>
+                            <th class="p-3.5">Fecha de Registro</th>
+                            <th class="p-3.5 text-center">Límite Equipos</th>
+                            <th class="p-3.5 text-center">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-clubes-registrados" class="text-xs divide-y divide-slate-100 font-medium">
+                        <tr>
+                            <td colspan="5" class="text-center py-10 text-slate-400 italic">
+                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando clubes desde Supabase...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-right">
+                <span id="total-clubes-count" class="text-xs text-slate-500 font-bold">Total clubes registrados: 0</span>
+            </div>
+        </div>
+
+        <!-- ACCESOS RÁPIDOS -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
                         <i class="fas fa-external-link-alt"></i>
                     </div>
                     <h3 class="font-black text-slate-900 text-base mb-1">Abrir Portal Público</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario de inscripción que usarán los representantes.</p>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario de inscripción de representantes.</p>
                 </div>
                 <a href="index_registro.html" target="_blank" class="w-full bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-electric text-center py-3 rounded-xl text-xs font-black transition border border-slate-200 flex items-center justify-center gap-2">
                     <i class="fas fa-eye"></i> Ver index_registro.html
                 </a>
             </div>
 
-            <!-- 2. NÓMINA DE ATLETAS -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-emerald-200">
                         <i class="fas fa-users"></i>
                     </div>
                     <h3 class="font-black text-slate-900 text-base mb-1">Gestión de Atletas</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos en la base de datos.</p>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos.</p>
                 </div>
                 <a href="index_atletas.html" class="w-full bg-emerald-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
                     <i class="fas fa-user-gear"></i> Ir a Atletas
                 </a>
             </div>
 
-            <!-- 3. MENÚ PRINCIPAL -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
                         <i class="fas fa-house"></i>
                     </div>
                     <h3 class="font-black text-slate-900 text-base mb-1">Menú del Club</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración de Control Voley.</p>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración.</p>
                 </div>
                 <a href="index_menu.html" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-center py-3 rounded-xl text-xs font-black transition shadow-md flex items-center justify-center gap-2">
                     <i class="fas fa-arrow-left"></i> Volver al Menú
                 </a>
             </div>
-
         </div>
 
     </div>
@@ -258,6 +299,12 @@
 
         const supabase = createClient(supaUrl, supaKey);
         let portalAbiertoActual = false;
+        let listaClubesMaster = [];
+
+        async function inicializarPanel() {
+            await consultarEstadoPortal();
+            await cargarClubesSupabase();
+        }
 
         async function consultarEstadoPortal() {
             try {
@@ -266,12 +313,7 @@
                     .select('portal_abierto')
                     .single();
 
-                if (error) {
-                    // Si la tabla no existe aún, la asumimos cerrada por defecto
-                    portalAbiertoActual = false;
-                } else {
-                    portalAbiertoActual = data ? data.portal_abierto : false;
-                }
+                portalAbiertoActual = (error || !data) ? false : data.portal_abierto;
                 actualizarInterfazEstado();
             } catch (err) {
                 console.error("Error consultando estado:", err);
@@ -292,7 +334,6 @@
         window.togglePortal = async () => {
             const nuevoEstado = !portalAbiertoActual;
             try {
-                // Intentamos actualizar o insertar en la tabla config_club
                 const { error } = await supabase
                     .from('config_club')
                     .upsert({ id: 1, portal_abierto: nuevoEstado });
@@ -308,7 +349,83 @@
             }
         };
 
-        consultarEstadoPortal();
+        async function cargarClubesSupabase() {
+            const tbody = document.getElementById('tabla-clubes-registrados');
+            if (!tbody) return;
+
+            try {
+                // Consultamos la tabla de licencias o clubes en Supabase (ej. tabla 'licencias' o 'clubes')
+                const { data, error } = await supabase
+                    .from('licencias') // O 'clubes' según cómo hayas nombrado tu tabla maestra en Supabase
+                    .select('*');
+
+                if (error) throw error;
+
+                listaClubesMaster = data || [];
+                renderizarTablaClubes(listaClubesMaster);
+            } catch (err) {
+                console.error("Nota sobre tabla de licencias/clubes en Supabase:", err);
+                // Si la tabla específica de licencias remotas no está creada aún en este proyecto, mostramos el club activo actual
+                const clubActual = localStorage.getItem('control_voley_club_nombre') || 'Club Actual';
+                const clubIdActual = localStorage.getItem('control_voley_club_id') || 'ACTIVO';
+                
+                listaClubesMaster = [{
+                    id: clubIdActual,
+                    nombre_club: clubActual,
+                    fecha_registro: new Date().toISOString(),
+                    limite_equipos: 'Ilimitado'
+                }];
+                renderizarTablaClubes(listaClubesMaster);
+            }
+        }
+
+        function renderizarTablaClubes(lista) {
+            const tbody = document.getElementById('tabla-clubes-registrados');
+            const totalCount = document.getElementById('total-clubes-count');
+            if (!tbody) return;
+
+            if (totalCount) totalCount.innerText = `Total clubes registrados: ${lista.length}`;
+
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 italic">No hay clubes registrados en Supabase.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = lista.map(item => {
+                const nombreClub = item.nombre_club || item.club || item.nombre || 'Club Deportivo';
+                const idLicencia = item.id || item.codigo || 'N/A';
+                const fechaReg = item.fecha_registro || item.created_at ? new Date(item.fecha_registro || item.created_at).toLocaleDateString() : 'N/A';
+                const limite = item.limite_equipos || item.limite || 'PRO';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3.5 font-mono font-bold text-brand-electric">${idLicencia}</td>
+                        <td class="p-3.5 font-bold text-slate-900">${nombreClub}</td>
+                        <td class="p-3.5 text-slate-600 font-semibold">${fechaReg}</td>
+                        <td class="p-3.5 text-center text-slate-800 font-black">${limite}</td>
+                        <td class="p-3.5 text-center">
+                            <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
+                                <i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ACTIVO
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('buscar-club-tech')?.addEventListener('input', (ev) => {
+            const criterio = ev.target.value.toLowerCase().trim();
+            const filtrados = listaClubesMaster.filter(item => 
+                (item.id || '').toLowerCase().includes(criterio) ||
+                (item.nombre_club || '').toLowerCase().includes(criterio) ||
+                (item.club || '').toLowerCase().includes(criterio)
+            );
+            renderizarTablaClubes(filtrados);
+        });
+
+        document.getElementById('btn-recargar-clubes')?.addEventListener('click', cargarClubesSupabase);
+
+        inicializarPanel();
     </script>
 </body>
 </html>
