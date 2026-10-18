@@ -1,35 +1,24 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener el ID del club autenticado desde localStorage
-const empresaID = localStorage.getItem('youcontrol_empresa_id');
+// 1. Obtener credenciales y datos del club directamente desde localStorage
+const empresaID = localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
 const supaUrl = localStorage.getItem('control_voley_supa_url');
 const supaKey = localStorage.getItem('control_voley_supa_key');
-const supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'control-voley';
+const supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID;
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || 'Club CIAR';
 
-if (!empresaID || !supaUrl || !supaKey) {
+if (!supaUrl || !supaKey) {
     alert("Sesión no autorizada o credenciales faltantes. Por favor, active el sistema nuevamente.");
     window.location.href = 'index.html';
 }
 
+// Mostrar inmediatamente el nombre del club en la interfaz
+_0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre} (${empresaID})`;
+
 const supabase = createClient(supaUrl, supaKey);
-
-// Configuración de Firebase Maestro para consultar los datos del club si es necesario
-const firebaseConfigMaster = {
-    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7yJUMqe2kg", 
-    authDomain: "youcontrolvoley.firebaseapp.com",
-    projectId: "youcontrolvoley",
-    storageBucket: "youcontrolvoley.firebasestorage.app",
-    messagingSenderId: "840027639026",
-    appId: "1:840027639026:web:d5170253b4b16c1be0146b"
-};
-
-const appMaster = initializeApp(firebaseConfigMaster);
-const dbMaster = getFirestore(appMaster);
 
 // COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO (Reducción a 300x300 px - Peso ~30KB)
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
@@ -74,21 +63,9 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// Cargar Nombre del Club e Inicializar Atletas desde Supabase
-async function inicializarClubYAtletas() {
+// Cargar Atletas desde Supabase ordenados por Cédula
+async function cargarAtletas() {
     try {
-        // Consultar el nombre oficial en Firebase (empresas_config)
-        const docRef = doc(dbMaster, "empresas_config", empresaID);
-        const docSnap = await getDoc(docRef);
-        
-        let nombreMostrar = empresaID;
-        if (docSnap.exists() && docSnap.data().nombre) {
-            nombreMostrar = docSnap.data().nombre;
-        }
-
-        _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${nombreMostrar}`;
-
-        // Cargar Atletas desde Supabase ordenados por Cédula
         const { data, error } = await supabase
             .from('atletas')
             .select('*')
@@ -97,11 +74,9 @@ async function inicializarClubYAtletas() {
         if (error) throw error;
         _aL = data || [];
         filterNomina();
-
     } catch (err) {
-        console.error("Error al inicializar:", err.message);
-        _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Club: ${empresaID}`;
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase.</td></tr>`;
+        console.error("Error al cargar atletas:", err.message);
+        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica la tabla 'atletas'.</td></tr>`;
     }
 }
 
@@ -182,7 +157,7 @@ _0xa('aForm').addEventListener('submit', async (e) => {
         }
 
         resetForm();
-        inicializarClubYAtletas();
+        cargarAtletas();
         alert('¡Atleta guardado con éxito!');
     } catch (err) {
         console.error("Error al guardar:", err);
@@ -275,7 +250,7 @@ window.deleteAtleta = async (id) => {
     try {
       const { error } = await supabase.from('atletas').delete().eq('id', id);
       if (error) throw error;
-      inicializarClubYAtletas();
+      cargarAtletas();
     } catch (e) { 
       console.error(e); 
       alert('Error al eliminar: ' + e.message); 
@@ -299,4 +274,4 @@ document.getElementById('btnLogout').addEventListener('click', () => {
     }
 });
 
-inicializarClubYAtletas();
+cargarAtletas();
