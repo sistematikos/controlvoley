@@ -80,7 +80,7 @@
             <div class="relative">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Buscar Club Existente</label>
                 <div class="flex gap-2">
-                    <input type="text" id="busquedaInput" placeholder="Ej: RCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none shadow-sm">
+                    <input type="text" id="busquedaInput" placeholder="Ej: YCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none shadow-sm">
                     <button id="btnBuscarManual" class="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2 cursor-pointer">
                         <i class="fas fa-search"></i> Buscar
                     </button>
@@ -163,27 +163,27 @@
                 </div>
             </div>
 
-            <!-- SUPABASE STORAGE (Para gestión y compresión de fotos de atletas) -->
+            <!-- SUPABASE STORAGE (Igual que en la consola de Supabase) -->
             <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
                 <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
                     <i class="fas fa-database text-brand-electric"></i> Supabase Storage (Almacenamiento de Fotos)
                 </h3>
-                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Credenciales de Supabase para guardar las fotografías comprimidas de los atletas.</p>
+                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí los datos tal como aparecen en Project Settings -> General & API Keys de Supabase.</p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Project URL</label>
-                        <input type="text" id="supaUrl" placeholder="https://xxx.supabase.co" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Project URL (General / API)</label>
+                        <input type="text" id="supaUrl" placeholder="https://zgkbjpesmgqiprvfowju.supabase.co" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Bucket</label>
-                        <input type="text" id="supaBucket" value="control-voley" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Bucket Name (Storage)</label>
+                        <input type="text" id="supaBucket" placeholder="Ej: YCDEP-CIAR" value="YCDEP-CIAR" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Anon Key</label>
-                    <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Publishable key (API Keys)</label>
+                    <input type="text" id="supaKey" placeholder="sb_publishable_VC9fuoRhlPpJ..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                 </div>
             </div>
 
@@ -284,7 +284,7 @@
                 const supCli = data.supabaseConfig || {};
                 document.getElementById('supaUrl').value = supCli.supabaseUrl || "";
                 document.getElementById('supaKey').value = supCli.supabaseKey || "";
-                document.getElementById('supaBucket').value = supCli.bucket || "control-voley";
+                document.getElementById('supaBucket').value = supCli.bucket || id;
 
                 if (data.token_licencia) {
                     document.getElementById('tokenResult').value = data.token_licencia;
@@ -311,7 +311,7 @@
             document.getElementById('fbProjectId').value = "";
             document.getElementById('supaUrl').value = "";
             document.getElementById('supaKey').value = "";
-            document.getElementById('supaBucket').value = "control-voley";
+            document.getElementById('supaBucket').value = "";
             document.getElementById('resultBox').classList.add('hidden');
             inputBusqueda.value = "";
             document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
@@ -343,7 +343,7 @@
                 firebaseConfig: apiKey && projectId ? { apiKey, projectId, authDomain: `${projectId}.firebaseapp.com`, storageBucket: `${projectId}.firebasestorage.app` } : null,
                 supabaseUrl: supaUrl,
                 supabaseKey: supaKey,
-                bucket: supaBucket || "control-voley"
+                bucket: supaBucket || id
             };
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
@@ -354,7 +354,7 @@
                 telefono: telefono,
                 limite_dispositivos: limite,
                 firebaseConfig: apiKey && projectId ? { apiKey, projectId } : null,
-                supabaseConfig: supaUrl && supaKey ? { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || "control-voley" } : null,
+                supabaseConfig: supaUrl && supaKey ? { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || id } : null,
                 token_licencia: tokenBase64,
                 updated_at: new Date().toISOString()
             };
