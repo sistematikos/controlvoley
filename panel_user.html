@@ -190,6 +190,18 @@
         }
         cargarCacheEmpresas();
 
+        // Autoguardado local para recordar datos previos si se recarga la página
+        const camposForm = ['empresaID', 'nombreEmpresa', 'ciudad', 'email', 'telefono', 'limite', 'supaUrl', 'supaBucket', 'supaKey'];
+        camposForm.forEach(id => {
+            const el = document.getElementById(id);
+            if (localStorage.getItem('draft_' + id)) {
+                el.value = localStorage.getItem('draft_' + id);
+            }
+            el.addEventListener('input', () => {
+                localStorage.setItem('draft_' + id, el.value);
+            });
+        });
+
         const inputBusqueda = document.getElementById('busquedaInput');
         const listaResultados = document.getElementById('lista-resultados-busqueda');
 
@@ -234,6 +246,9 @@
             document.getElementById('supaKey').value = emp.supabase_key || "";
             document.getElementById('supaBucket').value = emp.bucket || id;
 
+            // Guardar también en borrador local
+            camposForm.forEach(fid => localStorage.setItem('draft_' + fid, document.getElementById(fid).value));
+
             if (emp.licencia_token) {
                 document.getElementById('tokenResult').value = emp.licencia_token;
                 document.getElementById('resultBox').classList.remove('hidden');
@@ -257,6 +272,7 @@
             document.getElementById('supaBucket').value = "YCDEP-CIAR";
             document.getElementById('resultBox').classList.add('hidden');
             inputBusqueda.value = "";
+            camposForm.forEach(fid => localStorage.removeItem('draft_' + fid));
             document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
         });
 
@@ -296,6 +312,7 @@
                 limite_dispositivos: limite,
                 supabase_url: supaUrl,
                 supabase_key: supaKey,
+                bucket: supaBucket || id,
                 licencia_token: tokenBase64,
                 updated_at: new Date().toISOString()
             };
