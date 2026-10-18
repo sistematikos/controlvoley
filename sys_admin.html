@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Encabezados para evitar caché de navegador -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -139,13 +138,13 @@
     <nav class="navbar-sistema border-b border-white/10">
         <div class="nav-container">
             <a href="index_menu.html" class="btn-regresar">
-                <i class="fas fa-arrow-left"></i> Regresar al Sistema
+                <i class="fas fa-arrow-left"></i> Regresar al Menú
             </a>
             <a href="#" class="nav-logo">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric">
-                    <i class="fas fa-chart-pie text-xs animate-pulse"></i>
+                    <i class="fas fa-volleyball-ball text-xs animate-pulse"></i>
                 </div>
-                <span>CONTROL VOLEY <span class="text-brand-cyan font-black text-xs px-2 py-0.5 bg-brand-cyan/10 rounded-full border border-brand-cyan/20">TECH</span></span>
+                <span>CONTROL VOLEY <span class="text-brand-cyan font-black text-xs px-2 py-0.5 bg-brand-cyan/10 rounded-full border border-brand-cyan/20">SYS ADMIN</span></span>
             </a>
         </div>
     </nav>
@@ -153,125 +152,86 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="main-wrapper">
 
-        <!-- CABECERA DE PANEL TÉCNICO EXTERNO -->
-        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-amber-500 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <!-- CABECERA DE PANEL TÉCNICO -->
+        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-brand-electric shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-user-shield text-amber-500"></i> Panel de Control Externo (Sistematikos Admin)
+                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Apertura de Registros
                 </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Módulo independiente de administración, utilidades técnicas y auditoría de licencias del sistema.</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas de atletas y configuraciones del club.</p>
             </div>
-            <span class="bg-amber-100 text-amber-800 px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-amber-200 shadow-sm">
-                <i class="fas fa-lock"></i> Exclusivo Devs
+            <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
+                <i class="fas fa-shield-halved"></i> Exclusivo Staff
             </span>
         </div>
 
-        <!-- TARJETAS DE HERRAMIENTAS TÉCNICAS EXTERNAS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
-            <!-- 1. GESTIÓN DE USUARIOS / LICENCIAS -->
-            <div class="tool-card">
+        <!-- CONTROL DE APERTURA DE REGISTROS PÚBLICOS -->
+        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
-                        <i class="fas fa-users-gear"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Panel de Usuarios</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Administración directa de credenciales, clubes y accesos de clientes.</p>
-                </div>
-                <a href="panel_user.html" target="_blank" class="w-full bg-brand-electric text-white text-center py-3 rounded-xl text-xs font-black hover:bg-brand-600 transition shadow-electric flex items-center justify-center gap-2">
-                    <i class="fas fa-external-link-alt"></i> Abrir panel_user.html
-                </a>
-            </div>
-
-            <!-- 2. MIGRACIÓN Y REESTRUCTURACIÓN -->
-            <div class="tool-card">
-                <div>
-                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Migración de Datos</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Herramientas de importación, exportación y actualización masiva de bases de datos.</p>
-                </div>
-                <a href="migrar.html" target="_blank" class="w-full bg-indigo-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-indigo-700 transition shadow-md flex items-center justify-center gap-2">
-                    <i class="fas fa-file-import"></i> Abrir migrar.html
-                </a>
-            </div>
-
-            <!-- 3. PUESTA A CERO (RESET) -->
-            <div class="tool-card border-rose-200/80 bg-rose-50/10">
-                <div>
-                    <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-rose-200">
-                        <i class="fas fa-triangle-exclamation"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Puesta a Cero</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Limpieza parcial o total de plantillas, registros y datos de prueba.</p>
-                </div>
-                <a href="puestaacero.html" target="_blank" class="w-full bg-rose-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-rose-700 transition shadow-sm flex items-center justify-center gap-2">
-                    <i class="fas fa-trash-arrow-up"></i> Abrir puestaacero.html
-                </a>
-            </div>
-
-            <!-- 4. RESPALDO Y RESTAURACIÓN -->
-            <div class="tool-card border-brand-cyan/30 bg-cyan-50/10">
-                <div>
-                    <div class="w-12 h-12 bg-cyan-100 text-cyan-700 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-cyan-200">
-                        <i class="fas fa-file-zipper"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Respaldos Integrales</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Exporta e importa bases de datos completas de clubes en formato JSON.</p>
-                </div>
-                <a href="admin_backup.html" target="_blank" class="w-full bg-cyan-700 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-cyan-800 transition shadow-sm flex items-center justify-center gap-2">
-                    <i class="fas fa-download"></i> Abrir admin_backup.html
-                </a>
-            </div>
-
-        </div>
-
-        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES -->
-        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80 mt-2">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-key text-brand-electric"></i> Registro de Licencias & Clubes Activos
+                    <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-id-card-clip text-brand-electric"></i> Portal de Autoregistro para Representantes
                     </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Auditoría centralizada de licencias registradas desde la colección maestra de licencias.</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">
+                        Activa o desactiva el acceso a <code>index_registro.html</code> para que los representantes puedan inscribir atletas de forma autónoma.
+                    </p>
                 </div>
-                <div class="flex items-center gap-2.5 w-full md:w-auto">
-                    <div class="relative w-full md:w-72">
-                        <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                        <input type="text" id="buscar-licencia-tech" placeholder="Buscar por ID o Club..." class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium shadow-sm">
-                    </div>
-                    <button id="btn-recargar-licencias" class="bg-slate-100 text-slate-700 border border-slate-200 p-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 cursor-pointer shadow-sm transition">
-                        <i class="fas fa-rotate"></i>
+                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                    <span id="estadoPortalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+                        Cargando estado...
+                    </span>
+                    <button id="btnTogglePortal" onclick="togglePortal()" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric">
+                        Cambiar Estado
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- TABLA DE LICENCIAS -->
-            <div class="overflow-x-auto border border-slate-200/80 rounded-xl bg-white shadow-sm">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-600 text-xs font-black uppercase border-b border-slate-200">
-                            <th class="p-3.5">ID Licencia</th>
-                            <th class="p-3.5">Club / Cliente</th>
-                            <th class="p-3.5">Fecha Registro</th>
-                            <th class="p-3.5 text-center">Límite Equipos</th>
-                            <th class="p-3.5 text-center">Equipos Vinc.</th>
-                            <th class="p-3.5 text-center">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-licencias-registradas" class="text-xs divide-y divide-slate-100 font-medium">
-                        <tr>
-                            <td colspan="6" class="text-center py-10 text-slate-400 italic">
-                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando colección de licencias...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+            <!-- 1. VER PORTAL DE REGISTRO -->
+            <div class="tool-card">
+                <div>
+                    <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Abrir Portal Público</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario de inscripción que usarán los representantes.</p>
+                </div>
+                <a href="index_registro.html" target="_blank" class="w-full bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-electric text-center py-3 rounded-xl text-xs font-black transition border border-slate-200 flex items-center justify-center gap-2">
+                    <i class="fas fa-eye"></i> Ver index_registro.html
+                </a>
             </div>
-            <div class="mt-4 text-right">
-                <span id="total-licencias-count" class="text-xs text-slate-500 font-bold">Total licencias: 0</span>
+
+            <!-- 2. NÓMINA DE ATLETAS -->
+            <div class="tool-card">
+                <div>
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-emerald-200">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Gestión de Atletas</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos en la base de datos.</p>
+                </div>
+                <a href="index_atletas.html" class="w-full bg-emerald-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
+                    <i class="fas fa-user-gear"></i> Ir a Atletas
+                </a>
             </div>
+
+            <!-- 3. MENÚ PRINCIPAL -->
+            <div class="tool-card">
+                <div>
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
+                        <i class="fas fa-house"></i>
+                    </div>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Menú del Club</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración de Control Voley.</p>
+                </div>
+                <a href="index_menu.html" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-center py-3 rounded-xl text-xs font-black transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Volver al Menú
+                </a>
+            </div>
+
         </div>
 
     </div>
@@ -280,116 +240,75 @@
     <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold shadow-inner mt-12">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p>&copy; 2026 <span class="font-bold text-slate-800">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
-            <p class="text-[11px] text-slate-400">Panel Técnico Maestro de Administración Exclusiva</p>
+            <p class="text-[11px] text-slate-400">Panel Técnico de Administración y Control de Registros</p>
         </div>
     </footer>
 
-    <!-- LÓGICA DE CONEXIÓN A FIREBASE MASTER -->
+    <!-- LÓGICA DE CONTROL EN SUPABASE -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        const masterConfig = {
-            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q", 
-            authDomain: "youcontrol-1d60a.firebaseapp.com",
-            projectId: "youcontrol-1d60a",
-            storageBucket: "youcontrol-1d60a.firebasestorage.app",
-            messagingSenderId: "812100760013",
-            appId: "1:812100760013:web:7574906aa285555faf5484"
+        const supaUrl = localStorage.getItem('control_voley_supa_url');
+        const supaKey = localStorage.getItem('control_voley_supa_key');
+
+        if (!supaUrl || !supaKey) {
+            alert("Credenciales del club no encontradas. Inicia sesión con tu licencia.");
+            window.location.href = 'index.html';
+        }
+
+        const supabase = createClient(supaUrl, supaKey);
+        let portalAbiertoActual = false;
+
+        async function consultarEstadoPortal() {
+            try {
+                const { data, error } = await supabase
+                    .from('config_club')
+                    .select('portal_abierto')
+                    .single();
+
+                if (error) {
+                    // Si la tabla no existe aún, la asumimos cerrada por defecto
+                    portalAbiertoActual = false;
+                } else {
+                    portalAbiertoActual = data ? data.portal_abierto : false;
+                }
+                actualizarInterfazEstado();
+            } catch (err) {
+                console.error("Error consultando estado:", err);
+            }
+        }
+
+        function actualizarInterfazEstado() {
+            const badge = document.getElementById('estadoPortalBadge');
+            if (portalAbiertoActual) {
+                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200";
+                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ABIERTO';
+            } else {
+                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
+                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1"></i> CERRADO';
+            }
+        }
+
+        window.togglePortal = async () => {
+            const nuevoEstado = !portalAbiertoActual;
+            try {
+                // Intentamos actualizar o insertar en la tabla config_club
+                const { error } = await supabase
+                    .from('config_club')
+                    .upsert({ id: 1, portal_abierto: nuevoEstado });
+
+                if (error) throw error;
+
+                portalAbiertoActual = nuevoEstado;
+                actualizarInterfazEstado();
+                alert(nuevoEstado ? "¡Portal de inscripciones abierto con éxito!" : "Portal de inscripciones cerrado.");
+            } catch (err) {
+                console.error("Error al actualizar:", err);
+                alert("Error al cambiar el estado del portal. Asegúrate de tener la tabla 'config_club' creada en Supabase.");
+            }
         };
 
-        const appMaster = initializeApp(masterConfig, "tech_admin_lic_app_" + Math.random());
-        const dbMaster = getFirestore(appMaster);
-
-        let licenciasMaster = [];
-
-        async function cargarLicencias() {
-            const tbody = document.getElementById('tabla-licencias-registradas');
-            if (!tbody) return;
-
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-400 italic"><i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando colección licencias...</td></tr>`;
-
-            try {
-                const colRef = collection(dbMaster, "licencias");
-                const snapshot = await getDocs(colRef);
-
-                licenciasMaster = [];
-                snapshot.forEach(docSnap => {
-                    licenciasMaster.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                renderizarTablaLicencias(licenciasMaster);
-
-            } catch (err) {
-                console.error("Error cargando colección licencias:", err);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-rose-500 font-bold">Error al cargar listado de licencias: ${err.message}</td></tr>`;
-            }
-        }
-
-        function formatearFecha(f) {
-            if (!f) return "N/A";
-            try {
-                if (typeof f.toDate === 'function') {
-                    return f.toDate().toLocaleString('es-VE');
-                }
-                const d = new Date(f);
-                if (!isNaN(d.getTime())) {
-                    return d.toLocaleString('es-VE');
-                }
-                return f.toString();
-            } catch (e) {
-                return f.toString();
-            }
-        }
-
-        function renderizarTablaLicencias(lista) {
-            const tbody = document.getElementById('tabla-licencias-registradas');
-            const totalCount = document.getElementById('total-licencias-count');
-            if (!tbody) return;
-
-            if (totalCount) totalCount.innerText = `Total licencias: ${lista.length}`;
-
-            if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-400 italic">No hay licencias registradas en esta colección.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = lista.map(item => {
-                const clienteNombre = (item.cliente || item.club || 'Sin cliente').replace(/^"+|"+$/g, '');
-                const limiteEquipos = item.limite !== undefined ? item.limite : 'N/A';
-                const cantidadEquipos = Array.isArray(item.equipos) ? item.equipos.length : 0;
-                const fechaFormateada = formatearFecha(item.fecha_registro);
-
-                return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 font-mono font-bold text-brand-electric">${item.id}</td>
-                        <td class="p-3.5 font-bold text-slate-900">${clienteNombre}</td>
-                        <td class="p-3.5 text-slate-600 font-semibold">${fechaFormateada}</td>
-                        <td class="p-3.5 text-center text-slate-800 font-black">${limiteEquipos}</td>
-                        <td class="p-3.5 text-center text-slate-600 font-bold">${cantidadEquipos}</td>
-                        <td class="p-3.5 text-center">
-                            <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
-                                <i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ACTIVA
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        document.getElementById('buscar-licencia-tech')?.addEventListener('input', (ev) => {
-            const criterio = ev.target.value.toLowerCase().trim();
-            const filtradas = licenciasMaster.filter(item => 
-                (item.id || '').toLowerCase().includes(criterio) ||
-                (item.cliente || '').toLowerCase().includes(criterio) ||
-                (item.club || '').toLowerCase().includes(criterio)
-            );
-            renderizarTablaLicencias(filtradas);
-        });
-
-        document.getElementById('btn-recargar-licencias')?.addEventListener('click', cargarLicencias);
-
-        document.addEventListener('DOMContentLoaded', cargarLicencias);
+        consultarEstadoPortal();
     </script>
 </body>
 </html>
