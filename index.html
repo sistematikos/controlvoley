@@ -61,13 +61,17 @@
             window.deferredPrompt = e;
         });
 
-        // 1. VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA
+        function esPWAInstalada() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        // VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA -> index_menu.html
         document.addEventListener('DOMContentLoaded', () => {
             const licenciaValidada = localStorage.getItem('licencia_validada');
             const empresaID = localStorage.getItem('youcontrol_empresa_id');
 
-            if (licenciaValidada === 'true' && empresaID) {
-                window.location.replace('sys_v1_menu.html');
+            if (licenciaValidada === 'true' && empresaID && esPWAInstalada()) {
+                window.location.replace('index_menu.html');
             }
         });
 
@@ -96,8 +100,16 @@
             <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
         </div>
 
-        <button id="btnActivar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fas fa-key"></i> Activar Sistema
+        <!-- MENSAJE DE BIENVENIDA -->
+        <div class="bg-brand-50 border border-brand-electric/20 rounded-2xl p-4 text-center">
+            <p class="text-xs font-bold text-slate-700 leading-relaxed">
+                ¡Para comenzar a disfrutar de todo el contenido de <strong class="text-brand-electric uppercase">YOU CONTROL VOLEY</strong>, instala la aplicación en tu dispositivo!
+            </p>
+        </div>
+
+        <!-- ÚNICO BOTÓN DE INSTALACIÓN Y ACTIVACIÓN -->
+        <button id="btnActivarEInstalar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar
         </button>
 
         <div id="statusMsg" class="text-xs font-bold text-slate-500"></div>
@@ -107,14 +119,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Configuración por defecto (Base de datos principal para validar la licencia)
+        // Configuración del Firebase Maestro (youcontrolvoley)
         const defaultConfig = {
-            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q",
-            authDomain: "youcontrol-1d60a.firebaseapp.com",
-            projectId: "youcontrol-1d60a",
-            storageBucket: "youcontrol-1d60a.firebasestorage.app",
-            messagingSenderId: "812100760013",
-            appId: "1:812100760013:web:7574906aa285555faf5484"
+            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7yJUMqe2kg", 
+            authDomain: "youcontrolvoley.firebaseapp.com",
+            projectId: "youcontrolvoley",
+            storageBucket: "youcontrolvoley.firebasestorage.app",
+            messagingSenderId: "840027639026",
+            appId: "1:840027639026:web:d5170253b4b16c1be0146b"
         };
 
         const appPrincipal = initializeApp(defaultConfig);
@@ -122,12 +134,12 @@
 
         const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
 
-        async function procesarActivacion() {
+        async function procesarActivacionEInstalacion() {
             const rawToken = document.getElementById('tokenInput').value.trim();
             const statusDiv = document.getElementById('statusMsg');
             if (!rawToken) return alert("Por favor, pega el código de licencia primero.");
             
-            const btn = document.getElementById('btnActivar');
+            const btn = document.getElementById('btnActivarEInstalar');
             btn.disabled = true;
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando licencia...`;
 
@@ -136,29 +148,31 @@
                 const hwID = getHardwareID();
                 const activationId = data.clubId || data.activation_id;
 
-                // 1. Consultar en la base de datos principal la configuración de la empresa
+                if (!activationId) {
+                    throw new Error("El token no contiene un ID de club válido.");
+                }
+
+                // 1. Consultar configuración de la empresa en Firebase
                 const empresaRefPrincipal = doc(dbPrincipal, "empresas_config", activationId);
                 const snapEmpresaPrincipal = await getDoc(empresaRefPrincipal);
 
                 if (snapEmpresaPrincipal.exists()) {
                     const datosEmpresaConfig = snapEmpresaPrincipal.data();
                     
-                    // Guardar configuración independiente si existe en Firebase o Supabase
                     if (datosEmpresaConfig.firebaseConfig && datosEmpresaConfig.firebaseConfig.apiKey) {
                         localStorage.setItem(`youcontrol_tenant_config_${activationId}`, JSON.stringify(datosEmpresaConfig.firebaseConfig));
                     }
                     if (datosEmpresaConfig.supabaseConfig && datosEmpresaConfig.supabaseConfig.supabaseUrl) {
                         localStorage.setItem('control_voley_supa_url', datosEmpresaConfig.supabaseConfig.supabaseUrl);
                         localStorage.setItem('control_voley_supa_key', datosEmpresaConfig.supabaseConfig.supabaseKey);
-                        localStorage.setItem('control_voley_supa_bucket', datosEmpresaConfig.supabaseConfig.bucket || 'control-voley');
+                        localStorage.setItem('control_voley_supa_bucket', datosEmpresaConfig.supabaseConfig.bucket || activationId);
                     }
                 }
 
-                // Si viene del panel maestro nuevo con supabase directo en el token
                 if (data.supabaseUrl) {
                     localStorage.setItem('control_voley_supa_url', data.supabaseUrl);
                     localStorage.setItem('control_voley_supa_key', data.supabaseKey);
-                    localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
+                    localStorage.setItem('control_voley_supa_bucket', data.bucket || activationId);
                 }
                 if (data.clubNombre) {
                     localStorage.setItem('control_voley_club_nombre', data.clubNombre);
@@ -183,7 +197,7 @@
                     if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
                         alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
                         btn.disabled = false;
-                        btn.innerHTML = `<i class="fas fa-key"></i> Activar Sistema`;
+                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
                         return;
                     }
 
@@ -214,7 +228,6 @@
                 } else {
                     await setDoc(empresaRefPrincipal, { 
                         nombre: data.clubNombre || data.n || "",
-                        rif: data.rif || "",
                         email: data.email || "",
                         limite_dispositivos: limiteLicencia, 
                         equipos: [hwID], 
@@ -228,29 +241,37 @@
                 localStorage.setItem('licencia_validada', 'true');
 
                 statusDiv.className = "text-xs font-bold text-emerald-600";
-                statusDiv.innerText = "¡Activación exitosa! Configurando dispositivo...";
+                statusDiv.innerText = "¡Licencia válida! Iniciando instalación...";
 
-                // Prompt de instalación PWA si está disponible
+                // DISPARAR INSTALACIÓN PWA
                 if (window.deferredPrompt) {
                     window.deferredPrompt.prompt();
-                    await window.deferredPrompt.userChoice;
+                    const userChoice = await window.deferredPrompt.userChoice;
                     window.deferredPrompt = null;
-                }
 
-                setTimeout(() => {
+                    if (userChoice.outcome === 'accepted') {
+                        window.location.replace('index_menu.html');
+                    } else {
+                        alert("Es necesario instalar la aplicación para ingresar.");
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
+                        statusDiv.innerText = "";
+                    }
+                } else {
+                    // Si ya está en modo app o instalada
                     window.location.replace('index_menu.html');
-                }, 1000);
+                }
                 
             } catch (e) {
                 console.error("Error al procesar activación:", e);
-                alert("Código de licencia inválido o error en la conexión con Firebase.");
+                alert("Código de licencia inválido o error en la conexión: " + e.message);
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-key"></i> Activar Sistema`;
+                btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
                 statusDiv.innerText = "";
             }
         }
 
-        document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
+        document.getElementById('btnActivarEInstalar').addEventListener('click', procesarActivacionEInstalacion);
     </script>
 </body>
 </html>
