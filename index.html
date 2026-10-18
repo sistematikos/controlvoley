@@ -92,7 +92,7 @@
 
         <div>
             <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">Control Voley</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Activación del Sistema</p>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Activación del Sistema (Supabase)</p>
         </div>
 
         <div class="text-left space-y-2">
@@ -116,22 +116,13 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Configuración oficial y definitiva del Firebase Maestro (youcontrolvoley)
-        const defaultConfig = {
-            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
-            authDomain: "youcontrolvoley.firebaseapp.com",
-            projectId: "youcontrolvoley",
-            storageBucket: "youcontrolvoley.firebasestorage.app",
-            messagingSenderId: "840027639026",
-            appId: "1:840027639026:web:d5170253b4b16c1be0146b"
-        };
+        // Credenciales de tu Supabase Maestro (licencias_clubes)
+        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_KEY = "PON_AQUI_TU_ANONYMOUS_KEY_MAESTRO_DE_SUPABASE"; // Reemplaza con tu Key maestro
 
-        const appPrincipal = initializeApp(defaultConfig);
-        const dbPrincipal = getFirestore(appPrincipal);
-
+        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
 
         async function procesarActivacionEInstalacion() {
@@ -152,18 +143,19 @@
                     throw new Error("El token no contiene un ID de club válido.");
                 }
 
-                // Consultar directamente el documento unificado en empresas_config
-                const empresaRef = doc(dbPrincipal, "empresas_config", activationId);
-                const snapEmpresa = await getDoc(empresaRef);
+                // Consultar directamente en el Supabase Maestro (tabla 'licencias')
+                const { data: empresaData, error: empresaError } = await supabaseMaster
+                    .from('licencias')
+                    .select('*')
+                    .eq('id', activationId)
+                    .single();
 
-                if (!snapEmpresa.exists()) {
-                    throw new Error("La empresa o licencia no se encuentra registrada en el sistema.");
+                if (empresaError || !empresaData) {
+                    throw new Error("La empresa o licencia no se encuentra registrada en el sistema central.");
                 }
 
-                const datosEmpresa = snapEmpresa.data();
-                let equiposLicencia = Array.isArray(datosEmpresa.equipos) ? datosEmpresa.equipos : [];
-                
-                let limiteStr = datosEmpresa.limite_dispositivos || data.limite || "3";
+                let equiposLicencia = Array.isArray(empresaData.equipos) ? empresaData.equipos : [];
+                let limiteStr = empresaData.limite_dispositivos || data.limite || "3";
                 let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
 
                 // Validar límite de dispositivos
@@ -177,22 +169,19 @@
                 // Registrar equipo si es nuevo en la lista
                 if (!equiposLicencia.includes(hwID)) {
                     equiposLicencia.push(hwID);
-                    await updateDoc(empresaRef, { equipos: equiposLicencia });
+                    await supabaseMaster
+                        .from('licencias')
+                        .update({ equipos: equiposLicencia })
+                        .eq('id', activationId);
                 }
 
                 // Guardar configuraciones de Supabase en el localStorage para los módulos de atletas
-                if (datosEmpresa.supabaseConfig) {
-                    localStorage.setItem('control_voley_supa_url', datosEmpresa.supabaseConfig.supabaseUrl);
-                    localStorage.setItem('control_voley_supa_key', datosEmpresa.supabaseConfig.supabaseKey);
-                    localStorage.setItem('control_voley_supa_bucket', datosEmpresa.supabaseConfig.bucket || activationId);
-                } else if (data.supabaseUrl) {
-                    localStorage.setItem('control_voley_supa_url', data.supabaseUrl);
-                    localStorage.setItem('control_voley_supa_key', data.supabaseKey);
-                    localStorage.setItem('control_voley_supa_bucket', data.bucket || activationId);
-                }
+                localStorage.setItem('control_voley_supa_url', empresaData.supabase_url || data.supabaseUrl);
+                localStorage.setItem('control_voley_supa_key', empresaData.supabase_key || data.supabaseKey);
+                localStorage.setItem('control_voley_supa_bucket', empresaData.bucket || data.bucket || activationId);
 
-                if (datosEmpresa.nombre || data.clubNombre) {
-                    localStorage.setItem('control_voley_club_nombre', datosEmpresa.nombre || data.clubNombre);
+                if (empresaData.nombre || data.clubNombre) {
+                    localStorage.setItem('control_voley_club_nombre', empresaData.nombre || data.clubNombre);
                 }
 
                 // Guardar sesión local de acceso
