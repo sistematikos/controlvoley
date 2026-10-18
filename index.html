@@ -1,229 +1,256 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Voley | Activación y Acceso PWA</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0055FF">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        },
-        colors: {
-          brand: {
-            50: '#f0f6ff',
-            100: '#e0edff',
-            500: '#0066ff',
-            600: '#0052cc',
-            700: '#003db3',
-            electric: '#0055FF',
-            cyan: '#00D2FF',
-            dark: '#030B1E'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley | Activación del Sistema</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50: '#f0f6ff',
+                100: '#e0edff',
+                500: '#0066ff',
+                600: '#0052cc',
+                700: '#003db3',
+                electric: '#0055FF',
+                cyan: '#00D2FF',
+                dark: '#030B1E'
+              }
+            },
+            boxShadow: {
+              'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
+            }
           }
-        },
-        boxShadow: {
-          'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-          'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
-          'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
-          'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
         }
       }
-    }
-  }
-</script>
-<style>
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-  }
-  .bg-sports-pattern {
-    background-color: #F1F5F9;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.1) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.1) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-  }
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-</style>
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .bg-sports-pattern {
+            background-color: #F1F5F9;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+    </style>
+
+    <script>
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+        });
+
+        // 1. VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA
+        document.addEventListener('DOMContentLoaded', () => {
+            const licenciaValidada = localStorage.getItem('licencia_validada');
+            const empresaID = localStorage.getItem('youcontrol_empresa_id');
+
+            if (licenciaValidada === 'true' && empresaID) {
+                window.location.replace('sys_v1_menu.html');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
+            });
+        }
+    </script>
 </head>
-<body class="bg-sports-pattern min-h-screen flex flex-col justify-between items-center text-slate-800 antialiased p-4 sm:p-6" oncontextmenu="return false">
+<body class="bg-sports-pattern min-h-screen flex items-center justify-center p-4 antialiased text-slate-800" oncontextmenu="return false">
 
-    <!-- CONTENEDOR CENTRAL -->
-    <div class="w-full max-w-md my-auto">
+    <div class="glass-card p-8 rounded-3xl shadow-glass border border-slate-200/80 w-full max-w-md text-center space-y-6">
         
-        <!-- LOGO Y ENCABEZADO -->
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-4 transform hover:scale-105 transition-transform duration-300">
-                <i class="fas fa-volleyball-ball text-4xl animate-pulse"></i>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight uppercase">Control Voley</h1>
-            <p class="text-xs font-extrabold text-brand-electric uppercase tracking-widest mt-1">Plataforma de Gestión Deportiva PRO</p>
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-2">
+            <i class="fas fa-shield-alt text-2xl animate-pulse"></i>
         </div>
 
-        <!-- PASO 1: VALIDACIÓN DE LICENCIA -->
-        <div id="stepLicencia" class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80">
-            <h2 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
-                <i class="fas fa-key text-brand-electric"></i> Activación del Club
-            </h2>
-            <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">
-                Ingresa la licencia otorgada por tu panel de administración para conectar tu base de datos en Supabase.
-            </p>
-
-            <form id="formLicencia" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Código de Licencia</label>
-                    <input type="text" id="inputLicencia" placeholder="Ej: CV-PRO-XXXX-YYYY" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none transition shadow-sm uppercase tracking-wider text-center">
-                </div>
-                <button type="submit" class="w-full py-3.5 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                    <span>Activar Sistema</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
+        <div>
+            <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">Control Voley</h1>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Activación del Sistema</p>
         </div>
 
-        <!-- PASO 2 Y 3: TARJETA DE INSTALACIÓN Y ACCESO PWA (Oculta por defecto hasta validar) -->
-        <div id="stepApp" class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 hidden text-center space-y-6">
-            <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl mx-auto shadow-sm">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div>
-                <h3 id="clubTitle" class="text-xl font-black text-slate-900">¡Club Conectado!</h3>
-                <p class="text-xs font-semibold text-slate-500 mt-1">El sistema se encuentra vinculado correctamente con Supabase.</p>
-            </div>
-
-            <!-- Botón de Instalación PWA (Aparece si el navegador permite instalar) -->
-            <div id="installContainer" class="hidden">
-                <div class="p-4 bg-brand-50 rounded-2xl border border-brand-electric/20 mb-4 text-left">
-                    <p class="text-xs font-bold text-brand-electric mb-1"><i class="fas fa-mobile-screen-button"></i> Aplicación Web Progresiva</p>
-                    <p class="text-xs text-slate-600 font-medium">Instala Control Voley en tu dispositivo para acceder de forma rápida y en pantalla completa.</p>
-                </div>
-                <button id="btnInstall" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md transition text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                    <i class="fas fa-download"></i> Instalar App en tu Equipo
-                </button>
-            </div>
-
-            <!-- Botón para Abrir la App Web -->
-            <button id="btnOpenApp" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-electric to-brand-cyan text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                <i class="fas fa-rocket"></i> Abrir Panel del Club
-            </button>
-            
-            <button onclick="cambiarLicencia()" class="text-xs font-bold text-slate-400 hover:text-rose-600 transition underline">
-                Cambiar de Licencia / Desvincular
-            </button>
+        <div class="text-left space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Pega tu código de licencia:</label>
+            <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
         </div>
 
+        <button id="btnActivar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fas fa-key"></i> Activar Sistema
+        </button>
+
+        <div id="statusMsg" class="text-xs font-bold text-slate-500"></div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="w-full py-6 text-center text-xs text-slate-400 font-semibold">
-        <p>&copy; 2026 <span class="text-slate-600 font-bold">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
-    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<script>
-// --- REGISTRO DEL SERVICE WORKER (PWA) ---
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('ServiceWorker registrado con éxito:', reg.scope))
-      .catch(err => console.log('Error al registrar ServiceWorker:', err));
-  });
-}
+        // Configuración por defecto (Base de datos principal para validar la licencia)
+        const defaultConfig = {
+            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q",
+            authDomain: "youcontrol-1d60a.firebaseapp.com",
+            projectId: "youcontrol-1d60a",
+            storageBucket: "youcontrol-1d60a.firebasestorage.app",
+            messagingSenderId: "812100760013",
+            appId: "1:812100760013:web:7574906aa285555faf5484"
+        };
 
-// --- CAPTURA DE EVENTO DE INSTALACIÓN PWA ---
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installContainer = document.getElementById('installContainer');
-  if (installContainer) installContainer.classList.remove('hidden');
-});
+        const appPrincipal = initializeApp(defaultConfig);
+        const dbPrincipal = getFirestore(appPrincipal);
 
-document.getElementById('btnInstall').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('Usuario aceptó instalar la PWA');
-    }
-    deferredPrompt = null;
-    document.getElementById('installContainer').classList.add('hidden');
-  }
-});
+        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
 
-// --- LÓGICA DE LICENCIA Y SUPABASE ---
-document.addEventListener('DOMContentLoaded', () => {
-  const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
-  if (licenciaValidada === 'true') {
-    mostrarPanelApp();
-  }
-});
+        async function procesarActivacion() {
+            const rawToken = document.getElementById('tokenInput').value.trim();
+            const statusDiv = document.getElementById('statusMsg');
+            if (!rawToken) return alert("Por favor, pega el código de licencia primero.");
+            
+            const btn = document.getElementById('btnActivar');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando licencia...`;
 
-document.getElementById('formLicencia').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const token = document.getElementById('inputLicencia').value.trim();
+            try {
+                const data = JSON.parse(atob(rawToken));
+                const hwID = getHardwareID();
+                const activationId = data.clubId || data.activation_id;
 
-  try {
-    // Supongamos que la licencia decodifica en Base64 o contiene las credenciales
-    // Formato de prueba o decodificador de token de licencia del club:
-    // Puedes ajustar el parseo según tu generador de licencias exacto.
-    
-    // EJEMPLO DE DECODIFICACIÓN O SIMULACIÓN DE CREDENCIALES:
-    // (Si tus licencias vienen en formato JSON en Base64):
-    let datosClub;
-    try {
-      datosClub = JSON.parse(atob(token));
-    } catch (err) {
-      // Si el token es directo o usa otro formato, puedes mapearlo aquí:
-      // O simular con datos de prueba de Supabase si corresponde:
-      throw new Error("Formato de licencia inválido.");
-    }
+                // 1. Consultar en la base de datos principal la configuración de la empresa
+                const empresaRefPrincipal = doc(dbPrincipal, "empresas_config", activationId);
+                const snapEmpresaPrincipal = await getDoc(empresaRefPrincipal);
 
-    if (!datosClub.supabaseUrl || !datosClub.supabaseKey) {
-      throw new Error("La licencia no contiene credenciales válidas.");
-    }
+                if (snapEmpresaPrincipal.exists()) {
+                    const datosEmpresaConfig = snapEmpresaPrincipal.data();
+                    
+                    // Guardar configuración independiente si existe en Firebase o Supabase
+                    if (datosEmpresaConfig.firebaseConfig && datosEmpresaConfig.firebaseConfig.apiKey) {
+                        localStorage.setItem(`youcontrol_tenant_config_${activationId}`, JSON.stringify(datosEmpresaConfig.firebaseConfig));
+                    }
+                    if (datosEmpresaConfig.supabaseConfig && datosEmpresaConfig.supabaseConfig.supabaseUrl) {
+                        localStorage.setItem('control_voley_supa_url', datosEmpresaConfig.supabaseConfig.supabaseUrl);
+                        localStorage.setItem('control_voley_supa_key', datosEmpresaConfig.supabaseConfig.supabaseKey);
+                        localStorage.setItem('control_voley_supa_bucket', datosEmpresaConfig.supabaseConfig.bucket || 'control-voley');
+                    }
+                }
 
-    // Guardar en localStorage
-    localStorage.setItem('control_voley_supa_url', datosClub.supabaseUrl);
-    localStorage.setItem('control_voley_supa_key', datosClub.supabaseKey);
-    localStorage.setItem('control_voley_supa_bucket', datosClub.bucket || 'control-voley');
-    localStorage.setItem('control_voley_club_id', datosClub.clubId || 'club_pro');
-    localStorage.setItem('control_voley_club_nombre', datosClub.clubNombre || 'Club Deportivo');
-    localStorage.setItem('control_voley_licencia_validada', 'true');
+                // Si viene del panel maestro nuevo con supabase directo en el token
+                if (data.supabaseUrl) {
+                    localStorage.setItem('control_voley_supa_url', data.supabaseUrl);
+                    localStorage.setItem('control_voley_supa_key', data.supabaseKey);
+                    localStorage.setItem('control_voley_supa_bucket', data.bucket || 'control-voley');
+                }
+                if (data.clubNombre) {
+                    localStorage.setItem('control_voley_club_nombre', data.clubNombre);
+                }
 
-    mostrarPanelApp();
-  } catch (err) {
-    alert("Error de activación: " + (err.message || "Licencia incorrecta"));
-  }
-});
+                // 2. Validar licencia y límite de dispositivos
+                const licenciaRef = doc(dbPrincipal, "licencias", activationId);
+                const snapLicencia = await getDoc(licenciaRef);
 
-function mostrarPanelApp() {
-  document.getElementById('stepLicencia').classList.add('hidden');
-  document.getElementById('stepApp').classList.remove('hidden');
-  const nombreClub = localStorage.getItem('control_voley_club_nombre') || 'Club Deportivo';
-  document.getElementById('clubTitle').textContent = `¡${nombreClub} Conectado!`;
-}
+                let equiposLicencia = [];
+                let limiteLicencia = data.limite || data.l || 3;
+                if (limiteLicencia === "Ilimitado") limiteLicencia = 999;
+                else limiteLicencia = parseInt(limiteLicencia) || 3;
 
-document.getElementById('btnOpenApp').addEventListener('click', () => {
-  window.location.href = 'index_menu.html';
-});
+                if (snapLicencia.exists()) {
+                    const dbData = snapLicencia.data();
+                    equiposLicencia = Array.isArray(dbData.equipos) ? dbData.equipos : [];
+                    let limiteDb = dbData.limite;
+                    if (limiteDb === "Ilimitado") limiteLicencia = 999;
+                    else if (limiteDb) limiteLicencia = parseInt(limiteDb) || limiteLicencia;
 
-window.cambiarLicencia = () => {
-  if (confirm("¿Deseas desvincular este equipo e ingresar otra licencia?")) {
-    localStorage.clear();
-    location.reload();
-  }
-};
-</script>
+                    if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
+                        alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fas fa-key"></i> Activar Sistema`;
+                        return;
+                    }
+
+                    if (!equiposLicencia.includes(hwID)) {
+                        equiposLicencia.push(hwID);
+                        await updateDoc(licenciaRef, { equipos: equiposLicencia });
+                    }
+                } else {
+                    equiposLicencia = [hwID];
+                    await setDoc(licenciaRef, { 
+                        cliente: data.clubNombre || data.n || "", 
+                        limite: limiteLicencia, 
+                        equipos: equiposLicencia, 
+                        fecha_registro: new Date().toISOString() 
+                    });
+                }
+
+                // 3. Actualizar o crear registro en empresas_config principal
+                if (snapEmpresaPrincipal.exists()) {
+                    const dbEmpresa = snapEmpresaPrincipal.data();
+                    const equiposEmpresa = Array.isArray(dbEmpresa.equipos) ? dbEmpresa.equipos : [];
+                    if (!equiposEmpresa.includes(hwID)) {
+                        await updateDoc(empresaRefPrincipal, { 
+                            equipos: [...equiposEmpresa, hwID],
+                            licencia_token: rawToken
+                        });
+                    }
+                } else {
+                    await setDoc(empresaRefPrincipal, { 
+                        nombre: data.clubNombre || data.n || "",
+                        rif: data.rif || "",
+                        email: data.email || "",
+                        limite_dispositivos: limiteLicencia, 
+                        equipos: [hwID], 
+                        licencia_token: rawToken,
+                        timestamp: new Date().toISOString() 
+                    });
+                }
+
+                // 4. Guardar sesión local
+                localStorage.setItem('youcontrol_empresa_id', activationId);
+                localStorage.setItem('licencia_validada', 'true');
+
+                statusDiv.className = "text-xs font-bold text-emerald-600";
+                statusDiv.innerText = "¡Activación exitosa! Configurando dispositivo...";
+
+                // Prompt de instalación PWA si está disponible
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    await window.deferredPrompt.userChoice;
+                    window.deferredPrompt = null;
+                }
+
+                setTimeout(() => {
+                    window.location.replace('sys_v1_menu.html');
+                }, 1000);
+                
+            } catch (e) {
+                console.error("Error al procesar activación:", e);
+                alert("Código de licencia inválido o error en la conexión con Firebase.");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-key"></i> Activar Sistema`;
+                statusDiv.innerText = "";
+            }
+        }
+
+        document.getElementById('btnActivar').addEventListener('click', procesarActivacion);
+    </script>
 </body>
 </html>
