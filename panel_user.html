@@ -71,7 +71,7 @@
                 <i class="fas fa-shield-alt text-2xl"></i>
             </div>
             <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel de Gestión Maestro</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Firebase (Datos Automáticos) + Supabase (Fotos)</p>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Firebase (Empresas Config) + Supabase (Fotos)</p>
         </div>
 
         <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-6">
@@ -144,26 +144,7 @@
                 </div>
             </div>
 
-            <!-- BASE DE DATOS FIREBASE DEL CLUB (Opcional o Independiente) -->
-            <div class="p-5 bg-brand-50/60 border border-brand-electric/20 rounded-2xl space-y-4">
-                <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
-                    <i class="fas fa-fire text-amber-500"></i> Credenciales Firebase (Datos del Club)
-                </h3>
-                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Si lo dejas en blanco, usará la base de datos principal de Firebase por defecto.</p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Firebase API Key</label>
-                        <input type="text" id="fbApiKey" placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Firebase Project ID</label>
-                        <input type="text" id="fbProjectId" placeholder="proyecto-cliente" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUPABASE STORAGE (Igual que en la consola de Supabase) -->
+            <!-- SUPABASE STORAGE -->
             <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
                 <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
                     <i class="fas fa-database text-brand-electric"></i> Supabase Storage (Almacenamiento de Fotos)
@@ -207,8 +188,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Configuración oficial del proyecto maestro youcontrolvoley
         const firebaseConfigMaster = {
-            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7yJUMqe2kg", 
+            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
             authDomain: "youcontrolvoley.firebaseapp.com",
             projectId: "youcontrolvoley",
             storageBucket: "youcontrolvoley.firebasestorage.app",
@@ -277,20 +259,16 @@
                 document.getElementById('telefono').value = data.telefono || "";
                 document.getElementById('limite').value = data.limite_dispositivos || "3";
 
-                const fbCli = data.firebaseConfig || {};
-                document.getElementById('fbApiKey').value = fbCli.apiKey || "";
-                document.getElementById('fbProjectId').value = fbCli.projectId || "";
-
                 const supCli = data.supabaseConfig || {};
                 document.getElementById('supaUrl').value = supCli.supabaseUrl || "";
                 document.getElementById('supaKey').value = supCli.supabaseKey || "";
                 document.getElementById('supaBucket').value = supCli.bucket || id;
 
-                if (data.token_licencia) {
-                    document.getElementById('tokenResult').value = data.token_licencia;
+                if (data.licencia_token) {
+                    document.getElementById('tokenResult').value = data.licencia_token;
                     document.getElementById('resultBox').classList.remove('hidden');
                 }
-                document.getElementById('status').innerText = "✅ Datos del club cargados desde Firebase.";
+                document.getElementById('status').innerText = "✅ Datos del club cargados desde empresas_config.";
             } catch (e) {
                 alert("Error al cargar empresa: " + e.message);
             }
@@ -307,11 +285,9 @@
             document.getElementById('email').value = "";
             document.getElementById('telefono').value = "";
             document.getElementById('limite').value = "3";
-            document.getElementById('fbApiKey').value = "";
-            document.getElementById('fbProjectId').value = "";
             document.getElementById('supaUrl').value = "";
             document.getElementById('supaKey').value = "";
-            document.getElementById('supaBucket').value = "";
+            document.getElementById('supaBucket').value = "YCDEP-CIAR";
             document.getElementById('resultBox').classList.add('hidden');
             inputBusqueda.value = "";
             document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
@@ -325,9 +301,6 @@
             const telefono = document.getElementById('telefono').value.trim();
             const limite = document.getElementById('limite').value;
 
-            const apiKey = document.getElementById('fbApiKey').value.trim();
-            const projectId = document.getElementById('fbProjectId').value.trim();
-
             const supaUrl = document.getElementById('supaUrl').value.trim();
             const supaKey = document.getElementById('supaKey').value.trim();
             const supaBucket = document.getElementById('supaBucket').value.trim();
@@ -336,11 +309,11 @@
                 return alert("El ID del Club y el Nombre de la Empresa son obligatorios.");
             }
 
+            // Generar Token con la información unificada
             const tokenData = {
                 clubId: id,
                 clubNombre: nombre,
                 limite: limite,
-                firebaseConfig: apiKey && projectId ? { apiKey, projectId, authDomain: `${projectId}.firebaseapp.com`, storageBucket: `${projectId}.firebasestorage.app` } : null,
                 supabaseUrl: supaUrl,
                 supabaseKey: supaKey,
                 bucket: supaBucket || id
@@ -353,9 +326,8 @@
                 email: email,
                 telefono: telefono,
                 limite_dispositivos: limite,
-                firebaseConfig: apiKey && projectId ? { apiKey, projectId } : null,
                 supabaseConfig: supaUrl && supaKey ? { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || id } : null,
-                token_licencia: tokenBase64,
+                licencia_token: tokenBase64,
                 updated_at: new Date().toISOString()
             };
 
@@ -364,12 +336,13 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
 
             try {
+                // Guardar absolutamente todo en una sola colección: empresas_config
                 await setDoc(doc(dbMaster, "empresas_config", id), datosGuardar, { merge: true });
 
                 cargarCacheEmpresas();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').classList.remove('hidden');
-                document.getElementById('status').innerText = "🚀 ¡Guardado en Firebase con éxito y licencia generada!";
+                document.getElementById('status').innerText = "🚀 ¡Guardado en empresas_config con éxito y licencia generada!";
             } catch (err) {
                 alert("Error al guardar en Firebase: " + err.message);
             } finally {
