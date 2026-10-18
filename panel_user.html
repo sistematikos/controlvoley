@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Panel de Gestión Maestro (Supabase Database)</title>
+    <title>Control Voley | Panel de Gestión Maestro (Supabase Licencias)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,34 +11,23 @@
       tailwind.config = {
         theme: {
           extend: {
-            fontFamily: {
-              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            },
+            fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
             colors: {
               brand: {
-                50: '#f0f6ff',
-                100: '#e0edff',
-                500: '#0066ff',
-                600: '#0052cc',
-                700: '#003db3',
-                electric: '#0055FF',
-                cyan: '#00D2FF',
-                dark: '#030B1E'
+                50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+                electric: '#0055FF', cyan: '#00D2FF', dark: '#030B1E'
               }
             },
             boxShadow: {
               'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
+              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)'
             }
           }
         }
       }
     </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8FAFC;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
         .bg-sports-pattern {
             background-color: #F1F5F9;
             background-image: 
@@ -46,11 +35,7 @@
                 radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
                 radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); }
         #lista-resultados-busqueda {
             position: absolute; top: 100%; left: 0; right: 148px;
             background: white; border: 1px solid #E2E8F0;
@@ -68,10 +53,10 @@
         <!-- ENCABEZADO -->
         <div class="text-center mb-8">
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-3">
-                <i class="fas fa-shield-alt text-2xl"></i>
+                <i class="fas fa-key text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel de Gestión Maestro</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Firebase (Licencias & Control) + Supabase (Base de Datos & Fotos)</p>
+            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel Maestro de Licencias</h1>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Supabase Maestro (licencias_clubes)</p>
         </div>
 
         <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-6">
@@ -80,7 +65,7 @@
             <div class="relative">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Buscar Club Existente</label>
                 <div class="flex gap-2">
-                    <input type="text" id="busquedaInput" placeholder="Ej: YCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none shadow-sm">
+                    <input type="text" id="busquedaInput" placeholder="Ej: YCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                     <button id="btnBuscarManual" class="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2 cursor-pointer">
                         <i class="fas fa-search"></i> Buscar
                     </button>
@@ -104,7 +89,7 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación (Documento Firebase)</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación (Único)</label>
                         <input type="text" id="empresaID" placeholder="Ej: YCDEP-CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm uppercase">
                     </div>
 
@@ -147,9 +132,9 @@
             <!-- SUPABASE CONFIGURACIÓN Y STORAGE -->
             <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
                 <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                    <i class="fas fa-database text-brand-electric"></i> Supabase Database & Storage (Datos y Fotos)
+                    <i class="fas fa-database text-brand-electric"></i> Supabase del Club (Datos y Fotos)
                 </h3>
-                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí los datos de Supabase donde se almacenarán las tablas del club y las fotos.</p>
+                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí los datos de Supabase del proyecto independiente del club.</p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -164,12 +149,12 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Publishable key (API Keys)</label>
-                    <input type="text" id="supaKey" placeholder="sb_publishable_VC9fuoRhlPpJ..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    <input type="text" id="supaKey" placeholder="sb_publishable_..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                 </div>
             </div>
 
             <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-                <i class="fas fa-save"></i> Guardar en Firebase y Generar Licencia
+                <i class="fas fa-save"></i> Guardar en Supabase y Generar Licencia
             </button>
             <div id="status" class="text-center font-bold text-xs text-emerald-600"></div>
 
@@ -183,35 +168,24 @@
         </div>
     </div>
 
-    <!-- MÓDULO FIREBASE MAESTRO -->
+    <!-- MÓDULO SUPABASE MAESTRO -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Configuración oficial del proyecto maestro youcontrolvoley
-        const firebaseConfigMaster = {
-            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
-            authDomain: "youcontrolvoley.firebaseapp.com",
-            projectId: "youcontrolvoley",
-            storageBucket: "youcontrolvoley.firebasestorage.app",
-            messagingSenderId: "840027639026",
-            appId: "1:840027639026:web:d5170253b4b16c1be0146b"
-        };
+        // Credenciales de tu Supabase Maestro (licencias_clubes)
+        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_KEY = "PON_AQUI_TU_ANONYMOUS_KEY_MAESTRO_DE_SUPABASE"; // Reemplaza con tu Key maestro de Supabase
 
-        const appMaster = initializeApp(firebaseConfigMaster);
-        const dbMaster = getFirestore(appMaster);
-
+        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         let cacheEmpresas = [];
 
         async function cargarCacheEmpresas() {
             try {
-                const snap = await getDocs(collection(dbMaster, "empresas_config"));
-                cacheEmpresas = snap.docs.map(d => ({ 
-                    uid: d.id, 
-                    ...d.data() 
-                }));
+                const { data, error } = await supabaseMaster.from('licencias').select('*');
+                if (error) throw error;
+                cacheEmpresas = data || [];
             } catch (e) {
-                console.error("Error al precargar empresas desde Firebase:", e);
+                console.error("Error al precargar empresas desde Supabase Maestro:", e);
             }
         }
         cargarCacheEmpresas();
@@ -225,16 +199,16 @@
 
             const filtrados = cacheEmpresas.filter(emp => 
                 (emp.nombre && emp.nombre.toLowerCase().includes(term)) ||
-                (emp.uid && emp.uid.toLowerCase().includes(term)) ||
+                (emp.id && emp.id.toLowerCase().includes(term)) ||
                 (emp.ciudad && emp.ciudad.toLowerCase().includes(term))
             );
 
             if (filtrados.length > 0) {
                 listaResultados.style.display = 'block';
                 listaResultados.innerHTML = filtrados.map(emp => `
-                    <div class="item-res-busqueda" onclick="window.seleccionarEmpresaBusqueda('${emp.uid}')">
+                    <div class="item-res-busqueda" onclick="window.seleccionarEmpresaBusqueda('${emp.id}')">
                         <strong>${emp.nombre || 'Sin Nombre'}</strong><br>
-                        <small class="text-slate-500">ID: ${emp.uid} | Ciudad: ${emp.ciudad || 'N/A'}</small>
+                        <small class="text-slate-500">ID: ${emp.id} | Ciudad: ${emp.ciudad || 'N/A'}</small>
                     </div>
                 `).join('');
             } else {
@@ -247,31 +221,24 @@
             listaResultados.style.display = 'none';
             inputBusqueda.value = id;
 
-            try {
-                const docSnap = await getDoc(doc(dbMaster, "empresas_config", id));
-                if (!docSnap.exists()) return alert("No se encontró el registro de este club en Firebase.");
-                
-                const data = docSnap.data();
-                document.getElementById('empresaID').value = id;
-                document.getElementById('nombreEmpresa').value = data.nombre || "";
-                document.getElementById('ciudad').value = data.ciudad || "";
-                document.getElementById('email').value = data.email || "";
-                document.getElementById('telefono').value = data.telefono || "";
-                document.getElementById('limite').value = data.limite_dispositivos || "3";
+            const emp = cacheEmpresas.find(x => x.id === id);
+            if (!emp) return alert("Empresa no encontrada en caché.");
 
-                const supCli = data.supabaseConfig || {};
-                document.getElementById('supaUrl').value = supCli.supabaseUrl || "";
-                document.getElementById('supaKey').value = supCli.supabaseKey || "";
-                document.getElementById('supaBucket').value = supCli.bucket || id;
+            document.getElementById('empresaID').value = emp.id;
+            document.getElementById('nombreEmpresa').value = emp.nombre || "";
+            document.getElementById('ciudad').value = emp.ciudad || "";
+            document.getElementById('email').value = emp.email || "";
+            document.getElementById('telefono').value = emp.telefono || "";
+            document.getElementById('limite').value = emp.limite_dispositivos || "3";
+            document.getElementById('supaUrl').value = emp.supabase_url || "";
+            document.getElementById('supaKey').value = emp.supabase_key || "";
+            document.getElementById('supaBucket').value = emp.bucket || id;
 
-                if (data.licencia_token) {
-                    document.getElementById('tokenResult').value = data.licencia_token;
-                    document.getElementById('resultBox').classList.remove('hidden');
-                }
-                document.getElementById('status').innerText = "✅ Datos del club cargados desde empresas_config.";
-            } catch (e) {
-                alert("Error al cargar empresa: " + e.message);
+            if (emp.licencia_token) {
+                document.getElementById('tokenResult').value = emp.licencia_token;
+                document.getElementById('resultBox').classList.remove('hidden');
             }
+            document.getElementById('status').innerText = "✅ Datos del club cargados desde la tabla licencias.";
         };
 
         document.addEventListener('click', (e) => {
@@ -321,32 +288,36 @@
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
             const datosGuardar = {
+                id: id,
                 nombre: nombre,
                 ciudad: ciudad,
                 email: email,
                 telefono: telefono,
                 limite_dispositivos: limite,
-                supabaseConfig: { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || id },
+                supabase_url: supaUrl,
+                supabase_key: supaKey,
+                bucket: supaBucket || id,
                 licencia_token: tokenBase64,
                 updated_at: new Date().toISOString()
             };
 
             const btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Supabase...`;
 
             try {
-                await setDoc(doc(dbMaster, "empresas_config", id), datosGuardar, { merge: true });
+                const { error } = await supabaseMaster.from('licencias').upsert(datosGuardar);
+                if (error) throw error;
 
                 cargarCacheEmpresas();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').classList.remove('hidden');
-                document.getElementById('status').innerText = "🚀 ¡Guardado en empresas_config con éxito y licencia generada!";
+                document.getElementById('status').innerText = "🚀 ¡Guardado en la tabla licencias con éxito!";
             } catch (err) {
-                alert("Error al guardar en Firebase: " + err.message);
+                alert("Error al guardar en Supabase: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-save"></i> Guardar en Firebase y Generar Licencia`;
+                btn.innerHTML = `<i class="fas fa-save"></i> Guardar en Supabase y Generar Licencia`;
             }
         });
 
