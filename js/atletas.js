@@ -1,91 +1,32 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener identificadores y configuraciones del localStorage
+// 1. Obtener identificadores y configuraciones independientes del club desde localStorage
 const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
 const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'Club Voley';
 
-if (!empresaID) {
-    alert("Sesión no autorizada. Por favor, active el sistema nuevamente.");
+let supaUrl = localStorage.getItem('control_voley_supa_url');
+let supaKey = localStorage.getItem('control_voley_supa_key');
+let supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID.toLowerCase();
+
+// Limpiar corchetes o espacios accidentales si se guardaron mal
+if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
+if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
+
+if (!empresaID || !supaUrl || !supaKey) {
+    alert("Sesión no autorizada o credenciales de Supabase faltantes. Por favor, active el sistema nuevamente.");
     window.location.href = 'index.html';
 }
 
 // Mostrar nombre del club en la barra superior inmediatamente
 _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
 
-// 2. Configuración del Firebase Maestro (youcontrolvoley) para leer las credenciales del club si faltan
-const defaultConfig = {
-    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
-    authDomain: "youcontrolvoley.firebaseapp.com",
-    projectId: "youcontrolvoley",
-    storageBucket: "youcontrolvoley.firebasestorage.app",
-    messagingSenderId: "840027639026",
-    appId: "1:840027639026:web:d5170253b4b16c1be0146b"
-};
+// 2. Inicializar el cliente unificado de Supabase
+const supabase = createClient(supaUrl, supaKey);
 
-function obtenerDbPersonalizada(configParaUsar, identificadorApp) {
-    const existingApps = getApps();
-    let app = existingApps.find(a => a.name === identificadorApp);
-    if (!app) {
-        app = initializeApp(configParaUsar, identificadorApp);
-    }
-    return getFirestore(app);
-}
-
-// Inicializar base de datos de manera dinámica para el club
-let db;
-const cacheKey = `youcontrol_tenant_config_${empresaID}`;
-let tenantConfigStr = localStorage.getItem(cacheKey);
-
-if (tenantConfigStr) {
-    try {
-        const tenantConfig = JSON.parse(tenantConfigStr);
-        db = obtenerDbPersonalizada(tenantConfig, `app_${empresaID}`);
-    } catch (e) {
-        db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
-    }
-} else {
-    // Si no está en caché local, usamos el maestro por defecto mientras consultamos
-    db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
-    
-    // Buscar en segundo plano la configuración de Firebase del cliente en empresas_config
-    (async () => {
-        try {
-            const mainApp = getApps().find(a => a.name === '[DEFAULT]') || initializeApp(defaultConfig, '[DEFAULT]');
-            const mainDb = getFirestore(mainApp);
-            const docSnap = await getDoc(doc(mainDb, "empresas_config", empresaID));
-            
-            if (docSnap.exists() && docSnap.data().firebaseConfig) {
-                const nuevaConfig = docSnap.data().firebaseConfig;
-                // Asegurar estructura completa si falta authDomain o storageBucket
-                if (!nuevaConfig.authDomain && nuevaConfig.projectId) {
-                    nuevaConfig.authDomain = `${nuevaConfig.projectId}.firebaseapp.com`;
-                    nuevaConfig.storageBucket = `${nuevaConfig.projectId}.firebasestorage.app`;
-                }
-                localStorage.setItem(cacheKey, JSON.stringify(nuevaConfig));
-                window.location.reload(); // Recargar para conectar a la base de datos del cliente
-            }
-        } catch (err) {
-            console.error("Error obteniendo config de tenant:", err);
-        }
-    })();
-}
-
-// 3. Configuración de Supabase (Únicamente para Storage de Fotos)
-let supaUrl = localStorage.getItem('control_voley_supa_url');
-let supaKey = localStorage.getItem('control_voley_supa_key');
-let supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID.toLowerCase();
-
-if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
-if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
-
-const supabase = (supaUrl && supaKey) ? createClient(supaUrl, supaKey) : null;
-
-// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO PARA SUPABASE
+// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO PARA SUPABASE STORAGE
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -121,24 +62,24 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// CARGAR ATLETAS DESDE FIRESTORE DEL CLIENTE
+// CARGAR ATLETAS DESDE LA TABLA 'atletas' EN SUPABASE
 async function cargarAtletas() {
     try {
-        const querySnapshot = await getDocs(collection(db, "atletas"));
-        _aL = [];
-        querySnapshot.forEach((docSnap) => {
-            _aL.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        
-        _aL.sort((a, b) => (a.cedulaIdentidad || '').localeCompare(b.cedulaIdentidad || ''));
+        const { data, error } = await supabase
+            .from('atletas')
+            .select('*')
+            .order('cedulaIdentidad', { ascending: true });
+
+        if (error) throw error;
+        _aL = data || [];
         filterNomina();
     } catch (err) {
-        console.error("Error al cargar atletas de Firestore:", err.message);
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Firebase del club.</td></tr>`;
+        console.error("Error al cargar atletas de Supabase:", err.message);
+        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
     }
 }
 
-// GUARDAR O ACTUALIZAR ATLETA EN FIRESTORE DEL CLIENTE
+// GUARDAR O ACTUALIZAR ATLETA EN SUPABASE
 _0xa('aForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btnSubmit = _0xa('bS');
@@ -147,6 +88,7 @@ _0xa('aForm').addEventListener('submit', async (e) => {
     btnSubmit.disabled = true;
     btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
 
+    const idRegistro = _0xa('aId').value;
     const cedula = _0xa('cedulaIdentidad').value.trim();
     const inputArchivo = _0xa('fotoAtleta');
     const archivo = inputArchivo.files[0];
@@ -155,7 +97,7 @@ _0xa('aForm').addEventListener('submit', async (e) => {
     let urlFoto = _0xa('fotoUrlActual').value;
 
     try {
-        if (archivo && supabase) {
+        if (archivo) {
             btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
             const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
             const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
@@ -191,16 +133,31 @@ _0xa('aForm').addEventListener('submit', async (e) => {
             frecuenciaPago: _0xa('frecuenciaPago').value,
             montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
             fechaUltimoPago: _0xa('fechaUltimoPago').value,
-            fotoUrl: urlFoto,
-            updated_at: new Date().toISOString()
+            fotoUrl: urlFoto
         };
 
-        const docRef = doc(db, "atletas", cedula);
-        await setDoc(docRef, atletaData, { merge: true });
+        if (idRegistro) {
+            // Actualizar registro existente
+            const { error } = await supabase.from('atletas').update(atletaData).eq('id', idRegistro);
+            if (error) throw error;
+        } else {
+            // Validar si ya existe la cédula
+            const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
+            if (existente) {
+                alert('Ya existe un atleta registrado con la cédula: ' + cedula);
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = textoOriginalBtn;
+                return;
+            }
+
+            // Insertar nuevo registro
+            const { error } = await supabase.from('atletas').insert([atletaData]);
+            if (error) throw error;
+        }
 
         resetForm();
         cargarAtletas();
-        alert('¡Atleta guardado con éxito en el Firebase del club!');
+        alert('¡Atleta guardado con éxito en Supabase!');
     } catch (err) {
         console.error("Error al guardar:", err);
         alert('Error al guardar el atleta: ' + (err.message || err));
@@ -216,7 +173,7 @@ function renderTable(arr) {
 
   arr.forEach(k => {
     const tr = document.createElement('tr');
-    const foto = k.fotoUrl;
+    const foto = k.fotoUrl || k.foto_url;
     const nombre = k.nombre || '';
     const apellido = k.apellido || '';
     const cedula = k.cedulaIdentidad || 'N/A';
@@ -238,8 +195,8 @@ function renderTable(arr) {
       <td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
       <td class="px-4 py-3 text-slate-600">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
-        <button onclick="editAtleta('${k.cedulaIdentidad}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
-        <button onclick="deleteAtleta('${k.cedulaIdentidad}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
+        <button onclick="editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
+        <button onclick="deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
       </td>`;
     tb.appendChild(tr);
   });
@@ -260,9 +217,10 @@ window.filterNomina = () => {
   renderTable(f);
 };
 
-window.editAtleta = (cedula) => {
-  const k = _aL.find(x => x.cedulaIdentidad === cedula);
+window.editAtleta = (id) => {
+  const k = _aL.find(x => x.id == id);
   if (!k) return;
+  _0xa('aId').value = k.id;
   _0xa('nombre').value = k.nombre || '';
   _0xa('apellido').value = k.apellido || '';
   _0xa('cedulaIdentidad').value = k.cedulaIdentidad || '';
@@ -282,13 +240,15 @@ window.editAtleta = (cedula) => {
   _0xa('fotoUrlActual').value = k.fotoUrl || '';
   _0xa('fT').innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
   _0xa('bS').innerText = 'Actualizar Atleta';
+  _0xa('bC').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.deleteAtleta = async (cedula) => {
-  if (confirm('¿Seguro que deseas eliminar este atleta de la base de datos del club?')) {
+window.deleteAtleta = async (id) => {
+  if (confirm('¿Seguro que deseas eliminar este atleta de Supabase?')) {
     try {
-      await deleteDoc(doc(db, "atletas", cedula));
+      const { error } = await supabase.from('atletas').delete().eq('id', id);
+      if (error) throw error;
       cargarAtletas();
     } catch (e) { 
       console.error(e); 
@@ -299,9 +259,11 @@ window.deleteAtleta = async (cedula) => {
 
 window.resetForm = () => {
   _0xa('aForm').reset();
+  _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
   _0xa('fT').innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
   _0xa('bS').innerText = 'Guardar Atleta';
+  _0xa('bC').classList.add('hidden');
 };
 
 document.getElementById('btnLogout').addEventListener('click', () => {
