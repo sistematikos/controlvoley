@@ -172,9 +172,9 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales de tu Supabase Maestro (licencias_clubes)
+        // Credenciales de tu Supabase Maestro (licencias_clubes) con la nueva Publishable Key
         const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
-        const MASTER_SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqZGltYnB0em9lcXpycmlveXd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNDcxMjksImV4cCI6MjA1NgyM3I2Mjl9.TUWpZ98X-i_Gj0W8n5zN_hR2qK0vY2xL3mP6s4t8v1o"; // Reemplaza con tu Key anónima real de Supabase si es necesario
+        const MASTER_SUPA_KEY = "sb_publishable_avydbrj88elb7xVq1yopFw_2U4MH..."; // <--- Tu Publishable key real integrada
 
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         let cacheEmpresas = [];
