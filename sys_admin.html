@@ -180,7 +180,7 @@
                     <span id="estadoPortalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
                         Cargando estado...
                     </span>
-                    <button id="btnTogglePortal" onclick="togglePortal()" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric">
+                    <button id="btnTogglePortal" onclick="togglePortal()" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric cursor-pointer">
                         Cambiar Estado
                     </button>
                 </div>
@@ -233,7 +233,7 @@
             </div>
         </div>
 
-        <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES (CON public_registro.html) -->
+        <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES -->
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
             
             <!-- 1. ABRIR PORTAL PÚBLICO -->
@@ -326,7 +326,12 @@
         }
 
         async function consultarEstadoPortal() {
-            if (!supabaseLocal) return;
+            if (!supabaseLocal) {
+                const badge = document.getElementById('estadoPortalBadge');
+                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
+                badge.innerHTML = '<i class="fas fa-triangle-exclamation mr-1"></i> SIN SESIÓN DE CLUB';
+                return;
+            }
             try {
                 const { data, error } = await supabaseLocal
                     .from('config_club')
@@ -353,10 +358,14 @@
 
         window.togglePortal = async () => {
             if (!supabaseLocal) {
-                alert("No hay sesión de club activa para cambiar el estado del portal.");
+                alert("No hay sesión de club activa para cambiar el estado del portal. Inicia sesión con las credenciales de tu club.");
                 return;
             }
             const nuevoEstado = !portalAbiertoActual;
+            const btn = document.getElementById('btnTogglePortal');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
+
             try {
                 const { error } = await supabaseLocal
                     .from('config_club')
@@ -370,6 +379,9 @@
             } catch (err) {
                 console.error("Error al actualizar:", err);
                 alert("Error al cambiar el estado del portal. Asegúrate de tener la tabla 'config_club' creada en Supabase.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Cambiar Estado`;
             }
         };
 
