@@ -289,13 +289,11 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // CONEXIÓN MAESTRA A SUPABASE (Mismas credenciales usadas en panel_user.html)
         const SUPABASE_URL = "https://zgkbjpesmgqiprvfowju.supabase.co";
         const SUPABASE_KEY = "sb_publishable_VC9fuoRhlPpJ-8ZrERYfiA_TT_FyciK";
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Credenciales del club actual en sesión local para el estado del portal
         const supaUrlLocal = localStorage.getItem('control_voley_supa_url');
         const supaKeyLocal = localStorage.getItem('control_voley_supa_key');
         const supabaseLocal = (supaUrlLocal && supaKeyLocal) ? createClient(supaUrlLocal, supaKeyLocal) : null;
@@ -361,7 +359,6 @@
             if (!tbody) return;
 
             try {
-                // Consultamos directamente la tabla maestra 'licencias_master'
                 const { data, error } = await supabase
                     .from('licencias_master')
                     .select('*');
@@ -392,7 +389,12 @@
                 const nombreClub = item.nombre || 'Club Deportivo';
                 const idLicencia = item.club_id || 'N/A';
                 const fechaReg = item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A';
-                const limiteDispositivos = item.limite_dispositivos ? `${item.limite_dispositivos} Dispositivos` : '3 Dispositivos';
+                
+                // Muestra con precisión el límite registrado (número o texto)
+                let limVal = item.limite_dispositivos;
+                let limiteDispositivos = (limVal !== undefined && limVal !== null && limVal !== "") 
+                    ? (isNaN(limVal) ? limVal : `${limVal} Dispositivos`) 
+                    : '3 Dispositivos';
 
                 return `
                     <tr class="hover:bg-slate-50 transition">
