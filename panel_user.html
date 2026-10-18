@@ -114,8 +114,8 @@
                             <input type="text" id="nombreEmpresa" placeholder="Ej: Club CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">RIF / Identificación Fiscal</label>
-                            <input type="text" id="rif" placeholder="Ej: J-12345678-9" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Ciudad</label>
+                            <input type="text" id="ciudad" placeholder="Ej: Barquisimeto" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
                     </div>
 
@@ -125,16 +125,21 @@
                             <input type="email" id="email" placeholder="admin@club.com" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Límite de Dispositivos</label>
-                            <select id="limite" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                <option value="1">1 Dispositivo</option>
-                                <option value="2">2 Dispositivos</option>
-                                <option value="3" selected>3 Dispositivos</option>
-                                <option value="5">5 Dispositivos</option>
-                                <option value="10">10 Dispositivos</option>
-                                <option value="Ilimitado">Ilimitado</option>
-                            </select>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono de Contacto</label>
+                            <input type="text" id="telefono" placeholder="Ej: 0412-1234567" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Límite de Dispositivos</label>
+                        <select id="limite" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            <option value="1">1 Dispositivo</option>
+                            <option value="2">2 Dispositivos</option>
+                            <option value="3" selected>3 Dispositivos</option>
+                            <option value="5">5 Dispositivos</option>
+                            <option value="10">10 Dispositivos</option>
+                            <option value="Ilimitado">Ilimitado</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -239,7 +244,7 @@
             const filtrados = cacheEmpresas.filter(emp => 
                 (emp.nombre && emp.nombre.toLowerCase().includes(term)) ||
                 (emp.uid && emp.uid.toLowerCase().includes(term)) ||
-                (emp.rif && emp.rif.toLowerCase().includes(term))
+                (emp.ciudad && emp.ciudad.toLowerCase().includes(term))
             );
 
             if (filtrados.length > 0) {
@@ -247,7 +252,7 @@
                 listaResultados.innerHTML = filtrados.map(emp => `
                     <div class="item-res-busqueda" onclick="window.seleccionarEmpresaBusqueda('${emp.uid}')">
                         <strong>${emp.nombre || 'Sin Nombre'}</strong><br>
-                        <small class="text-slate-500">ID: ${emp.uid} | RIF: ${emp.rif || 'N/A'}</small>
+                        <small class="text-slate-500">ID: ${emp.uid} | Ciudad: ${emp.ciudad || 'N/A'}</small>
                     </div>
                 `).join('');
             } else {
@@ -267,8 +272,9 @@
                 const data = docSnap.data();
                 document.getElementById('empresaID').value = id;
                 document.getElementById('nombreEmpresa').value = data.nombre || "";
-                document.getElementById('rif').value = data.rif || "";
+                document.getElementById('ciudad').value = data.ciudad || "";
                 document.getElementById('email').value = data.email || "";
+                document.getElementById('telefono').value = data.telefono || "";
                 document.getElementById('limite').value = data.limite_dispositivos || "3";
 
                 const fbCli = data.firebaseConfig || {};
@@ -297,8 +303,9 @@
         document.getElementById('btnNuevo').addEventListener('click', () => {
             document.getElementById('empresaID').value = "";
             document.getElementById('nombreEmpresa').value = "";
-            document.getElementById('rif').value = "";
+            document.getElementById('ciudad').value = "";
             document.getElementById('email').value = "";
+            document.getElementById('telefono').value = "";
             document.getElementById('limite').value = "3";
             document.getElementById('fbApiKey').value = "";
             document.getElementById('fbProjectId').value = "";
@@ -313,8 +320,9 @@
         document.getElementById('btnGuardar').addEventListener('click', async () => {
             const id = document.getElementById('empresaID').value.trim().toUpperCase();
             const nombre = document.getElementById('nombreEmpresa').value.trim();
-            const rif = document.getElementById('rif').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
             const email = document.getElementById('email').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
             const limite = document.getElementById('limite').value;
 
             const apiKey = document.getElementById('fbApiKey').value.trim();
@@ -328,7 +336,6 @@
                 return alert("El ID del Club y el Nombre de la Empresa son obligatorios.");
             }
 
-            // Paquete de credenciales encapsulado en el token Base64 para el index del club
             const tokenData = {
                 clubId: id,
                 clubNombre: nombre,
@@ -342,8 +349,9 @@
 
             const datosGuardar = {
                 nombre: nombre,
-                rif: rif,
+                ciudad: ciudad,
                 email: email,
+                telefono: telefono,
                 limite_dispositivos: limite,
                 firebaseConfig: apiKey && projectId ? { apiKey, projectId } : null,
                 supabaseConfig: supaUrl && supaKey ? { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || "control-voley" } : null,
@@ -356,7 +364,6 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
 
             try {
-                // Firebase guarda todo de forma automática sin requerir tablas previas
                 await setDoc(doc(dbMaster, "empresas_config", id), datosGuardar, { merge: true });
 
                 cargarCacheEmpresas();
