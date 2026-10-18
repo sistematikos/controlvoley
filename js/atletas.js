@@ -1,26 +1,89 @@
-import { db } from "./config-firebase.js"; // Importa la base de datos dinámica del club (ej. dataciar)
-import { collection, getDocs, doc, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// Obtener datos del club desde localStorage
-const empresaID = localStorage.getItem('youcontrol_empresa_id');
-const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID;
+// 1. Obtener identificadores y configuraciones del localStorage
+const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'Club Voley';
 
-// Supabase solo se usará para el Storage de Fotos
+if (!empresaID) {
+    alert("Sesión no autorizada. Por favor, active el sistema nuevamente.");
+    window.location.href = 'index.html';
+}
+
+// Mostrar nombre del club en la barra superior inmediatamente
+_0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
+
+// 2. Configuración del Firebase Maestro (youcontrolvoley) para leer las credenciales del club si faltan
+const defaultConfig = {
+    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
+    authDomain: "youcontrolvoley.firebaseapp.com",
+    projectId: "youcontrolvoley",
+    storageBucket: "youcontrolvoley.firebasestorage.app",
+    messagingSenderId: "840027639026",
+    appId: "1:840027639026:web:d5170253b4b16c1be0146b"
+};
+
+function obtenerDbPersonalizada(configParaUsar, identificadorApp) {
+    const existingApps = getApps();
+    let app = existingApps.find(a => a.name === identificadorApp);
+    if (!app) {
+        app = initializeApp(configParaUsar, identificadorApp);
+    }
+    return getFirestore(app);
+}
+
+// Inicializar base de datos de manera dinámica para el club
+let db;
+const cacheKey = `youcontrol_tenant_config_${empresaID}`;
+let tenantConfigStr = localStorage.getItem(cacheKey);
+
+if (tenantConfigStr) {
+    try {
+        const tenantConfig = JSON.parse(tenantConfigStr);
+        db = obtenerDbPersonalizada(tenantConfig, `app_${empresaID}`);
+    } catch (e) {
+        db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
+    }
+} else {
+    // Si no está en caché local, usamos el maestro por defecto mientras consultamos
+    db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
+    
+    // Buscar en segundo plano la configuración de Firebase del cliente en empresas_config
+    (async () => {
+        try {
+            const mainApp = getApps().find(a => a.name === '[DEFAULT]') || initializeApp(defaultConfig, '[DEFAULT]');
+            const mainDb = getFirestore(mainApp);
+            const docSnap = await getDoc(doc(mainDb, "empresas_config", empresaID));
+            
+            if (docSnap.exists() && docSnap.data().firebaseConfig) {
+                const nuevaConfig = docSnap.data().firebaseConfig;
+                // Asegurar estructura completa si falta authDomain o storageBucket
+                if (!nuevaConfig.authDomain && nuevaConfig.projectId) {
+                    nuevaConfig.authDomain = `${nuevaConfig.projectId}.firebaseapp.com`;
+                    nuevaConfig.storageBucket = `${nuevaConfig.projectId}.firebasestorage.app`;
+                }
+                localStorage.setItem(cacheKey, JSON.stringify(nuevaConfig));
+                window.location.reload(); // Recargar para conectar a la base de datos del cliente
+            }
+        } catch (err) {
+            console.error("Error obteniendo config de tenant:", err);
+        }
+    })();
+}
+
+// 3. Configuración de Supabase (Únicamente para Storage de Fotos)
 let supaUrl = localStorage.getItem('control_voley_supa_url');
 let supaKey = localStorage.getItem('control_voley_supa_key');
-let supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'ycdep-ciar';
+let supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID.toLowerCase();
 
 if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
 if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
 
 const supabase = (supaUrl && supaKey) ? createClient(supaUrl, supaKey) : null;
-
-// Mostrar nombre del club en la interfaz
-_0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
 
 // COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO PARA SUPABASE
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
@@ -58,7 +121,7 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// 1. CARGAR ATLETAS DESDE FIRESTORE DEL CLIENTE
+// CARGAR ATLETAS DESDE FIRESTORE DEL CLIENTE
 async function cargarAtletas() {
     try {
         const querySnapshot = await getDocs(collection(db, "atletas"));
@@ -67,7 +130,6 @@ async function cargarAtletas() {
             _aL.push({ id: docSnap.id, ...docSnap.data() });
         });
         
-        // Ordenar por cédula si existe
         _aL.sort((a, b) => (a.cedulaIdentidad || '').localeCompare(b.cedulaIdentidad || ''));
         filterNomina();
     } catch (err) {
@@ -76,14 +138,14 @@ async function cargarAtletas() {
     }
 }
 
-// 2. GUARDAR O ACTUALIZAR ATLETA EN FIRESTORE DEL CLIENTE
+// GUARDAR O ACTUALIZAR ATLETA EN FIRESTORE DEL CLIENTE
 _0xa('aForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btnSubmit = _0xa('bS');
     const textoOriginalBtn = btnSubmit.innerHTML;
 
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
+    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
 
     const cedula = _0xa('cedulaIdentidad').value.trim();
     const inputArchivo = _0xa('fotoAtleta');
@@ -93,7 +155,6 @@ _0xa('aForm').addEventListener('submit', async (e) => {
     let urlFoto = _0xa('fotoUrlActual').value;
 
     try {
-        // Subir foto a Supabase Storage si se seleccionó una nueva
         if (archivo && supabase) {
             btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
             const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
@@ -134,7 +195,6 @@ _0xa('aForm').addEventListener('submit', async (e) => {
             updated_at: new Date().toISOString()
         };
 
-        // Usamos la cédula de identidad como ID del documento en Firestore para evitar duplicados
         const docRef = doc(db, "atletas", cedula);
         await setDoc(docRef, atletaData, { merge: true });
 
