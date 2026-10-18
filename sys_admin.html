@@ -158,7 +158,7 @@
                 <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Clubes Activos
                 </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas y la auditoría de licencias de los clubes en Supabase.</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas y la auditoría de licencias en Firebase.</p>
             </div>
             <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
                 <i class="fas fa-shield-halved"></i> Exclusivo Staff
@@ -187,14 +187,14 @@
             </div>
         </div>
 
-        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN SUPABASE -->
+        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN FIREBASE -->
         <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                     <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
                         <i class="fas fa-shield-halved text-brand-electric"></i> Auditoría de Clubes y Licencias Activas
                     </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado oficial sincronizado desde la tabla maestra de licencias en Supabase.</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado oficial sincronizado desde la base de datos de Firebase.</p>
                 </div>
                 <div class="flex items-center gap-2.5 w-full md:w-auto">
                     <div class="relative w-full md:w-72">
@@ -222,7 +222,7 @@
                     <tbody id="tabla-clubes-registrados" class="text-xs divide-y divide-slate-100 font-medium">
                         <tr>
                             <td colspan="5" class="text-center py-10 text-slate-400 italic">
-                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando clubes desde Supabase...
+                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando clubes desde Firebase...
                             </td>
                         </tr>
                     </tbody>
@@ -304,19 +304,24 @@
         </div>
     </footer>
 
-    <!-- LÓGICA DE CONTROL EN SUPABASE -->
+    <!-- LÓGICA DE CONTROL EN FIREBASE -->
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const SUPABASE_URL = "https://zgkbjpesmgqiprvfowju.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_VC9fuoRhlPpJ-8ZrERYfiA_TT_FyciK";
+        const firebaseConfigMaster = {
+            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q", 
+            authDomain: "youcontrol-1d60a.firebaseapp.com",
+            projectId: "youcontrol-1d60a",
+            storageBucket: "youcontrol-1d60a.firebasestorage.app",
+            messagingSenderId: "812100760013",
+            appId: "1:812100760013:web:7574906aa285555faf5484"
+        };
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const appMaster = initializeApp(firebaseConfigMaster);
+        const dbMaster = getFirestore(appMaster);
 
-        const supaUrlLocal = localStorage.getItem('control_voley_supa_url');
-        const supaKeyLocal = localStorage.getItem('control_voley_supa_key');
-        const supabaseLocal = (supaUrlLocal && supaKeyLocal) ? createClient(supaUrlLocal, supaKeyLocal) : null;
-
+        const empresaIdActiva = localStorage.getItem('youcontrol_empresa_id');
         let portalAbiertoActual = false;
         let listaClubesMaster = [];
 
@@ -326,22 +331,20 @@
         }
 
         async function consultarEstadoPortal() {
-            if (!supabaseLocal) {
+            if (!empresaIdActiva) {
                 const badge = document.getElementById('estadoPortalBadge');
                 badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
                 badge.innerHTML = '<i class="fas fa-triangle-exclamation mr-1"></i> SIN SESIÓN DE CLUB';
                 return;
             }
             try {
-                const { data, error } = await supabaseLocal
-                    .from('config_club')
-                    .select('portal_abierto')
-                    .single();
+                const docRef = doc(dbMaster, "empresas_config", empresaIdActiva);
+                const docSnap = await getDoc(docRef);
 
-                portalAbiertoActual = (error || !data) ? false : data.portal_abierto;
+                portalAbiertoActual = (docSnap.exists() && docSnap.data().portal_abierto === true);
                 actualizarInterfazEstado();
             } catch (err) {
-                console.error("Error consultando estado del portal:", err);
+                console.error("Error consultando estado del portal en Firebase:", err);
             }
         }
 
@@ -357,8 +360,8 @@
         }
 
         window.togglePortal = async () => {
-            if (!supabaseLocal) {
-                alert("No hay sesión de club activa para cambiar el estado del portal. Inicia sesión con las credenciales de tu club.");
+            if (!empresaIdActiva) {
+                alert("No hay sesión de club activa para cambiar el estado del portal.");
                 return;
             }
             const nuevoEstado = !portalAbiertoActual;
@@ -367,18 +370,15 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
 
             try {
-                const { error } = await supabaseLocal
-                    .from('config_club')
-                    .upsert({ id: 1, portal_abierto: nuevoEstado });
-
-                if (error) throw error;
+                const docRef = doc(dbMaster, "empresas_config", empresaIdActiva);
+                await setDoc(docRef, { portal_abierto: nuevoEstado }, { merge: true });
 
                 portalAbiertoActual = nuevoEstado;
                 actualizarInterfazEstado();
                 alert(nuevoEstado ? "¡Portal de inscripciones abierto con éxito!" : "Portal de inscripciones cerrado.");
             } catch (err) {
-                console.error("Error al actualizar:", err);
-                alert("Error al cambiar el estado del portal. Asegúrate de tener la tabla 'config_club' creada en Supabase.");
+                console.error("Error al actualizar estado en Firebase:", err);
+                alert("Error al cambiar el estado del portal.");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `Cambiar Estado`;
@@ -390,17 +390,15 @@
             if (!tbody) return;
 
             try {
-                const { data, error } = await supabase
-                    .from('licencias_master')
-                    .select('*');
-
-                if (error) throw error;
-
-                listaClubesMaster = data || [];
+                const snap = await getDocs(collection(dbMaster, "empresas_config"));
+                listaClubesMaster = snap.docs.map(d => ({
+                    club_id: d.id,
+                    ...d.data()
+                }));
                 renderizarTablaClubes(listaClubesMaster);
             } catch (err) {
-                console.error("Error cargando licencias_master:", err);
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-rose-500 font-bold">Error al conectar con la tabla 'licencias_master' en Supabase.</td></tr>`;
+                console.error("Error cargando empresas desde Firebase:", err);
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-rose-500 font-bold">Error al conectar con Firebase.</td></tr>`;
             }
         }
 
@@ -419,9 +417,15 @@
             tbody.innerHTML = lista.map(item => {
                 const nombreClub = item.nombre || 'Club Deportivo';
                 const idLicencia = item.club_id || 'N/A';
-                const fechaReg = item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A';
                 
-                let limVal = item.limite_dispositivos;
+                let fechaReg = 'N/A';
+                if (item.timestamp) {
+                    fechaReg = new Date(item.timestamp).toLocaleDateString();
+                } else if (item.updated_at) {
+                    fechaReg = new Date(item.updated_at).toLocaleDateString();
+                }
+                
+                let limVal = item.limite_dispositivos || item.limite_equipos;
                 let limiteDispositivos = (limVal !== undefined && limVal !== null && limVal !== "") 
                     ? (isNaN(limVal) ? limVal : `${limVal} Dispositivos`) 
                     : '3 Dispositivos';
