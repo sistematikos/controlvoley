@@ -118,9 +118,9 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales de tu Supabase Maestro (licencias_clubes) con la Publishable Key real
+        // Credenciales de tu Supabase Maestro (licencias_clubes) con la llave real integrada
         const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
-        const MASTER_SUPA_KEY = "sb_publishable_avydbrj88elb7xVq1yopFw_2U4MH..."; 
+        const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
