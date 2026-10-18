@@ -170,6 +170,8 @@ function renderTable(arr) {
 
   arr.forEach(k => {
     const tr = document.createElement('tr');
+    tr.className = "row-atleta border-b border-slate-100 transition";
+    
     const foto = k.fotoUrl || k.foto_url;
     const nombre = k.nombre || '';
     const apellido = k.apellido || '';
@@ -182,19 +184,19 @@ function renderTable(arr) {
       : `<div class="w-10 h-10 rounded-full bg-brand-50 text-brand-electric flex items-center font-black justify-center text-xs border border-brand-electric/20">${(nombre[0]||'')+(apellido[0]||'')}</div>`;
 
     tr.innerHTML = `
-      <td class="px-4 py-3 flex items-center space-x-3">
+      <td class="px-4 py-3 flex items-center space-x-3 cursor-pointer" onclick="verFicha('${k.id}')">
         ${avatar}
         <div>
-          <div class="font-bold text-slate-900">${nombre} ${apellido}</div>
+          <div class="font-bold text-slate-900 hover:text-brand-electric transition">${nombre} ${apellido}</div>
         </div>
       </td>
-      <td class="px-4 py-3 text-slate-600 font-semibold">${fechaNac}</td>
-      <td class="px-4 py-3 text-brand-electric font-bold">${cedula}</td>
-      <td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
-      <td class="px-4 py-3 text-slate-600">${rep}</td>
+      <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
+      <td class="px-4 py-3 text-brand-electric font-bold cursor-pointer" onclick="verFicha('${k.id}')">${cedula}</td>
+      <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
+      <td class="px-4 py-3 text-slate-600 cursor-pointer" onclick="verFicha('${k.id}')">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
-        <button onclick="editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
-        <button onclick="deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
+        <button onclick="event.stopPropagation(); editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
+        <button onclick="event.stopPropagation(); deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
       </td>`;
     tb.appendChild(tr);
   });
@@ -263,12 +265,5 @@ window.resetForm = () => {
   _0xa('bS').innerText = 'Guardar Atleta';
   _0xa('bC').classList.add('hidden');
 };
-
-document.getElementById('btnLogout').addEventListener('click', () => {
-    if (confirm("¿Deseas cerrar la sesión activa?")) {
-        localStorage.clear();
-        window.location.href = 'index.html';
-    }
-});
 
 cargarAtletas();
