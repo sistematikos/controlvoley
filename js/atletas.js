@@ -137,11 +137,9 @@ _0xa('aForm').addEventListener('submit', async (e) => {
         };
 
         if (idRegistro) {
-            // Actualizar registro existente
             const { error } = await supabase.from('atletas').update(atletaData).eq('id', idRegistro);
             if (error) throw error;
         } else {
-            // Validar si ya existe la cédula
             const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
             if (existente) {
                 alert('Ya existe un atleta registrado con la cédula: ' + cedula);
@@ -150,7 +148,6 @@ _0xa('aForm').addEventListener('submit', async (e) => {
                 return;
             }
 
-            // Insertar nuevo registro
             const { error } = await supabase.from('atletas').insert([atletaData]);
             if (error) throw error;
         }
@@ -177,6 +174,7 @@ function renderTable(arr) {
     const nombre = k.nombre || '';
     const apellido = k.apellido || '';
     const cedula = k.cedulaIdentidad || 'N/A';
+    const fechaNac = k.fechaNacimiento || k.fecha_nacimiento || 'N/A';
     const rep = k.nombreRepresentante || 'N/A';
 
     const avatar = foto 
@@ -190,7 +188,7 @@ function renderTable(arr) {
           <div class="font-bold text-slate-900">${nombre} ${apellido}</div>
         </div>
       </td>
-      <td class="px-4 py-3 text-slate-600 font-semibold">${k.sede || 'N/A'}</td>
+      <td class="px-4 py-3 text-slate-600 font-semibold">${fechaNac}</td>
       <td class="px-4 py-3 text-brand-electric font-bold">${cedula}</td>
       <td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
       <td class="px-4 py-3 text-slate-600">${rep}</td>
@@ -225,19 +223,19 @@ window.editAtleta = (id) => {
   _0xa('apellido').value = k.apellido || '';
   _0xa('cedulaIdentidad').value = k.cedulaIdentidad || '';
   _0xa('telefono').value = k.telefono || '';
-  _0xa('fechaNacimiento').value = k.fechaNacimiento || '';
+  _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
   _0xa('sede').value = k.sede || '';
   _0xa('categoria').value = k.categoria || '';
-  _0xa('nroCamiseta').value = k.nroCamiseta || '';
+  _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
   _0xa('peso').value = k.peso || '';
   _0xa('talla').value = k.talla || '';
-  _0xa('nombreRepresentante').value = k.nombreRepresentante || '';
-  _0xa('cedulaRepresentante').value = k.cedulaRepresentante || '';
-  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || '';
-  _0xa('frecuenciaPago').value = k.frecuenciaPago || 'mensual';
-  _0xa('montoPago').value = k.montoPago || '';
-  _0xa('fechaUltimoPago').value = k.fechaUltimoPago || '';
-  _0xa('fotoUrlActual').value = k.fotoUrl || '';
+  _0xa('nombreRepresentante').value = k.nombreRepresentante || k.nombre_representante || '';
+  _0xa('cedulaRepresentante').value = k.cedulaRepresentante || k.cedula_representante || '';
+  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || k.telefono_representante || '';
+  _0xa('frecuenciaPago').value = k.frecuenciaPago || k.frecuencia_pago || 'mensual';
+  _0xa('montoPago').value = k.montoPago || k.monto_pago || '';
+  _0xa('fechaUltimoPago').value = k.fechaUltimoPago || k.fecha_ultimo_pago || '';
+  _0xa('fotoUrlActual').value = k.fotoUrl || k.foto_url || '';
   _0xa('fT').innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
   _0xa('bS').innerText = 'Actualizar Atleta';
   _0xa('bC').classList.remove('hidden');
