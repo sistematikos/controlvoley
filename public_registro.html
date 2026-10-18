@@ -313,7 +313,6 @@ async function verificarEstadoPortal() {
             _0xa('estadoCerrado').classList.remove('hidden');
         }
     } catch (err) {
-        // Por seguridad, si la tabla no responde, se muestra cerrado hasta que se configure
         _0xa('estadoCargando').classList.add('hidden');
         _0xa('estadoCerrado').classList.remove('hidden');
     }
