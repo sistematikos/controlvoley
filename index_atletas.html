@@ -7,6 +7,10 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Vinculación del archivo CSS externo -->
+<link rel="stylesheet" href="css/styles.css">
+
 <script>
   tailwind.config = {
     theme: {
@@ -36,43 +40,6 @@
     }
   }
 </script>
-<style>
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-  }
-  
-  .bg-sports-pattern {
-    background-color: #F1F5F9;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-
-  .banner-glow {
-    position: relative;
-  }
-  .banner-glow::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 5%;
-    width: 90%;
-    height: 30px;
-    background: linear-gradient(90deg, #0055FF, #00D2FF);
-    filter: blur(20px);
-    opacity: 0.35;
-    z-index: -1;
-    border-radius: 50%;
-  }
-</style>
 </head>
 <body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
 
@@ -81,7 +48,6 @@
         <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 glass-card border-b border-slate-200/80 shadow-sm">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 
-                <!-- Regresar & Identificador del Club -->
                 <div class="flex items-center space-x-3">
                     <a href="index_menu.html" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-electric border border-slate-200 flex items-center justify-center transition-all shadow-sm">
                         <i class="fas fa-arrow-left"></i>
@@ -98,7 +64,6 @@
                     </div>
                 </div>
 
-                <!-- Botón Cerrar Sesión -->
                 <button id="btnLogout" class="py-2.5 px-4 sm:px-5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold rounded-xl text-xs sm:text-sm border border-slate-200 hover:border-rose-200 transition-all duration-300 flex items-center gap-2 shadow-sm group">
                     <i class="fas fa-sign-out-alt text-slate-400 group-hover:text-rose-600 transition-colors"></i>
                     <span class="hidden sm:inline">Cerrar Sesión</span>
@@ -113,13 +78,13 @@
                 
                 <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
                     <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <i class="fas fa-users-line"></i> Plantilla &amp; Registros
+                        <i class="fas fa-users-line"></i> Plantilla &amp; Registros por Cédula
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-black text-white max-w-2xl leading-tight drop-shadow-md">
                         Administración de Atletas
                     </h2>
                     <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl font-medium hidden sm:block">
-                        Inscribe deportistas, carga fotografías optimizadas y gestiona la nómina general de tu club.
+                        Inscribe deportistas utilizando su número de cédula, carga fotografías optimizadas y gestiona la nómina general.
                     </p>
                 </div>
             </div>
@@ -139,12 +104,15 @@
                         <input type="hidden" id="aId">
                         <input type="hidden" id="fotoUrlActual">
                         
-                        <!-- Campo para la Foto -->
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Foto del Atleta (Compresión Automática)</label>
                             <input type="file" id="fotoAtleta" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-electric hover:file:bg-brand-100 transition cursor-pointer border border-slate-200 rounded-xl p-1 bg-white">
                         </div>
 
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad</label>
+                            <input type="text" id="cedulaIdentidad" required placeholder="Ej: V-28123456" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-bold text-brand-electric">
+                        </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre</label>
                             <input type="text" id="nombre" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
@@ -152,10 +120,6 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Apellido</label>
                             <input type="text" id="apellido" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad</label>
-                            <input type="text" id="cedulaIdentidad" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono</label>
@@ -255,7 +219,7 @@
                             </select>
                             <div class="relative w-full sm:w-64">
                                 <i class="fas fa-search absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-                                <input type="text" id="sAt" placeholder="Buscar en nómina..." onkeyup="filterNomina()" class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white shadow-sm font-medium">
+                                <input type="text" id="sAt" placeholder="Buscar por cédula o nombre..." onkeyup="filterNomina()" class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white shadow-sm font-medium">
                             </div>
                         </div>
                     </div>
@@ -291,275 +255,7 @@
         </div>
     </footer>
 
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-const _0xa = i => document.getElementById(i); 
-let _aL = [];
-
-// Credenciales del club en localStorage
-const supaUrl = localStorage.getItem('control_voley_supa_url');
-const supaKey = localStorage.getItem('control_voley_supa_key');
-const supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'control-voley';
-const clubID = localStorage.getItem('control_voley_club_id');
-const clubNombre = localStorage.getItem('control_voley_club_nombre');
-
-if (!supaUrl || !supaKey) {
-    alert("Sesión no autorizada o credenciales faltantes.");
-    window.location.href = 'index.html';
-}
-
-const supabase = createClient(supaUrl, supaKey);
-
-// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO (Reducción a 300x300 px - Peso ~30KB)
-async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const width = img.width;
-        const height = img.height;
-
-        const minDim = Math.min(width, height);
-        const startX = (width - minDim) / 2;
-        const startY = (height - minDim) / 2;
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
-
-        canvas.toBlob((blob) => {
-          if (!blob) {
-            reject(new Error('Error al comprimir la imagen'));
-            return;
-          }
-          const compressedFile = new File([blob], `${Date.now()}_atleta.jpg`, {
-            type: 'image/jpeg',
-            lastModified: Date.now()
-          });
-          resolve(compressedFile);
-        }, 'image/jpeg', quality);
-      };
-      img.onerror = (error) => reject(error);
-    };
-    reader.onerror = (error) => reject(error);
-  });
-}
-
-// Cargar Atletas desde Supabase
-async function cargarAtletas() {
-    const nombreMostrar = clubNombre || clubID || 'Activo';
-    _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${nombreMostrar}`;
-
-    try {
-        const { data, error } = await supabase
-            .from('atletas')
-            .select('*')
-            .order('nombre', { ascending: true });
-
-        if (error) throw error;
-        _aL = data || [];
-        filterNomina();
-    } catch (err) {
-        console.error("Error al cargar atletas:", err.message);
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase.</td></tr>`;
-    }
-}
-
-// Guardar o Actualizar Atleta
-_0xa('aForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btnSubmit = _0xa('bS');
-    const textoOriginalBtn = btnSubmit.innerHTML;
-
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
-
-    const id = _0xa('aId').value;
-    const cedula = _0xa('cedulaIdentidad').value.trim();
-    const inputArchivo = _0xa('fotoAtleta');
-    const archivo = inputArchivo.files[0];
-    const sedeAtleta = _0xa('sede').value;
-    
-    let urlFoto = _0xa('fotoUrlActual').value;
-
-    try {
-        if (archivo) {
-            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Comprimiendo Foto...`;
-            
-            const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
-            
-            const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
-
-            const { error: uploadError } = await supabase.storage
-                .from(supaBucket)
-                .upload(fileName, archivoOptimizado, { upsert: true });
-
-            if (uploadError) throw uploadError;
-
-            const { data: publicURLData } = supabase.storage
-                .from(supaBucket)
-                .getPublicUrl(fileName);
-
-            urlFoto = publicURLData.publicUrl;
-        }
-
-        const atletaData = {
-            nombre: _0xa('nombre').value.trim(),
-            apellido: _0xa('apellido').value.trim(),
-            cedulaIdentidad: cedula,
-            telefono: _0xa('telefono').value.trim(),
-            fechaNacimiento: _0xa('fechaNacimiento').value,
-            sede: sedeAtleta,
-            categoria: _0xa('categoria').value,
-            nroCamiseta: _0xa('nroCamiseta').value.trim(),
-            peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
-            talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
-            nombreRepresentante: _0xa('nombreRepresentante').value.trim(),
-            cedulaRepresentante: _0xa('cedulaRepresentante').value.trim(),
-            telefonoRepresentante: _0xa('telefonoRepresentante').value.trim(),
-            frecuenciaPago: _0xa('frecuenciaPago').value,
-            montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
-            fechaUltimoPago: _0xa('fechaUltimoPago').value,
-            fotoUrl: urlFoto
-        };
-
-        if (id) {
-            const { error } = await supabase.from('atletas').update(atletaData).eq('id', id);
-            if (error) throw error;
-        } else {
-            const { error } = await supabase.from('atletas').insert([atletaData]);
-            if (error) throw error;
-        }
-
-        resetForm();
-        cargarAtletas();
-        alert('¡Atleta guardado con éxito!');
-    } catch (err) {
-        console.error("Error al guardar:", err);
-        alert('Error al guardar el atleta: ' + (err.message || err));
-    } finally {
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = textoOriginalBtn;
-    }
-});
-
-function renderTable(arr) {
-  const tb = _0xa('nTB'); tb.innerHTML = '';
-  if (!arr.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados.</td></tr>'; return; }
-
-  arr.forEach(k => {
-    const tr = document.createElement('tr');
-    const foto = k.fotoUrl || k.foto_url;
-    const nombre = k.nombre || '';
-    const apellido = k.apellido || '';
-    const cedula = k.cedulaIdentidad || k.cedula_identidad || 'N/A';
-    const rep = k.nombreRepresentante || k.nombre_representante || 'N/A';
-
-    const avatar = foto 
-      ? `<img src="${foto}" class="w-10 h-10 rounded-full object-cover shadow-sm border border-brand-cyan">` 
-      : `<div class="w-10 h-10 rounded-full bg-brand-50 text-brand-electric flex items-center font-black justify-center text-xs border border-brand-electric/20">${(nombre[0]||'')+(apellido[0]||'')}</div>`;
-
-    tr.innerHTML = `
-      <td class="px-4 py-3 flex items-center space-x-3">
-        ${avatar}
-        <div>
-          <div class="font-bold text-slate-900">${nombre} ${apellido}</div>
-        </div>
-      </td>
-      <td class="px-4 py-3 text-slate-600 font-semibold">${k.sede || 'N/A'}</td>
-      <td class="px-4 py-3 text-slate-600">${cedula}</td>
-      <td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
-      <td class="px-4 py-3 text-slate-600">${rep}</td>
-      <td class="px-4 py-3 text-center space-x-2">
-        <button onclick="editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
-        <button onclick="deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
-      </td>`;
-    tb.appendChild(tr);
-  });
-}
-
-window.filterNomina = () => {
-  const t = _0xa('sAt').value.toLowerCase();
-  const sedeFiltro = _0xa('filtroSede').value;
-  
-  const f = _aL.filter(x => {
-    const coincideSede = (sedeFiltro === 'todos' || x.sede === sedeFiltro);
-    const nom = ((x.nombre || '') + ' ' + (x.apellido || '')).toLowerCase();
-    const ci = (x.cedulaIdentidad || x.cedula_identidad || '').toString();
-    const rep = (x.nombreRepresentante || x.nombre_representante || '').toLowerCase();
-    const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t);
-    return coincideSede && coincideTexto;
-  });
-  renderTable(f);
-};
-
-window.editAtleta = (id) => {
-  const k = _aL.find(x => x.id === id);
-  if (!k) return;
-  _0xa('aId').value = k.id;
-  _0xa('nombre').value = k.nombre || '';
-  _0xa('apellido').value = k.apellido || '';
-  _0xa('cedulaIdentidad').value = k.cedulaIdentidad || k.cedula_identidad || '';
-  _0xa('telefono').value = k.telefono || '';
-  _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
-  _0xa('sede').value = k.sede || '';
-  _0xa('categoria').value = k.categoria || '';
-  _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
-  _0xa('peso').value = k.peso || '';
-  _0xa('talla').value = k.talla || '';
-  _0xa('nombreRepresentante').value = k.nombreRepresentante || k.nombre_representante || '';
-  _0xa('cedulaRepresentante').value = k.cedulaRepresentante || k.cedula_representante || '';
-  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || k.telefono_representante || '';
-  _0xa('frecuenciaPago').value = k.frecuenciaPago || k.frecuencia_pago || 'mensual';
-  _0xa('montoPago').value = k.montoPago || k.monto_pago || '';
-  _0xa('fechaUltimoPago').value = k.fechaUltimoPago || k.fecha_ultimo_pago || '';
-  _0xa('fotoUrlActual').value = k.fotoUrl || k.foto_url || '';
-  _0xa('fT').innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
-  _0xa('bS').innerText = 'Actualizar Atleta';
-  _0xa('bC').classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-window.deleteAtleta = async (id) => {
-  if (confirm('¿Seguro que deseas eliminar este atleta?')) {
-    try {
-      const { error } = await supabase.from('atletas').delete().eq('id', id);
-      if (error) throw error;
-      cargarAtletas();
-    } catch (e) { 
-      console.error(e); 
-      alert('Error al eliminar: ' + e.message); 
-    }
-  }
-};
-
-window.resetForm = () => {
-  _0xa('aForm').reset();
-  _0xa('aId').value = '';
-  _0xa('fotoUrlActual').value = '';
-  _0xa('fT').innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
-  _0xa('bS').innerText = 'Guardar Atleta';
-  _0xa('bC').classList.add('hidden');
-};
-
-document.getElementById('btnLogout').addEventListener('click', () => {
-    if (confirm("¿Deseas cerrar la sesión activa?")) {
-        localStorage.clear();
-        window.location.href = 'index.html';
-    }
-});
-
-cargarAtletas();
-</script>
+    <!-- Vinculación del archivo JS externo (dentro de la carpeta js/) -->
+    <script type="module" src="js/atletas.js"></script>
 </body>
 </html>
