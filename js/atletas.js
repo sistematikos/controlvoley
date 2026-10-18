@@ -1,35 +1,25 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener credenciales y datos del club desde localStorage
-const empresaID = localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
+// 1. Obtener las credenciales INDEPENDIENTES del club desde el localStorage (generadas al activar la licencia)
+const empresaID = localStorage.getItem('youcontrol_empresa_id');
 const supaUrl = localStorage.getItem('control_voley_supa_url');
 const supaKey = localStorage.getItem('control_voley_supa_key');
 const supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID;
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID;
 
-if (!supaUrl || !supaKey) {
-    alert("Sesión no autorizada o credenciales faltantes. Por favor, active el sistema nuevamente.");
+if (!empresaID || !supaUrl || !supaKey) {
+    alert("Sesión no autorizada o credenciales de Supabase no encontradas. Por favor, active el sistema nuevamente.");
     window.location.href = 'index.html';
 }
 
+// Mostrar inmediatamente el nombre del club en la barra superior
+_0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
+
+// 2. Inicializar el cliente de Supabase con la data específica de esta empresa
 const supabase = createClient(supaUrl, supaKey);
-
-// 2. Configuración oficial y definitiva del Firebase Maestro (youcontrolvoley)
-const firebaseConfigMaster = {
-    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
-    authDomain: "youcontrolvoley.firebaseapp.com",
-    projectId: "youcontrolvoley",
-    storageBucket: "youcontrolvoley.firebasestorage.app",
-    messagingSenderId: "840027639026",
-    appId: "1:840027639026:web:d5170253b4b16c1be0146b"
-};
-
-const appMaster = initializeApp(firebaseConfigMaster);
-const dbMaster = getFirestore(appMaster);
 
 // COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO (Reducción a 300x300 px - Peso ~30KB)
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
@@ -74,21 +64,9 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// Cargar Nombre del Club desde Firebase Maestro e Inicializar Atletas desde Supabase
-async function inicializarClubYAtletas() {
+// Cargar Atletas desde la base de datos Supabase del club
+async function cargarAtletas() {
     try {
-        // Consultar el nombre oficial en el proyecto maestro youcontrolvoley -> empresas_config
-        const docRef = doc(dbMaster, "empresas_config", empresaID);
-        const docSnap = await getDoc(docRef);
-        
-        let nombreMostrar = empresaID;
-        if (docSnap.exists() && docSnap.data().nombre) {
-            nombreMostrar = docSnap.data().nombre;
-        }
-
-        _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${nombreMostrar}`;
-
-        // Cargar Atletas desde Supabase ordenados por Cédula
         const { data, error } = await supabase
             .from('atletas')
             .select('*')
@@ -97,11 +75,9 @@ async function inicializarClubYAtletas() {
         if (error) throw error;
         _aL = data || [];
         filterNomina();
-
     } catch (err) {
-        console.error("Error al inicializar:", err.message);
-        _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Club: ${empresaID}`;
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase.</td></tr>`;
+        console.error("Error al cargar atletas de Supabase:", err.message);
+        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error de conexión con la Supabase del club. Verifica las políticas RLS de la tabla 'atletas'.</td></tr>`;
     }
 }
 
@@ -182,8 +158,8 @@ _0xa('aForm').addEventListener('submit', async (e) => {
         }
 
         resetForm();
-        inicializarClubYAtletas();
-        alert('¡Atleta guardado con éxito!');
+        cargarAtletas();
+        alert('¡Atleta guardado con éxito en la base de datos del club!');
     } catch (err) {
         console.error("Error al guardar:", err);
         alert('Error al guardar el atleta: ' + (err.message || err));
@@ -275,7 +251,7 @@ window.deleteAtleta = async (id) => {
     try {
       const { error } = await supabase.from('atletas').delete().eq('id', id);
       if (error) throw error;
-      inicializarClubYAtletas();
+      cargarAtletas();
     } catch (e) { 
       console.error(e); 
       alert('Error al eliminar: ' + e.message); 
@@ -299,4 +275,4 @@ document.getElementById('btnLogout').addEventListener('click', () => {
     }
 });
 
-inicializarClubYAtletas();
+cargarAtletas();
