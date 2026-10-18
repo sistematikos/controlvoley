@@ -3,7 +3,7 @@ import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10
 
 // Configuración por defecto (Proyecto Principal / Maestro - youcontrolvoley)
 const defaultConfig = {
-    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7yJUMqe2kg", 
+    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
     authDomain: "youcontrolvoley.firebaseapp.com",
     projectId: "youcontrolvoley",
     storageBucket: "youcontrolvoley.firebasestorage.app",
@@ -12,7 +12,6 @@ const defaultConfig = {
 };
 
 const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
-let activeConfig = defaultConfig;
 
 // Función para inicializar app segura de manera aislada por tenant
 function obtenerDbPersonalizada(configParaUsar, identificadorApp) {
@@ -24,44 +23,45 @@ function obtenerDbPersonalizada(configParaUsar, identificadorApp) {
     return getFirestore(app);
 }
 
-let db;
+let activeConfig = defaultConfig;
+const cacheKey = empresaID ? `youcontrol_tenant_config_${empresaID}` : null;
+let tenantConfigStr = cacheKey ? localStorage.getItem(cacheKey) : null;
 
-// Inicialización síncrona basada en caché local para velocidad inmediata
-if (empresaID) {
-    const cacheKey = `youcontrol_tenant_config_${empresaID}`;
-    let tenantConfigStr = localStorage.getItem(cacheKey);
-
-    if (tenantConfigStr) {
-        try {
-            activeConfig = JSON.parse(tenantConfigStr);
-            console.log("🔌 Usando configuración independiente desde caché para:", empresaID);
-            db = obtenerDbPersonalizada(activeConfig, `app_${empresaID}`);
-        } catch (e) {
-            console.error("Error leyendo caché tenant:", e);
-            db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
-        }
-    } else {
-        // Si no está en caché, inicializamos con la maestra y buscamos en segundo plano
-        db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
-        
-        (async () => {
-            try {
-                const mainApp = getApps().find(a => a.name === '[DEFAULT]') || initializeApp(defaultConfig, '[DEFAULT]');
-                const mainDb = getFirestore(mainApp);
-                const docSnap = await getDoc(doc(mainDb, "empresas_config", empresaID));
-                
-                if (docSnap.exists() && docSnap.data().firebaseConfig) {
-                    const nuevaConfig = docSnap.data().firebaseConfig;
-                    localStorage.setItem(cacheKey, JSON.stringify(nuevaConfig));
-                    console.log("☁️ Configuración independiente descargada de la nube y guardada en caché para:", empresaID);
-                }
-            } catch (e) {
-                console.error("Error consultando configuración en la nube de forma asíncrona:", e);
-            }
-        })();
+if (tenantConfigStr) {
+    try {
+        activeConfig = JSON.parse(tenantConfigStr);
+        console.log("🔌 Usando configuración independiente desde caché para:", empresaID);
+    } catch (e) {
+        console.error("Error leyendo caché tenant:", e);
+        activeConfig = defaultConfig;
     }
-} else {
-    db = obtenerDbPersonalizada(defaultConfig, '[DEFAULT]');
+}
+
+// Inicializar la base de datos principal de este módulo de forma síncrona
+let db = obtenerDbPersonalizada(activeConfig, empresaID ? `app_${empresaID}` : '[DEFAULT]');
+
+// Si no estaba en caché pero hay empresaID, consultamos a la nube y si cambia, recargamos opcionalmente o actualizamos
+if (empresaID && !tenantConfigStr) {
+    (async () => {
+        try {
+            const mainApp = getApps().find(a => a.name === '[DEFAULT]') || initializeApp(defaultConfig, '[DEFAULT]');
+            const mainDb = getFirestore(mainApp);
+            const docSnap = await getDoc(doc(mainDb, "empresas_config", empresaID));
+            
+            if (docSnap.exists() && docSnap.data().firebaseConfig) {
+                const nuevaConfig = docSnap.data().firebaseConfig;
+                localStorage.setItem(cacheKey, JSON.stringify(nuevaConfig));
+                console.log("☁️ Configuración independiente descargada de la nube y guardada en caché para:", empresaID);
+                
+                // Si la configuración no estaba en caché al arrancar, sugerimos recargar para aplicar la db del cliente
+                if (!tenantConfigStr) {
+                    window.location.reload();
+                }
+            }
+        } catch (e) {
+            console.error("Error consultando configuración en la nube de forma asíncrona:", e);
+        }
+    })();
 }
 
 export { db };
