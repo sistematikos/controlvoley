@@ -1,261 +1,239 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Voley | Gestión de Atletas</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<!-- Vinculación del archivo CSS externo -->
-<link rel="stylesheet" href="css/styles.css">
-
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        },
-        colors: {
-          brand: {
-            50: '#f0f6ff',
-            100: '#e0edff',
-            500: '#0066ff',
-            600: '#0052cc',
-            700: '#003db3',
-            electric: '#0055FF',
-            cyan: '#00D2FF',
-            dark: '#030B1E'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley | Gestión de Atletas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+            colors: {
+              brand: {
+                50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+                electric: '#0055FF', cyan: '#00D2FF', dark: '#030B1E'
+              }
+            },
+            boxShadow: {
+              'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)'
+            }
           }
-        },
-        boxShadow: {
-          'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-          'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
-          'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
-          'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
         }
       }
-    }
-  }
-</script>
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
+<body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
-    <div>
-        <!-- NAVEGACIÓN SUPERIOR FLOTANTE -->
-        <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 glass-card border-b border-slate-200/80 shadow-sm">
-            <div class="max-w-7xl mx-auto flex justify-between items-center">
-                
-                <div class="flex items-center space-x-3">
-                    <a href="index_menu.html" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-electric border border-slate-200 flex items-center justify-center transition-all shadow-sm">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Gestión de Atletas</h1>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20 uppercase tracking-widest">PRO</span>
-                        </div>
-                        <p id="userEmail" class="text-xs font-bold text-brand-electric mt-1 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                            <span>Cargando club...</span>
-                        </p>
-                    </div>
-                </div>
-
-                <button id="btnLogout" class="py-2.5 px-4 sm:px-5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold rounded-xl text-xs sm:text-sm border border-slate-200 hover:border-rose-200 transition-all duration-300 flex items-center gap-2 shadow-sm group">
-                    <i class="fas fa-sign-out-alt text-slate-400 group-hover:text-rose-600 transition-colors"></i>
-                    <span class="hidden sm:inline">Cerrar Sesión</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- BANNER HERO PRINCIPAL -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
-            <div class="banner-glow rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-brand-dark">
-                <img src="img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-48 object-cover opacity-85 mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
-                
-                <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
-                    <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <i class="fas fa-users-line"></i> Plantilla &amp; Registros por Cédula
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-white max-w-2xl leading-tight drop-shadow-md">
-                        Administración de Atletas
-                    </h2>
-                    <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl font-medium hidden sm:block">
-                        Inscribe deportistas utilizando su número de cédula, carga fotografías optimizadas y gestiona la nómina general.
+    <div class="max-w-7xl mx-auto w-full space-y-6">
+        
+        <!-- BARRA SUPERIOR -->
+        <header class="glass-card p-4 rounded-2xl shadow-glass flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index_menu.html" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition shadow-sm">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="text-lg font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                        Gestión de Atletas <span class="text-[10px] bg-brand-electric text-white px-2 py-0.5 rounded-md font-bold">PRO</span>
+                    </h1>
+                    <p id="userEmail" class="text-xs font-semibold text-slate-500 flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Cargando club...
                     </p>
                 </div>
             </div>
-        </div>
+            <button id="btnLogout" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-2 cursor-pointer shadow-sm">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </header>
 
         <!-- CONTENIDO PRINCIPAL -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
-                <!-- Formulario de Registro / Edición -->
-                <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-1 h-fit">
-                    <h2 id="fT" class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta
-                    </h2>
-                    
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- FORMULARIO DE REGISTRO / EDICIÓN -->
+            <div class="lg:col-span-4">
+                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-5 sticky top-6">
+                    <div class="flex justify-between items-center">
+                        <h3 id="fT" class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
+                            <i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta
+                        </h3>
+                        <button type="button" onclick="resetForm()" id="bC" class="hidden text-[10px] font-bold text-slate-400 hover:text-slate-700 uppercase tracking-wider">Cancelar</button>
+                    </div>
+
                     <form id="aForm" class="space-y-4">
                         <input type="hidden" id="aId">
                         <input type="hidden" id="fotoUrlActual">
-                        
+
+                        <!-- FOTO -->
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Foto del Atleta (Compresión Automática)</label>
-                            <input type="file" id="fotoAtleta" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-electric hover:file:bg-brand-100 transition cursor-pointer border border-slate-200 rounded-xl p-1 bg-white">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Foto del Atleta (Compresión Automática)</label>
+                            <input type="file" id="fotoAtleta" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-electric hover:file:bg-brand-100 file:cursor-pointer border border-slate-200 rounded-xl p-1 bg-white">
                         </div>
 
+                        <!-- CÉDULA -->
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad</label>
-                            <input type="text" id="cedulaIdentidad" required placeholder="Ej: V-28123456" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-bold text-brand-electric">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Cédula de Identidad *</label>
+                            <input type="text" id="cedulaIdentidad" required placeholder="Ej: V-28123456" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre</label>
-                            <input type="text" id="nombre" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Apellido</label>
-                            <input type="text" id="apellido" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono</label>
-                            <input type="text" id="telefono" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Fecha de Nacimiento</label>
-                            <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede</label>
-                            <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
-                                <option value="">Seleccione sede...</option>
-                                <option value="Principal">Principal</option>
-                                <option value="Sucursal">Sucursal</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Categoría</label>
-                            <select id="categoria" required class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
-                                <option value="">Seleccione...</option>
-                                <option value="U7">U7</option>
-                                <option value="U9">U9</option>
-                                <option value="U11">U11</option>
-                                <option value="U13">U13</option>
-                                <option value="U15">U15</option>
-                                <option value="U17">U17</option>
-                                <option value="U19">U19</option>
-                                <option value="Senior">Senior</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Número de Camiseta</label>
-                            <input type="number" id="nroCamiseta" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
+
+                        <!-- NOMBRE Y APELLIDO -->
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Peso (kg)</label>
-                                <input type="number" step="0.1" id="peso" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre *</label>
+                                <input type="text" id="nombre" required placeholder="Nombre" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Altura</label>
-                                <input type="number" step="0.01" id="talla" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Apellido *</label>
+                                <input type="text" id="apellido" required placeholder="Apellido" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                             </div>
                         </div>
 
-                        <hr class="border-slate-200/80 my-3">
-                        <h3 class="text-xs font-black uppercase tracking-wider text-slate-700">Datos del Representante</h3>
-                        
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre Representante</label>
-                            <input type="text" id="nombreRepresentante" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula Representante</label>
-                            <input type="text" id="cedulaRepresentante" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono Representante</label>
-                            <input type="text" id="telefonoRepresentante" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                        <!-- TELÉFONO Y FECHA NACIMIENTO -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono</label>
+                                <input type="text" id="telefono" placeholder="0412-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Fecha Nacimiento</label>
+                                <input type="date" id="fechaNacimiento" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
                         </div>
 
-                        <hr class="border-slate-200/80 my-3">
-                        
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Frecuencia de Pago</label>
-                            <select id="frecuenciaPago" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
-                                <option value="mensual">Mensual</option>
-                                <option value="quincenal">Quincenal</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Monto de Pago ($)</label>
-                            <input type="number" step="0.01" id="montoPago" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Fecha de Pago</label>
-                            <input type="date" id="fechaUltimoPago" class="mt-1 block w-full border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                        <!-- SEDE Y CATEGORÍA -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Sede</label>
+                                <select id="sede" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                    <option value="Principal">Principal</option>
+                                    <option value="Norte">Norte</option>
+                                    <option value="Este">Este</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Categoría</label>
+                                <select id="categoria" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                    <option value="U13">U13</option>
+                                    <option value="U15" selected>U15</option>
+                                    <option value="U17">U17</option>
+                                    <option value="U19">U19</option>
+                                    <option value="Libre">Libre</option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div class="flex space-x-2 pt-3">
-                            <button type="submit" id="bS" class="w-full py-3 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider">Guardar Atleta</button>
-                            <button type="button" id="bC" onclick="resetForm()" class="hidden py-3 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition text-sm">Cancelar</button>
+                        <!-- CAMISETA, PESO Y TALLA -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nro. Camiseta</label>
+                                <input type="text" id="nroCamiseta" placeholder="10" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Peso (kg)</label>
+                                <input type="number" step="0.1" id="peso" placeholder="60" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Altura (m)</label>
+                                <input type="number" step="0.01" id="talla" placeholder="1.75" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
                         </div>
+
+                        <hr class="border-slate-200">
+
+                        <!-- DATOS DEL REPRESENTANTE -->
+                        <div class="space-y-3">
+                            <h4 class="text-[11px] font-black uppercase tracking-wider text-slate-700">Datos del Representante</h4>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre Representante</label>
+                                <input type="text" id="nombreRepresentante" placeholder="Nombre completo" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Cédula Rep.</label>
+                                    <input type="text" id="cedulaRepresentante" placeholder="V-12345678" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono Rep.</label>
+                                    <input type="text" id="telefonoRepresentante" placeholder="0414-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PAGOS -->
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Frecuencia</label>
+                                <select id="frecuenciaPago" class="w-full px-2 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                    <option value="mensual">Mensual</option>
+                                    <option value="semanal">Semanal</option>
+                                    <option value="anual">Anual</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Monto ($)</label>
+                                <input type="number" step="0.01" id="montoPago" placeholder="20.00" class="w-full px-2.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Último Pago</label>
+                                <input type="date" id="fechaUltimoPago" class="w-full px-2 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="bS" class="w-full py-3.5 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer mt-2">
+                            <i class="fas fa-save"></i> Guardar Atleta
+                        </button>
                     </form>
                 </div>
+            </div>
 
-                <!-- Listado / Nómina -->
-                <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80 lg:col-span-2">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <h2 class="text-xl font-black text-slate-900">Nómina del Club</h2>
-                        <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                            <select id="filtroSede" onchange="filterNomina()" class="border border-slate-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold shadow-sm">
-                                <option value="todos">Todas las sedes (General)</option>
+            <!-- NÓMINA DE ATLETAS -->
+            <div class="lg:col-span-8">
+                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <h3 class="text-sm font-black uppercase tracking-tight text-slate-900">Nómina del Club</h3>
+                        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                            <select id="filtroSede" onchange="filterNomina()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm outline-none">
+                                <option value="todos">Todas las sedes</option>
                                 <option value="Principal">Principal</option>
-                                <option value="Sucursal">Sucursal</option>
+                                <option value="Norte">Norte</option>
+                                <option value="Este">Este</option>
                             </select>
-                            <div class="relative w-full sm:w-64">
-                                <i class="fas fa-search absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-                                <input type="text" id="sAt" placeholder="Buscar por cédula o nombre..." onkeyup="filterNomina()" class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white shadow-sm font-medium">
+                            <div class="relative flex-1 sm:w-64">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-search text-xs"></i></span>
+                                <input type="text" id="sAt" oninput="filterNomina()" placeholder="Buscar por cédula o nombre..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="overflow-x-auto max-h-[650px] overflow-y-auto rounded-xl border border-slate-200/60 bg-white">
-                        <table class="min-w-full divide-y divide-slate-200">
-                            <thead class="bg-slate-50 sticky top-0 z-10">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase">Atleta</th>
-                                    <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase">Sede</th>
-                                    <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase">Cédula</th>
-                                    <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase">Cat.</th>
-                                    <th class="px-4 py-3 text-left text-xs font-black text-slate-600 uppercase">Representante</th>
-                                    <th class="px-4 py-3 text-center text-xs font-black text-slate-600 uppercase">Acciones</th>
+
+                    <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
+                                    <th class="px-4 py-3">Atleta</th>
+                                    <th class="px-4 py-3">Fecha Nac.</th>
+                                    <th class="px-4 py-3">Cédula</th>
+                                    <th class="px-4 py-3">Cat.</th>
+                                    <th class="px-4 py-3">Representante</th>
+                                    <th class="px-4 py-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="nTB" class="bg-white divide-y divide-slate-100 text-sm font-medium">
-                                <tr><td colspan="6" class="text-center py-10 text-slate-400 italic">Cargando nómina...</td></tr>
+                            <tbody id="nTB" class="divide-y divide-slate-100 text-xs">
+                                <!-- Dinámico -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
-        </main>
+
+        </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold shadow-inner mt-12">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p>&copy; 2026 <span class="font-bold text-slate-800">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
-            <p class="text-[11px] text-slate-400">Plataforma de Software Deportivo de Alto Rendimiento</p>
-        </div>
-    </footer>
-
-    <!-- Vinculación del archivo JS externo (dentro de la carpeta js/) -->
+    <!-- MÓDULO JS -->
     <script type="module" src="js/atletas.js"></script>
 </body>
 </html>
