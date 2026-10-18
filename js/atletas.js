@@ -11,7 +11,6 @@ let supaUrl = localStorage.getItem('control_voley_supa_url');
 let supaKey = localStorage.getItem('control_voley_supa_key');
 let supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID.toLowerCase();
 
-// Limpiar corchetes o espacios accidentales si se guardaron mal
 if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
 if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
 
@@ -20,8 +19,10 @@ if (!empresaID || !supaUrl || !supaKey) {
     window.location.href = 'index.html';
 }
 
-// Mostrar nombre del club en la barra superior inmediatamente
-_0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
+const userEmailEl = _0xa('userEmail');
+if (userEmailEl) {
+    userEmailEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
+}
 
 // 2. Inicializar el cliente unificado de Supabase
 const supabase = createClient(supaUrl, supaKey);
@@ -75,98 +76,116 @@ async function cargarAtletas() {
         filterNomina();
     } catch (err) {
         console.error("Error al cargar atletas de Supabase:", err.message);
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
+        const nTB = _0xa('nTB');
+        if (nTB) {
+            nTB.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
+        }
     }
 }
 
 // GUARDAR O ACTUALIZAR ATLETA EN SUPABASE
-_0xa('aForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btnSubmit = _0xa('bS');
-    const textoOriginalBtn = btnSubmit.innerHTML;
+const aForm = _0xa('aForm');
+if (aForm) {
+    aForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSubmit = _0xa('bS');
+        const textoOriginalBtn = btnSubmit ? btnSubmit.innerHTML : 'Guardar Atleta';
 
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
-
-    const idRegistro = _0xa('aId').value;
-    const cedula = _0xa('cedulaIdentidad').value.trim();
-    const inputArchivo = _0xa('fotoAtleta');
-    const archivo = inputArchivo.files[0];
-    const sedeAtleta = _0xa('sede').value;
-    
-    let urlFoto = _0xa('fotoUrlActual').value;
-
-    try {
-        if (archivo) {
-            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
-            const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
-            const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
-
-            const { error: uploadError } = await supabase.storage
-                .from(supaBucket)
-                .upload(fileName, archivoOptimizado, { upsert: true });
-
-            if (uploadError) throw uploadError;
-
-            const { data: publicURLData } = supabase.storage
-                .from(supaBucket)
-                .getPublicUrl(fileName);
-
-            urlFoto = publicURLData.publicUrl;
+        if (btnSubmit) {
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
         }
 
-        const atletaData = {
-            nombre: _0xa('nombre').value.trim(),
-            apellido: _0xa('apellido').value.trim(),
-            cedulaIdentidad: cedula,
-            telefono: _0xa('telefono').value.trim(),
-            fechaNacimiento: _0xa('fechaNacimiento').value,
-            sede: sedeAtleta,
-            categoria: _0xa('categoria').value,
-            nroCamiseta: _0xa('nroCamiseta').value.trim(),
-            peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
-            talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
-            nombreRepresentante: _0xa('nombreRepresentante').value.trim(),
-            cedulaRepresentante: _0xa('cedulaRepresentante').value.trim(),
-            telefonoRepresentante: _0xa('telefonoRepresentante').value.trim(),
-            frecuenciaPago: _0xa('frecuenciaPago').value,
-            montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
-            fechaUltimoPago: _0xa('fechaUltimoPago').value,
-            fotoUrl: urlFoto
-        };
+        const idRegistro = _0xa('aId').value;
+        const cedula = _0xa('cedulaIdentidad').value.trim();
+        const inputArchivo = _0xa('fotoAtleta');
+        const archivo = inputArchivo ? inputArchivo.files[0] : null;
+        const sedeAtleta = _0xa('sede').value;
+        
+        let urlFoto = _0xa('fotoUrlActual').value;
 
-        if (idRegistro) {
-            const { error } = await supabase.from('atletas').update(atletaData).eq('id', idRegistro);
-            if (error) throw error;
-        } else {
-            const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
-            if (existente) {
-                alert('Ya existe un atleta registrado con la cédula: ' + cedula);
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = textoOriginalBtn;
-                return;
+        try {
+            if (archivo) {
+                if (btnSubmit) btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
+                const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
+                const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
+                const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from(supaBucket)
+                    .upload(fileName, archivoOptimizado, { upsert: true });
+
+                if (uploadError) throw uploadError;
+
+                const { data: publicURLData } = supabase.storage
+                    .from(supaBucket)
+                    .getPublicUrl(fileName);
+
+                urlFoto = publicURLData.publicUrl;
             }
 
-            const { error } = await supabase.from('atletas').insert([atletaData]);
-            if (error) throw error;
-        }
+            const atletaData = {
+                nombre: _0xa('nombre').value.trim(),
+                apellido: _0xa('apellido').value.trim(),
+                cedulaIdentidad: cedula,
+                telefono: _0xa('telefono').value.trim(),
+                fechaNacimiento: _0xa('fechaNacimiento').value,
+                sede: sedeAtleta,
+                categoria: _0xa('categoria').value,
+                nroCamiseta: _0xa('nroCamiseta').value.trim(),
+                peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
+                talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
+                nombreRepresentante: _0xa('nombreRepresentante').value.trim(),
+                cedulaRepresentante: _0xa('cedulaRepresentante').value.trim(),
+                telefonoRepresentante: _0xa('telefonoRepresentante').value.trim(),
+                frecuenciaPago: _0xa('frecuenciaPago').value,
+                montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
+                fechaUltimoPago: _0xa('fechaUltimoPago').value,
+                fotoUrl: urlFoto
+            };
 
-        resetForm();
-        cargarAtletas();
-        alert('¡Atleta guardado con éxito en Supabase!');
-    } catch (err) {
-        console.error("Error al guardar:", err);
-        alert('Error al guardar el atleta: ' + (err.message || err));
-    } finally {
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = textoOriginalBtn;
-    }
-});
+            if (idRegistro) {
+                const { error } = await supabase.from('atletas').update(atletaData).eq('id', idRegistro);
+                if (error) throw error;
+            } else {
+                const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
+                if (existente) {
+                    alert('Ya existe un atleta registrado con la cédula: ' + cedula);
+                    if (btnSubmit) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = textoOriginalBtn;
+                    }
+                    return;
+                }
+
+                const { error } = await supabase.from('atletas').insert([atletaData]);
+                if (error) throw error;
+            }
+
+            window.resetForm();
+            cargarAtletas();
+            alert('¡Atleta guardado con éxito en Supabase!');
+        } catch (err) {
+            console.error("Error al guardar:", err);
+            alert('Error al guardar el atleta: ' + (err.message || err));
+        } finally {
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = textoOriginalBtn;
+            }
+        }
+    });
+}
 
 function renderTable(arr) {
-  const tb = _0xa('nTB'); tb.innerHTML = '';
-  if (!arr.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; return; }
+  const tb = _0xa('nTB'); 
+  if (!tb) return;
+  tb.innerHTML = '';
+  
+  if (!arr.length) { 
+      tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; 
+      return; 
+  }
 
   arr.forEach(k => {
     const tr = document.createElement('tr');
@@ -203,8 +222,10 @@ function renderTable(arr) {
 }
 
 window.filterNomina = () => {
-  const t = _0xa('sAt').value.toLowerCase();
-  const sedeFiltro = _0xa('filtroSede').value;
+  const sAt = _0xa('sAt');
+  const filtroSedeEl = _0xa('filtroSede');
+  const t = sAt ? sAt.value.toLowerCase() : '';
+  const sedeFiltro = filtroSedeEl ? filtroSedeEl.value : 'todos';
   
   const f = _aL.filter(x => {
     const coincideSede = (sedeFiltro === 'todos' || x.sede === sedeFiltro);
@@ -238,9 +259,14 @@ window.editAtleta = (id) => {
   _0xa('montoPago').value = k.montoPago || k.monto_pago || '';
   _0xa('fechaUltimoPago').value = k.fechaUltimoPago || k.fecha_ultimo_pago || '';
   _0xa('fotoUrlActual').value = k.fotoUrl || k.foto_url || '';
-  _0xa('fT').innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
-  _0xa('bS').innerText = 'Actualizar Atleta';
-  _0xa('bC').classList.remove('hidden');
+  
+  const fT = _0xa('fT');
+  const bS = _0xa('bS');
+  const bC = _0xa('bC');
+
+  if (fT) fT.innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
+  if (bS) bS.innerText = 'Actualizar Atleta';
+  if (bC) bC.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
@@ -258,12 +284,22 @@ window.deleteAtleta = async (id) => {
 };
 
 window.resetForm = () => {
-  _0xa('aForm').reset();
+  const aForm = _0xa('aForm');
+  if (aForm) aForm.reset();
   _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
-  _0xa('fT').innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
-  _0xa('bS').innerText = 'Guardar Atleta';
-  _0xa('bC').classList.add('hidden');
+  
+  const fT = _0xa('fT');
+  const bS = _0xa('bS');
+  const bC = _0xa('bC');
+
+  if (fT) fT.innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
+  if (bS) bS.innerText = 'Guardar Atleta';
+  if (bC) bC.classList.add('hidden');
+};
+
+window.verFicha = function(id) {
+    window.location.href = `index_ficha.html?id=${id}`;
 };
 
 cargarAtletas();
