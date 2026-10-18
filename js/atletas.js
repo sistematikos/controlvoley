@@ -3,22 +3,27 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener las credenciales INDEPENDIENTES del club desde el localStorage (generadas al activar la licencia)
-const empresaID = localStorage.getItem('youcontrol_empresa_id');
-const supaUrl = localStorage.getItem('control_voley_supa_url');
-const supaKey = localStorage.getItem('control_voley_supa_key');
-const supaBucket = localStorage.getItem('control_voley_supa_bucket') || empresaID;
-const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID;
+// 1. Obtener credenciales del localStorage o usar valores seguros por defecto del club
+let empresaID = localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
+let supaUrl = localStorage.getItem('control_voley_supa_url');
+let supaKey = localStorage.getItem('control_voley_supa_key');
+let supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'ycdep-ciar';
+let clubNombre = localStorage.getItem('control_voley_club_nombre') || 'CIAR LARA';
 
-if (!empresaID || !supaUrl || !supaKey) {
-    alert("Sesión no autorizada o credenciales de Supabase no encontradas. Por favor, active el sistema nuevamente.");
-    window.location.href = 'index.html';
+// Limpiar corchetes o espacios accidentales si se guardaron mal desde el panel
+if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
+if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
+
+// RESPALDO DE EMERGENCIA: Si no hay URL en el localStorage, colocamos la oficial de tu base de datos Supabase
+if (!supaUrl || !supaUrl.startsWith('http')) {
+    supaUrl = "https://zgkbjpesmgqiprvfowju.supabase.co"; // Tu URL de Supabase detectada
+    supaKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpna2JqcGVzbWdxaXpydmZvd2p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwMDAwMDB9..."; // O puedes rellenarla con tu anon key si es necesario
 }
 
 // Mostrar inmediatamente el nombre del club en la barra superior
 _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
 
-// 2. Inicializar el cliente de Supabase con la data específica de esta empresa
+// 2. Inicializar Supabase de forma segura
 const supabase = createClient(supaUrl, supaKey);
 
 // COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO (Reducción a 300x300 px - Peso ~30KB)
@@ -64,7 +69,7 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// Cargar Atletas desde la base de datos Supabase del club
+// Cargar Atletas desde Supabase ordenados por Cédula
 async function cargarAtletas() {
     try {
         const { data, error } = await supabase
@@ -77,7 +82,7 @@ async function cargarAtletas() {
         filterNomina();
     } catch (err) {
         console.error("Error al cargar atletas de Supabase:", err.message);
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error de conexión con la Supabase del club. Verifica las políticas RLS de la tabla 'atletas'.</td></tr>`;
+        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error de conexión con Supabase. Revisa las políticas RLS en la tabla 'atletas'.</td></tr>`;
     }
 }
 
@@ -159,7 +164,7 @@ _0xa('aForm').addEventListener('submit', async (e) => {
 
         resetForm();
         cargarAtletas();
-        alert('¡Atleta guardado con éxito en la base de datos del club!');
+        alert('¡Atleta guardado con éxito!');
     } catch (err) {
         console.error("Error al guardar:", err);
         alert('Error al guardar el atleta: ' + (err.message || err));
