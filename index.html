@@ -117,16 +117,16 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-       // Configuración oficial y definitiva del Firebase Maestro (youcontrolvoley)
-    const defaultConfig = {
-    apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
-    authDomain: "youcontrolvoley.firebaseapp.com",
-    projectId: "youcontrolvoley",
-    storageBucket: "youcontrolvoley.firebasestorage.app",
-    messagingSenderId: "840027639026",
-    appId: "1:840027639026:web:d5170253b4b16c1be0146b"
+        // Configuración oficial y definitiva del Firebase Maestro (youcontrolvoley)
+        const defaultConfig = {
+            apiKey: "AIzaSyCbjqKJHxL5eRBJwg8mT5YK7y7jUMQe2kg", 
+            authDomain: "youcontrolvoley.firebaseapp.com",
+            projectId: "youcontrolvoley",
+            storageBucket: "youcontrolvoley.firebasestorage.app",
+            messagingSenderId: "840027639026",
+            appId: "1:840027639026:web:d5170253b4b16c1be0146b"
         };
 
         const appPrincipal = initializeApp(defaultConfig);
@@ -152,91 +152,50 @@
                     throw new Error("El token no contiene un ID de club válido.");
                 }
 
-                // 1. Consultar configuración de la empresa en Firebase
-                const empresaRefPrincipal = doc(dbPrincipal, "empresas_config", activationId);
-                const snapEmpresaPrincipal = await getDoc(empresaRefPrincipal);
+                // Consultar directamente el documento unificado en empresas_config
+                const empresaRef = doc(dbPrincipal, "empresas_config", activationId);
+                const snapEmpresa = await getDoc(empresaRef);
 
-                if (snapEmpresaPrincipal.exists()) {
-                    const datosEmpresaConfig = snapEmpresaPrincipal.data();
-                    
-                    if (datosEmpresaConfig.firebaseConfig && datosEmpresaConfig.firebaseConfig.apiKey) {
-                        localStorage.setItem(`youcontrol_tenant_config_${activationId}`, JSON.stringify(datosEmpresaConfig.firebaseConfig));
-                    }
-                    if (datosEmpresaConfig.supabaseConfig && datosEmpresaConfig.supabaseConfig.supabaseUrl) {
-                        localStorage.setItem('control_voley_supa_url', datosEmpresaConfig.supabaseConfig.supabaseUrl);
-                        localStorage.setItem('control_voley_supa_key', datosEmpresaConfig.supabaseConfig.supabaseKey);
-                        localStorage.setItem('control_voley_supa_bucket', datosEmpresaConfig.supabaseConfig.bucket || activationId);
-                    }
+                if (!snapEmpresa.exists()) {
+                    throw new Error("La empresa o licencia no se encuentra registrada en el sistema.");
                 }
 
-                if (data.supabaseUrl) {
+                const datosEmpresa = snapEmpresa.data();
+                let equiposLicencia = Array.isArray(datosEmpresa.equipos) ? datosEmpresa.equipos : [];
+                
+                let limiteStr = datosEmpresa.limite_dispositivos || data.limite || "3";
+                let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
+
+                // Validar límite de dispositivos
+                if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
+                    alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
+                    return;
+                }
+
+                // Registrar equipo si es nuevo en la lista
+                if (!equiposLicencia.includes(hwID)) {
+                    equiposLicencia.push(hwID);
+                    await updateDoc(empresaRef, { equipos: equiposLicencia });
+                }
+
+                // Guardar configuraciones de Supabase en el localStorage para los módulos de atletas
+                if (datosEmpresa.supabaseConfig) {
+                    localStorage.setItem('control_voley_supa_url', datosEmpresa.supabaseConfig.supabaseUrl);
+                    localStorage.setItem('control_voley_supa_key', datosEmpresa.supabaseConfig.supabaseKey);
+                    localStorage.setItem('control_voley_supa_bucket', datosEmpresa.supabaseConfig.bucket || activationId);
+                } else if (data.supabaseUrl) {
                     localStorage.setItem('control_voley_supa_url', data.supabaseUrl);
                     localStorage.setItem('control_voley_supa_key', data.supabaseKey);
                     localStorage.setItem('control_voley_supa_bucket', data.bucket || activationId);
                 }
-                if (data.clubNombre) {
-                    localStorage.setItem('control_voley_club_nombre', data.clubNombre);
+
+                if (datosEmpresa.nombre || data.clubNombre) {
+                    localStorage.setItem('control_voley_club_nombre', datosEmpresa.nombre || data.clubNombre);
                 }
 
-                // 2. Validar licencia y límite de dispositivos
-                const licenciaRef = doc(dbPrincipal, "licencias", activationId);
-                const snapLicencia = await getDoc(licenciaRef);
-
-                let equiposLicencia = [];
-                let limiteLicencia = data.limite || data.l || 3;
-                if (limiteLicencia === "Ilimitado") limiteLicencia = 999;
-                else limiteLicencia = parseInt(limiteLicencia) || 3;
-
-                if (snapLicencia.exists()) {
-                    const dbData = snapLicencia.data();
-                    equiposLicencia = Array.isArray(dbData.equipos) ? dbData.equipos : [];
-                    let limiteDb = dbData.limite;
-                    if (limiteDb === "Ilimitado") limiteLicencia = 999;
-                    else if (limiteDb) limiteLicencia = parseInt(limiteDb) || limiteLicencia;
-
-                    if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
-                        alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
-                        btn.disabled = false;
-                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
-                        return;
-                    }
-
-                    if (!equiposLicencia.includes(hwID)) {
-                        equiposLicencia.push(hwID);
-                        await updateDoc(licenciaRef, { equipos: equiposLicencia });
-                    }
-                } else {
-                    equiposLicencia = [hwID];
-                    await setDoc(licenciaRef, { 
-                        cliente: data.clubNombre || data.n || "", 
-                        limite: limiteLicencia, 
-                        equipos: equiposLicencia, 
-                        fecha_registro: new Date().toISOString() 
-                    });
-                }
-
-                // 3. Actualizar o crear registro en empresas_config principal
-                if (snapEmpresaPrincipal.exists()) {
-                    const dbEmpresa = snapEmpresaPrincipal.data();
-                    const equiposEmpresa = Array.isArray(dbEmpresa.equipos) ? dbEmpresa.equipos : [];
-                    if (!equiposEmpresa.includes(hwID)) {
-                        await updateDoc(empresaRefPrincipal, { 
-                            equipos: [...equiposEmpresa, hwID],
-                            licencia_token: rawToken
-                        });
-                    }
-                } else {
-                    await setDoc(empresaRefPrincipal, { 
-                        nombre: data.clubNombre || data.n || "",
-                        email: data.email || "",
-                        limite_dispositivos: limiteLicencia, 
-                        equipos: [hwID], 
-                        licencia_token: rawToken,
-                        timestamp: new Date().toISOString() 
-                    });
-                }
-
-                // 4. Guardar sesión local
+                // Guardar sesión local de acceso
                 localStorage.setItem('youcontrol_empresa_id', activationId);
                 localStorage.setItem('licencia_validada', 'true');
 
@@ -258,7 +217,7 @@
                         statusDiv.innerText = "";
                     }
                 } else {
-                    // Si ya está en modo app o instalada
+                    // Si ya está en modo app o instalada previamente
                     window.location.replace('index_menu.html');
                 }
                 
