@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-
-    <title>Control Voley | Panel de Administración Técnico</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Control Voley | Panel de Usuario y Licencias</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
       tailwind.config = {
         theme: {
@@ -33,7 +28,6 @@
             },
             boxShadow: {
               'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-              'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
               'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
             }
           }
@@ -53,377 +47,279 @@
                 radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-        .navbar-sistema {
-            background: #030B1E;
-            width: 100%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+        #lista-resultados-busqueda {
+            position: absolute; top: 100%; left: 0; right: 148px;
+            background: white; border: 1px solid #E2E8F0;
+            border-radius: 0 0 12px 12px; max-height: 220px; overflow-y: auto;
+            z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none;
         }
-        .nav-container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
-        .nav-logo {
-            color: white;
-            font-weight: 800;
-            font-size: 1.1rem;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: -0.5px;
-        }
-        .nav-logo i {
-            color: #00D2FF;
-        }
-        .btn-regresar {
-            background: rgba(255, 255, 255, 0.08);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .btn-regresar:hover {
-            background: rgba(0, 85, 255, 0.2);
-            color: #00D2FF;
-            border-color: rgba(0, 210, 255, 0.4);
-        }
-        .main-wrapper {
-            max-width: 1100px;
-            width: 92%;
-            margin: 30px auto;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .tool-card {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 16px;
-            padding: 22px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .tool-card:hover {
-            border-color: #0055FF;
-            box-shadow: 0 10px 25px -5px rgba(0, 85, 255, 0.2);
-            transform: translateY(-3px);
-        }
+        .item-res-busqueda { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #F1F5F9; font-size: 0.8rem; }
+        .item-res-busqueda:hover { background: #f0f6ff; color: #0055FF; }
     </style>
 </head>
-<body class="bg-sports-pattern min-h-screen flex flex-col justify-between antialiased text-slate-800" oncontextmenu="return false">
+<body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased p-4 sm:p-6" oncontextmenu="return false">
 
-    <!-- BARRA SUPERIOR UNIFICADA -->
-    <nav class="navbar-sistema border-b border-white/10">
-        <div class="nav-container">
-            <a href="index_menu.html" class="btn-regresar">
-                <i class="fas fa-arrow-left"></i> Regresar al Menú
-            </a>
-            <a href="#" class="nav-logo">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric">
-                    <i class="fas fa-volleyball-ball text-xs animate-pulse"></i>
-                </div>
-                <span>CONTROL VOLEY <span class="text-brand-cyan font-black text-xs px-2 py-0.5 bg-brand-cyan/10 rounded-full border border-brand-cyan/20">SYS ADMIN</span></span>
-            </a>
+    <div class="max-w-2xl mx-auto w-full my-auto py-6">
+        
+        <!-- ENCABEZADO -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-3">
+                <i class="fas fa-shield-alt text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel de Gestión Maestro</h1>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Administración de Clubes y Licencias Supabase</p>
         </div>
-    </nav>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="main-wrapper">
+        <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-6">
+            
+            <!-- BUSCADOR -->
+            <div class="relative">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Buscar Club Existente</label>
+                <div class="flex gap-2">
+                    <input type="text" id="busquedaInput" placeholder="Ej: RCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none shadow-sm">
+                    <button class="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                </div>
+                <div id="lista-resultados-busqueda"></div>
+            </div>
 
-        <!-- CABECERA DE PANEL TÉCNICO -->
-        <div class="glass-card p-6 rounded-2xl border-l-4 border-l-brand-electric shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="text-center">
+                <button id="btnNuevo" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold rounded-xl text-xs uppercase tracking-wider transition">
+                    <i class="fas fa-plus-circle mr-1"></i> Registrar Nuevo Club / Licencia
+                </button>
+            </div>
+
+            <hr class="border-slate-200">
+
+            <!-- CONFIGURACIÓN DEL CLUB -->
             <div>
-                <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Clubes Activos
-                </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas y la auditoría de licencias de los clubes en Supabase.</p>
-            </div>
-            <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
-                <i class="fas fa-shield-halved"></i> Exclusivo Staff
-            </span>
-        </div>
+                <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric mb-4 flex items-center gap-2">
+                    <i class="fas fa-volleyball-ball"></i> Configuración del Club
+                </h3>
 
-        <!-- CONTROL DE APERTURA DE REGISTROS PÚBLICOS -->
-        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-id-card-clip text-brand-electric"></i> Portal de Autoregistro para Representantes
-                    </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">
-                        Activa o desactiva el acceso a <code>index_registro.html</code> para que los representantes puedan inscribir atletas de forma autónoma.
-                    </p>
-                </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span id="estadoPortalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
-                        Cargando estado...
-                    </span>
-                    <button id="btnTogglePortal" onclick="togglePortal()" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric">
-                        Cambiar Estado
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN SUPABASE -->
-        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                <div>
-                    <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-shield-halved text-brand-electric"></i> Auditoría de Clubes y Licencias Activas
-                    </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado oficial sincronizado desde la tabla maestra de licencias en Supabase.</p>
-                </div>
-                <div class="flex items-center gap-2.5 w-full md:w-auto">
-                    <div class="relative w-full md:w-72">
-                        <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                        <input type="text" id="buscar-club-tech" placeholder="Buscar por ID o Club..." class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium shadow-sm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación</label>
+                        <input type="text" id="empresaID" placeholder="Ej: RCDEP-CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm uppercase">
                     </div>
-                    <button id="btn-recargar-clubes" class="bg-slate-100 text-slate-700 border border-slate-200 p-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 cursor-pointer shadow-sm transition">
-                        <i class="fas fa-rotate"></i>
-                    </button>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre del Club</label>
+                            <input type="text" id="nombreEmpresa" placeholder="Ej: Club CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">RIF / Identificación Fiscal</label>
+                            <input type="text" id="rif" placeholder="Ej: J-12345678-9" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Correo Autorizado (Admin)</label>
+                            <input type="email" id="email" placeholder="admin@club.com" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Límite de Dispositivos</label>
+                            <select id="limite" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                <option value="1">1 Dispositivo</option>
+                                <option value="2">2 Dispositivos</option>
+                                <option value="3" selected>3 Dispositivos</option>
+                                <option value="5">5 Dispositivos</option>
+                                <option value="10">10 Dispositivos</option>
+                                <option value="Ilimitado">Ilimitado</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- TABLA DE CLUBES -->
-            <div class="overflow-x-auto border border-slate-200/80 rounded-xl bg-white shadow-sm">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-600 text-xs font-black uppercase border-b border-slate-200">
-                            <th class="p-3.5">ID Licencia / Club</th>
-                            <th class="p-3.5">Nombre del Club</th>
-                            <th class="p-3.5">Fecha de Registro</th>
-                            <th class="p-3.5 text-center">Límite Dispositivos</th>
-                            <th class="p-3.5 text-center">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-clubes-registrados" class="text-xs divide-y divide-slate-100 font-medium">
-                        <tr>
-                            <td colspan="5" class="text-center py-10 text-slate-400 italic">
-                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando clubes desde Supabase...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- PROYECTO SUPABASE DEL CLUB -->
+            <div class="p-5 bg-brand-50/60 border border-brand-electric/20 rounded-2xl space-y-4">
+                <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
+                    <i class="fas fa-database"></i> Proyecto Supabase del Club (Base de Datos + Fotos)
+                </h3>
+                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí la URL y la Anon Key del proyecto Supabase dedicado a este club.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Project URL</label>
+                        <input type="text" id="supaUrl" placeholder="https://xxx.supabase.co" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Bucket</label>
+                        <input type="text" id="supaBucket" value="control-voley" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Anon Key (Llave Pública)</label>
+                    <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                </div>
             </div>
-            <div class="mt-4 text-right">
-                <span id="total-clubes-count" class="text-xs text-slate-500 font-bold">Total clubes registrados: 0</span>
+
+            <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fas fa-key"></i> Generar Licencia y Aprovisionar Club
+            </button>
+            <div id="status" class="text-center font-bold text-xs text-emerald-600"></div>
+
+            <!-- TOKEN RESULTADO -->
+            <div id="resultBox" class="hidden p-4 bg-white border border-slate-200 rounded-2xl relative shadow-sm">
+                <button onclick="copiarToken()" class="absolute right-4 top-4 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition">Copiar</button>
+                <p class="text-xs font-bold text-slate-700 mb-2"><i class="fas fa-key text-brand-electric"></i> Token de Licencia Generado</p>
+                <textarea id="tokenResult" readonly class="w-full h-20 bg-slate-50 border border-slate-200 rounded-xl p-2 font-mono text-[11px] text-slate-600 resize-none outline-none"></textarea>
             </div>
+
         </div>
-
-        <!-- ACCESOS RÁPIDOS -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div class="tool-card">
-                <div>
-                    <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
-                        <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Abrir Portal Público</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario de inscripción de representantes.</p>
-                </div>
-                <a href="index_registro.html" target="_blank" class="w-full bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-electric text-center py-3 rounded-xl text-xs font-black transition border border-slate-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-eye"></i> Ver index_registro.html
-                </a>
-            </div>
-
-            <div class="tool-card">
-                <div>
-                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-emerald-200">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Gestión de Atletas</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos.</p>
-                </div>
-                <a href="index_atletas.html" class="w-full bg-emerald-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
-                    <i class="fas fa-user-gear"></i> Ir a Atletas
-                </a>
-            </div>
-
-            <div class="tool-card">
-                <div>
-                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
-                        <i class="fas fa-house"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Menú del Club</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración.</p>
-                </div>
-                <a href="index_menu.html" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-center py-3 rounded-xl text-xs font-black transition shadow-md flex items-center justify-center gap-2">
-                    <i class="fas fa-arrow-left"></i> Volver al Menú
-                </a>
-            </div>
-        </div>
-
     </div>
 
-    <!-- PIE DE PÁGINA -->
-    <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold shadow-inner mt-12">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p>&copy; 2026 <span class="font-bold text-slate-800">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
-            <p class="text-[11px] text-slate-400">Panel Técnico de Administración y Control de Registros</p>
-        </div>
-    </footer>
-
-    <!-- LÓGICA DE CONTROL EN SUPABASE -->
     <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
         const SUPABASE_URL = "https://zgkbjpesmgqiprvfowju.supabase.co";
         const SUPABASE_KEY = "sb_publishable_VC9fuoRhlPpJ-8ZrERYfiA_TT_FyciK";
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        let cacheClubes = [];
 
-        const supaUrlLocal = localStorage.getItem('control_voley_supa_url');
-        const supaKeyLocal = localStorage.getItem('control_voley_supa_key');
-        const supabaseLocal = (supaUrlLocal && supaKeyLocal) ? createClient(supaUrlLocal, supaKeyLocal) : null;
-
-        let portalAbiertoActual = false;
-        let listaClubesMaster = [];
-
-        async function inicializarPanel() {
-            await consultarEstadoPortal();
-            await cargarClubesMaster();
-        }
-
-        async function consultarEstadoPortal() {
-            if (!supabaseLocal) return;
+        async function cargarCache() {
             try {
-                const { data, error } = await supabaseLocal
-                    .from('config_club')
-                    .select('portal_abierto')
-                    .single();
-
-                portalAbiertoActual = (error || !data) ? false : data.portal_abierto;
-                actualizarInterfazEstado();
-            } catch (err) {
-                console.error("Error consultando estado del portal:", err);
+                const { data, error } = await supabase.from('licencias_master').select('*');
+                if (!error && data) cacheClubes = data;
+            } catch (e) {
+                console.error("Error cargando licencias:", e);
             }
         }
+        cargarCache();
 
-        function actualizarInterfazEstado() {
-            const badge = document.getElementById('estadoPortalBadge');
-            if (portalAbiertoActual) {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ABIERTO';
-            } else {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1"></i> CERRADO';
-            }
-        }
+        const inputBusqueda = document.getElementById('busquedaInput');
+        const listaResultados = document.getElementById('lista-resultados-busqueda');
 
-        window.togglePortal = async () => {
-            if (!supabaseLocal) {
-                alert("No hay sesión de club activa para cambiar el estado del portal.");
-                return;
-            }
-            const nuevoEstado = !portalAbiertoActual;
-            try {
-                const { error } = await supabaseLocal
-                    .from('config_club')
-                    .upsert({ id: 1, portal_abierto: nuevoEstado });
+        inputBusqueda.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            if (term.length === 0) { listaResultados.style.display = 'none'; return; }
 
-                if (error) throw error;
-
-                portalAbiertoActual = nuevoEstado;
-                actualizarInterfazEstado();
-                alert(nuevoEstado ? "¡Portal de inscripciones abierto con éxito!" : "Portal de inscripciones cerrado.");
-            } catch (err) {
-                console.error("Error al actualizar:", err);
-                alert("Error al cambiar el estado del portal. Asegúrate de tener la tabla 'config_club' creada en Supabase.");
-            }
-        };
-
-        async function cargarClubesMaster() {
-            const tbody = document.getElementById('tabla-clubes-registrados');
-            if (!tbody) return;
-
-            try {
-                const { data, error } = await supabase
-                    .from('licencias_master')
-                    .select('*');
-
-                if (error) throw error;
-
-                listaClubesMaster = data || [];
-                renderizarTablaClubes(listaClubesMaster);
-            } catch (err) {
-                console.error("Error cargando licencias_master:", err);
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-rose-500 font-bold">Error al conectar con la tabla 'licencias_master' en Supabase.</td></tr>`;
-            }
-        }
-
-        function renderizarTablaClubes(lista) {
-            const tbody = document.getElementById('tabla-clubes-registrados');
-            const totalCount = document.getElementById('total-clubes-count');
-            if (!tbody) return;
-
-            if (totalCount) totalCount.innerText = `Total clubes registrados: ${lista.length}`;
-
-            if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 italic">No hay clubes registrados en el sistema.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = lista.map(item => {
-                const nombreClub = item.nombre || 'Club Deportivo';
-                const idLicencia = item.club_id || 'N/A';
-                const fechaReg = item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A';
-                
-                // Muestra con precisión el límite registrado (número o texto)
-                let limVal = item.limite_dispositivos;
-                let limiteDispositivos = (limVal !== undefined && limVal !== null && limVal !== "") 
-                    ? (isNaN(limVal) ? limVal : `${limVal} Dispositivos`) 
-                    : '3 Dispositivos';
-
-                return `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3.5 font-mono font-bold text-brand-electric">${idLicencia}</td>
-                        <td class="p-3.5 font-bold text-slate-900">${nombreClub}</td>
-                        <td class="p-3.5 text-slate-600 font-semibold">${fechaReg}</td>
-                        <td class="p-3.5 text-center text-slate-800 font-black">${limiteDispositivos}</td>
-                        <td class="p-3.5 text-center">
-                            <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
-                                <i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ACTIVO
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        document.getElementById('buscar-club-tech')?.addEventListener('input', (ev) => {
-            const criterio = ev.target.value.toLowerCase().trim();
-            const filtrados = listaClubesMaster.filter(item => 
-                (item.club_id || '').toLowerCase().includes(criterio) ||
-                (item.nombre || '').toLowerCase().includes(criterio)
+            const filtrados = cacheClubes.filter(emp => 
+                (emp.nombre && emp.nombre.toLowerCase().includes(term)) ||
+                (emp.club_id && emp.club_id.toLowerCase().includes(term)) ||
+                (emp.rif && emp.rif.toLowerCase().includes(term))
             );
-            renderizarTablaClubes(filtrados);
+
+            if (filtrados.length > 0) {
+                listaResultados.style.display = 'block';
+                listaResultados.innerHTML = filtrados.map(emp => `
+                    <div class="item-res-busqueda" onclick="window.seleccionarClub('${emp.club_id}')">
+                        <strong>${emp.nombre}</strong><br>
+                        <small class="text-slate-500">ID: ${emp.club_id} | RIF: ${emp.rif || 'N/A'}</small>
+                    </div>
+                `).join('');
+            } else {
+                listaResultados.style.display = 'block';
+                listaResultados.innerHTML = `<div class="p-3 text-slate-400 text-xs">No se encontraron clubes.</div>`;
+            }
         });
 
-        document.getElementById('btn-recargar-clubes')?.addEventListener('click', cargarClubesMaster);
+        window.seleccionarClub = (clubId) => {
+            listaResultados.style.display = 'none';
+            const club = cacheClubes.find(c => c.club_id === clubId);
+            if (!club) return;
 
-        inicializarPanel();
+            document.getElementById('empresaID').value = club.club_id;
+            document.getElementById('nombreEmpresa').value = club.nombre;
+            document.getElementById('rif').value = club.rif || "";
+            document.getElementById('email').value = club.email || "";
+            document.getElementById('limite').value = club.limite_dispositivos || "3";
+            document.getElementById('supaUrl').value = club.supabase_url || "";
+            document.getElementById('supaKey').value = club.supabase_key || "";
+            document.getElementById('supaBucket').value = club.bucket_name || "control-voley";
+
+            if (club.token_licencia) {
+                document.getElementById('tokenResult').value = club.token_licencia;
+                document.getElementById('resultBox').classList.remove('hidden');
+            }
+            document.getElementById('status').innerText = "✅ Club cargado correctamente.";
+        };
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) listaResultados.style.display = 'none';
+        });
+
+        document.getElementById('btnNuevo').addEventListener('click', () => {
+            document.getElementById('empresaID').value = "";
+            document.getElementById('nombreEmpresa').value = "";
+            document.getElementById('rif').value = "";
+            document.getElementById('email').value = "";
+            document.getElementById('limite').value = "3";
+            document.getElementById('supaUrl').value = "";
+            document.getElementById('supaKey').value = "";
+            document.getElementById('supaBucket').value = "control-voley";
+            document.getElementById('resultBox').classList.add('hidden');
+            inputBusqueda.value = "";
+            document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
+        });
+
+        document.getElementById('btnGuardar').addEventListener('click', async () => {
+            const clubId = document.getElementById('empresaID').value.trim().toUpperCase();
+            const nombre = document.getElementById('nombreEmpresa').value.trim();
+            const rif = document.getElementById('rif').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const limite = document.getElementById('limite').value;
+            const supaUrl = document.getElementById('supaUrl').value.trim();
+            const supaKey = document.getElementById('supaKey').value.trim();
+            const supaBucket = document.getElementById('supaBucket').value.trim();
+
+            if (!clubId || !nombre || !supaUrl || !supaKey) {
+                return alert("Completa el ID del Club, Nombre y las credenciales de Supabase.");
+            }
+
+            const tokenData = {
+                clubId: clubId,
+                clubNombre: nombre,
+                limite: limite,
+                supabaseUrl: supaUrl,
+                supabaseKey: supaKey,
+                bucket: supaBucket || "control-voley"
+            };
+            const tokenBase64 = btoa(JSON.stringify(tokenData));
+
+            try {
+                const { error } = await supabase
+                    .from('licencias_master')
+                    .upsert([{
+                        club_id: clubId,
+                        nombre: nombre,
+                        rif: rif,
+                        email: email,
+                        limite_dispositivos: limite,
+                        supabase_url: supaUrl,
+                        supabase_key: supaKey,
+                        bucket_name: supaBucket || "control-voley",
+                        token_licencia: tokenBase64,
+                        updated_at: new Date().toISOString()
+                    }], { onConflict: 'club_id' });
+
+                if (error) throw error;
+
+                cargarCache();
+                document.getElementById('tokenResult').value = tokenBase64;
+                document.getElementById('resultBox').classList.remove('hidden');
+                document.getElementById('status').innerText = "🚀 ¡Club registrado y guardado en Supabase con éxito!";
+            } catch (err) {
+                alert("Error al guardar en Supabase: " + err.message);
+            }
+        });
+
+        window.copiarToken = function() {
+            const copyText = document.getElementById("tokenResult");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("¡Token de licencia copiado al portapapeles!");
+        };
     </script>
 </body>
 </html>
