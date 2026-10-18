@@ -1,32 +1,28 @@
+import { db } from "./config-firebase.js"; // Importa la base de datos dinámica del club (ej. dataciar)
+import { collection, getDocs, doc, setDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener credenciales del localStorage o usar valores seguros por defecto del club
-let empresaID = localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
+// Obtener datos del club desde localStorage
+const empresaID = localStorage.getItem('youcontrol_empresa_id');
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID;
+
+// Supabase solo se usará para el Storage de Fotos
 let supaUrl = localStorage.getItem('control_voley_supa_url');
 let supaKey = localStorage.getItem('control_voley_supa_key');
 let supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'ycdep-ciar';
-let clubNombre = localStorage.getItem('control_voley_club_nombre') || 'CIAR LARA';
 
-// Limpiar corchetes o espacios accidentales si se guardaron mal desde el panel
 if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
 if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
 
-// RESPALDO DE EMERGENCIA: Si no hay URL en el localStorage, colocamos la oficial de tu base de datos Supabase
-if (!supaUrl || !supaUrl.startsWith('http')) {
-    supaUrl = "https://zgkbjpesmgqiprvfowju.supabase.co"; // Tu URL de Supabase detectada
-    supaKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpna2JqcGVzbWdxaXpydmZvd2p1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwMDAwMDB9..."; // O puedes rellenarla con tu anon key si es necesario
-}
+const supabase = (supaUrl && supaKey) ? createClient(supaUrl, supaKey) : null;
 
-// Mostrar inmediatamente el nombre del club en la barra superior
+// Mostrar nombre del club en la interfaz
 _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
 
-// 2. Inicializar Supabase de forma segura
-const supabase = createClient(supaUrl, supaKey);
-
-// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO (Reducción a 300x300 px - Peso ~30KB)
+// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO PARA SUPABASE
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -38,7 +34,6 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
         const canvas = document.createElement('canvas');
         const width = img.width;
         const height = img.height;
-
         const minDim = Math.min(width, height);
         const startX = (width - minDim) / 2;
         const startY = (height - minDim) / 2;
@@ -52,14 +47,8 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
         ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
 
         canvas.toBlob((blob) => {
-          if (!blob) {
-            reject(new Error('Error al comprimir la imagen'));
-            return;
-          }
-          const compressedFile = new File([blob], `${Date.now()}_atleta.jpg`, {
-            type: 'image/jpeg',
-            lastModified: Date.now()
-          });
+          if (!blob) { reject(new Error('Error al comprimir la imagen')); return; }
+          const compressedFile = new File([blob], `${Date.now()}_atleta.jpg`, { type: 'image/jpeg' });
           resolve(compressedFile);
         }, 'image/jpeg', quality);
       };
@@ -69,33 +58,33 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// Cargar Atletas desde Supabase ordenados por Cédula
+// 1. CARGAR ATLETAS DESDE FIRESTORE DEL CLIENTE
 async function cargarAtletas() {
     try {
-        const { data, error } = await supabase
-            .from('atletas')
-            .select('*')
-            .order('cedulaIdentidad', { ascending: true });
-
-        if (error) throw error;
-        _aL = data || [];
+        const querySnapshot = await getDocs(collection(db, "atletas"));
+        _aL = [];
+        querySnapshot.forEach((docSnap) => {
+            _aL.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        
+        // Ordenar por cédula si existe
+        _aL.sort((a, b) => (a.cedulaIdentidad || '').localeCompare(b.cedulaIdentidad || ''));
         filterNomina();
     } catch (err) {
-        console.error("Error al cargar atletas de Supabase:", err.message);
-        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error de conexión con Supabase. Revisa las políticas RLS en la tabla 'atletas'.</td></tr>`;
+        console.error("Error al cargar atletas de Firestore:", err.message);
+        _0xa('nTB').innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Firebase del club.</td></tr>`;
     }
 }
 
-// Guardar o Actualizar Atleta basado en número de Cédula
+// 2. GUARDAR O ACTUALIZAR ATLETA EN FIRESTORE DEL CLIENTE
 _0xa('aForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btnSubmit = _0xa('bS');
     const textoOriginalBtn = btnSubmit.innerHTML;
 
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
+    btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
 
-    const id = _0xa('aId').value;
     const cedula = _0xa('cedulaIdentidad').value.trim();
     const inputArchivo = _0xa('fotoAtleta');
     const archivo = inputArchivo.files[0];
@@ -104,11 +93,10 @@ _0xa('aForm').addEventListener('submit', async (e) => {
     let urlFoto = _0xa('fotoUrlActual').value;
 
     try {
-        if (archivo) {
-            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Comprimiendo Foto...`;
-            
+        // Subir foto a Supabase Storage si se seleccionó una nueva
+        if (archivo && supabase) {
+            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
             const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
-            
             const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
             const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
 
@@ -142,29 +130,17 @@ _0xa('aForm').addEventListener('submit', async (e) => {
             frecuenciaPago: _0xa('frecuenciaPago').value,
             montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
             fechaUltimoPago: _0xa('fechaUltimoPago').value,
-            fotoUrl: urlFoto
+            fotoUrl: urlFoto,
+            updated_at: new Date().toISOString()
         };
 
-        if (id) {
-            const { error } = await supabase.from('atletas').update(atletaData).eq('id', id);
-            if (error) throw error;
-        } else {
-            // Verificar duplicados por cédula de identidad
-            const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
-            if (existente) {
-                alert('Ya existe un atleta registrado con la cédula: ' + cedula);
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = textoOriginalBtn;
-                return;
-            }
-
-            const { error } = await supabase.from('atletas').insert([atletaData]);
-            if (error) throw error;
-        }
+        // Usamos la cédula de identidad como ID del documento en Firestore para evitar duplicados
+        const docRef = doc(db, "atletas", cedula);
+        await setDoc(docRef, atletaData, { merge: true });
 
         resetForm();
         cargarAtletas();
-        alert('¡Atleta guardado con éxito!');
+        alert('¡Atleta guardado con éxito en el Firebase del club!');
     } catch (err) {
         console.error("Error al guardar:", err);
         alert('Error al guardar el atleta: ' + (err.message || err));
@@ -176,15 +152,15 @@ _0xa('aForm').addEventListener('submit', async (e) => {
 
 function renderTable(arr) {
   const tb = _0xa('nTB'); tb.innerHTML = '';
-  if (!arr.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados.</td></tr>'; return; }
+  if (!arr.length) { tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; return; }
 
   arr.forEach(k => {
     const tr = document.createElement('tr');
-    const foto = k.fotoUrl || k.foto_url;
+    const foto = k.fotoUrl;
     const nombre = k.nombre || '';
     const apellido = k.apellido || '';
-    const cedula = k.cedulaIdentidad || k.cedula_identidad || 'N/A';
-    const rep = k.nombreRepresentante || k.nombre_representante || 'N/A';
+    const cedula = k.cedulaIdentidad || 'N/A';
+    const rep = k.nombreRepresentante || 'N/A';
 
     const avatar = foto 
       ? `<img src="${foto}" class="w-10 h-10 rounded-full object-cover shadow-sm border border-brand-cyan">` 
@@ -202,8 +178,8 @@ function renderTable(arr) {
       <td class="px-4 py-3"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
       <td class="px-4 py-3 text-slate-600">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
-        <button onclick="editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
-        <button onclick="deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
+        <button onclick="editAtleta('${k.cedulaIdentidad}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
+        <button onclick="deleteAtleta('${k.cedulaIdentidad}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
       </td>`;
     tb.appendChild(tr);
   });
@@ -216,46 +192,43 @@ window.filterNomina = () => {
   const f = _aL.filter(x => {
     const coincideSede = (sedeFiltro === 'todos' || x.sede === sedeFiltro);
     const nom = ((x.nombre || '') + ' ' + (x.apellido || '')).toLowerCase();
-    const ci = (x.cedulaIdentidad || x.cedula_identidad || '').toString().toLowerCase();
-    const rep = (x.nombreRepresentante || x.nombre_representante || '').toLowerCase();
+    const ci = (x.cedulaIdentidad || '').toString().toLowerCase();
+    const rep = (x.nombreRepresentante || '').toLowerCase();
     const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t);
     return coincideSede && coincideTexto;
   });
   renderTable(f);
 };
 
-window.editAtleta = (id) => {
-  const k = _aL.find(x => x.id === id);
+window.editAtleta = (cedula) => {
+  const k = _aL.find(x => x.cedulaIdentidad === cedula);
   if (!k) return;
-  _0xa('aId').value = k.id;
   _0xa('nombre').value = k.nombre || '';
   _0xa('apellido').value = k.apellido || '';
-  _0xa('cedulaIdentidad').value = k.cedulaIdentidad || k.cedula_identidad || '';
+  _0xa('cedulaIdentidad').value = k.cedulaIdentidad || '';
   _0xa('telefono').value = k.telefono || '';
-  _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
+  _0xa('fechaNacimiento').value = k.fechaNacimiento || '';
   _0xa('sede').value = k.sede || '';
   _0xa('categoria').value = k.categoria || '';
-  _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
+  _0xa('nroCamiseta').value = k.nroCamiseta || '';
   _0xa('peso').value = k.peso || '';
   _0xa('talla').value = k.talla || '';
-  _0xa('nombreRepresentante').value = k.nombreRepresentante || k.nombre_representante || '';
-  _0xa('cedulaRepresentante').value = k.cedulaRepresentante || k.cedula_representante || '';
-  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || k.telefono_representante || '';
-  _0xa('frecuenciaPago').value = k.frecuenciaPago || k.frecuencia_pago || 'mensual';
-  _0xa('montoPago').value = k.montoPago || k.monto_pago || '';
-  _0xa('fechaUltimoPago').value = k.fechaUltimoPago || k.fecha_ultimo_pago || '';
-  _0xa('fotoUrlActual').value = k.fotoUrl || k.foto_url || '';
+  _0xa('nombreRepresentante').value = k.nombreRepresentante || '';
+  _0xa('cedulaRepresentante').value = k.cedulaRepresentante || '';
+  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || '';
+  _0xa('frecuenciaPago').value = k.frecuenciaPago || 'mensual';
+  _0xa('montoPago').value = k.montoPago || '';
+  _0xa('fechaUltimoPago').value = k.fechaUltimoPago || '';
+  _0xa('fotoUrlActual').value = k.fotoUrl || '';
   _0xa('fT').innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
   _0xa('bS').innerText = 'Actualizar Atleta';
-  _0xa('bC').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.deleteAtleta = async (id) => {
-  if (confirm('¿Seguro que deseas eliminar este atleta?')) {
+window.deleteAtleta = async (cedula) => {
+  if (confirm('¿Seguro que deseas eliminar este atleta de la base de datos del club?')) {
     try {
-      const { error } = await supabase.from('atletas').delete().eq('id', id);
-      if (error) throw error;
+      await deleteDoc(doc(db, "atletas", cedula));
       cargarAtletas();
     } catch (e) { 
       console.error(e); 
@@ -266,11 +239,9 @@ window.deleteAtleta = async (id) => {
 
 window.resetForm = () => {
   _0xa('aForm').reset();
-  _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
   _0xa('fT').innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
   _0xa('bS').innerText = 'Guardar Atleta';
-  _0xa('bC').classList.add('hidden');
 };
 
 document.getElementById('btnLogout').addEventListener('click', () => {
