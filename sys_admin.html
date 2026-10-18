@@ -173,7 +173,7 @@
                         <i class="fas fa-id-card-clip text-brand-electric"></i> Portal de Autoregistro para Representantes
                     </h2>
                     <p class="text-xs text-slate-500 font-semibold mt-1">
-                        Activa o desactiva el acceso a <code>index_registro.html</code> para que los representantes puedan inscribir atletas de forma autónoma.
+                        Activa o desactiva el acceso a <code>public_registro.html</code> para que los representantes puedan inscribir atletas de forma autónoma.
                     </p>
                 </div>
                 <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
@@ -233,46 +233,65 @@
             </div>
         </div>
 
-        <!-- ACCESOS RÁPIDOS -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES (CON public_registro.html) -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
+            
+            <!-- 1. ABRIR PORTAL PÚBLICO -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
-                        <i class="fas fa-external-link-alt"></i>
+                        <i class="fas fa-globe"></i>
                     </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Abrir Portal Público</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario de inscripción de representantes.</p>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Portal Público</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario <code>public_registro.html</code> de representantes.</p>
                 </div>
-                <a href="index_registro.html" target="_blank" class="w-full bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-electric text-center py-3 rounded-xl text-xs font-black transition border border-slate-200 flex items-center justify-center gap-2">
-                    <i class="fas fa-eye"></i> Ver index_registro.html
+                <a href="public_registro.html" target="_blank" class="w-full bg-brand-electric text-white text-center py-3 rounded-xl text-xs font-black hover:bg-brand-600 transition shadow-electric flex items-center justify-center gap-2">
+                    <i class="fas fa-external-link-alt"></i> Ver Portal
                 </a>
             </div>
 
+            <!-- 2. GESTIÓN DE ATLETAS -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-emerald-200">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Gestión de Atletas</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos.</p>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Gestión Atletas</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Revisa, edita o valida los atletas inscritos en el sistema.</p>
                 </div>
                 <a href="index_atletas.html" class="w-full bg-emerald-600 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-emerald-700 transition shadow-sm flex items-center justify-center gap-2">
                     <i class="fas fa-user-gear"></i> Ir a Atletas
                 </a>
             </div>
 
+            <!-- 3. PANEL DE USUARIOS / LICENCIAS -->
+            <div class="tool-card">
+                <div>
+                    <div class="w-12 h-12 bg-cyan-50 text-cyan-700 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-cyan-200">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Panel Licencias</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Genera o edita los tokens y accesos de los clubes.</p>
+                </div>
+                <a href="panel_user.html" target="_blank" class="w-full bg-cyan-700 text-white text-center py-3 rounded-xl text-xs font-black hover:bg-cyan-800 transition shadow-sm flex items-center justify-center gap-2">
+                    <i class="fas fa-key"></i> Ir a Licencias
+                </a>
+            </div>
+
+            <!-- 4. MENÚ PRINCIPAL -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
                         <i class="fas fa-house"></i>
                     </div>
                     <h3 class="font-black text-slate-900 text-base mb-1">Menú del Club</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración.</p>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Regresa al panel general de administración de Control Voley.</p>
                 </div>
                 <a href="index_menu.html" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-center py-3 rounded-xl text-xs font-black transition shadow-md flex items-center justify-center gap-2">
                     <i class="fas fa-arrow-left"></i> Volver al Menú
                 </a>
             </div>
+
         </div>
 
     </div>
