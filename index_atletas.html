@@ -27,13 +27,19 @@
       }
     </script>
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .row-atleta:hover {
+            background-color: #f8fafc;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
-    <div class="max-w-7xl mx-auto w-full space-y-6">
+    <div class="max-w-6xl mx-auto w-full space-y-6">
         
-        <!-- BARRA SUPERIOR -->
-        <header class="glass-card p-4 rounded-2xl shadow-glass flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- BARRA SUPERIOR (SIN BOTÓN CERRAR SESIÓN) -->
+        <header class="glass-card p-4 rounded-2xl shadow-glass flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <a href="index_menu.html" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition shadow-sm">
                     <i class="fas fa-arrow-left"></i>
@@ -47,28 +53,25 @@
                     </p>
                 </div>
             </div>
-            <button id="btnLogout" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center gap-2 cursor-pointer shadow-sm">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </button>
         </header>
 
-        <!-- CONTENIDO PRINCIPAL -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- CONTENIDO PRINCIPAL (DISPOSICIÓN VERTICAL: FORMULARIO ARRIBA, TABLA ABAJO) -->
+        <div class="space-y-6">
             
-            <!-- FORMULARIO DE REGISTRO / EDICIÓN -->
-            <div class="lg:col-span-4">
-                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-5 sticky top-6">
-                    <div class="flex justify-between items-center">
-                        <h3 id="fT" class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
-                            <i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta
-                        </h3>
-                        <button type="button" onclick="resetForm()" id="bC" class="hidden text-[10px] font-bold text-slate-400 hover:text-slate-700 uppercase tracking-wider">Cancelar</button>
-                    </div>
+            <!-- 1. FORMULARIO DE REGISTRO / EDICIÓN (ARRIBA) -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-5">
+                <div class="flex justify-between items-center border-b border-slate-200/60 pb-3">
+                    <h3 id="fT" class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
+                        <i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta
+                    </h3>
+                    <button type="button" onclick="resetForm()" id="bC" class="hidden text-xs font-bold text-slate-400 hover:text-slate-700 uppercase tracking-wider">Cancelar Edición</button>
+                </div>
 
-                    <form id="aForm" class="space-y-4">
-                        <input type="hidden" id="aId">
-                        <input type="hidden" id="fotoUrlActual">
+                <form id="aForm" class="space-y-4">
+                    <input type="hidden" id="aId">
+                    <input type="hidden" id="fotoUrlActual">
 
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- FOTO -->
                         <div>
                             <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Foto del Atleta (Compresión Automática)</label>
@@ -81,152 +84,148 @@
                             <input type="text" id="cedulaIdentidad" required placeholder="Ej: V-28123456" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
 
-                        <!-- NOMBRE Y APELLIDO -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre *</label>
-                                <input type="text" id="nombre" required placeholder="Nombre" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Apellido *</label>
-                                <input type="text" id="apellido" required placeholder="Apellido" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
+                        <!-- TELÉFONO -->
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono</label>
+                            <input type="text" id="telefono" placeholder="0412-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
+                    </div>
 
-                        <!-- TELÉFONO Y FECHA NACIMIENTO -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono</label>
-                                <input type="text" id="telefono" placeholder="0412-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Fecha Nacimiento</label>
-                                <input type="date" id="fechaNacimiento" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
+                    <!-- NOMBRE Y APELLIDO -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre *</label>
+                            <input type="text" id="nombre" required placeholder="Nombre" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
-
-                        <!-- SEDE Y CATEGORÍA -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Sede</label>
-                                <select id="sede" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                    <option value="Principal">Principal</option>
-                                    <option value="Norte">Norte</option>
-                                    <option value="Este">Este</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Categoría</label>
-                                <select id="categoria" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                    <option value="U13">U13</option>
-                                    <option value="U15" selected>U15</option>
-                                    <option value="U17">U17</option>
-                                    <option value="U19">U19</option>
-                                    <option value="Libre">Libre</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Apellido *</label>
+                            <input type="text" id="apellido" required placeholder="Apellido" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
+                    </div>
 
-                        <!-- CAMISETA, PESO Y TALLA -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nro. Camiseta</label>
-                                <input type="text" id="nroCamiseta" placeholder="10" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Peso (kg)</label>
-                                <input type="number" step="0.1" id="peso" placeholder="60" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Altura (m)</label>
-                                <input type="number" step="0.01" id="talla" placeholder="1.75" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
+                    <!-- FECHA NACIMIENTO, SEDE Y CATEGORÍA -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Fecha Nacimiento</label>
+                            <input type="date" id="fechaNacimiento" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                         </div>
-
-                        <hr class="border-slate-200">
-
-                        <!-- DATOS DEL REPRESENTANTE -->
-                        <div class="space-y-3">
-                            <h4 class="text-[11px] font-black uppercase tracking-wider text-slate-700">Datos del Representante</h4>
-                            <div>
-                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre Representante</label>
-                                <input type="text" id="nombreRepresentante" placeholder="Nombre completo" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Cédula Rep.</label>
-                                    <input type="text" id="cedulaRepresentante" placeholder="V-12345678" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono Rep.</label>
-                                    <input type="text" id="telefonoRepresentante" placeholder="0414-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- PAGOS -->
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Frecuencia</label>
-                                <select id="frecuenciaPago" class="w-full px-2 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                                    <option value="mensual">Mensual</option>
-                                    <option value="semanal">Semanal</option>
-                                    <option value="anual">Anual</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Monto ($)</label>
-                                <input type="number" step="0.01" id="montoPago" placeholder="20.00" class="w-full px-2.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Último Pago</label>
-                                <input type="date" id="fechaUltimoPago" class="w-full px-2 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                            </div>
-                        </div>
-
-                        <button type="submit" id="bS" class="w-full py-3.5 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer mt-2">
-                            <i class="fas fa-save"></i> Guardar Atleta
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- NÓMINA DE ATLETAS -->
-            <div class="lg:col-span-8">
-                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <h3 class="text-sm font-black uppercase tracking-tight text-slate-900">Nómina del Club</h3>
-                        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                            <select id="filtroSede" onchange="filterNomina()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm outline-none">
-                                <option value="todos">Todas las sedes</option>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Sede</label>
+                            <select id="sede" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                                 <option value="Principal">Principal</option>
                                 <option value="Norte">Norte</option>
                                 <option value="Este">Este</option>
                             </select>
-                            <div class="relative flex-1 sm:w-64">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-search text-xs"></i></span>
-                                <input type="text" id="sAt" oninput="filterNomina()" placeholder="Buscar por cédula o nombre..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Categoría</label>
+                            <select id="categoria" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                <option value="U13">U13</option>
+                                <option value="U15" selected>U15</option>
+                                <option value="U17">U17</option>
+                                <option value="U19">U19</option>
+                                <option value="Libre">Libre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- CAMISETA, PESO Y TALLA -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nro. Camiseta</label>
+                            <input type="text" id="nroCamiseta" placeholder="10" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Peso (kg)</label>
+                            <input type="number" step="0.1" id="peso" placeholder="60" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Altura (m)</label>
+                            <input type="number" step="0.01" id="talla" placeholder="1.75" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-200">
+
+                    <!-- DATOS DEL REPRESENTANTE -->
+                    <div class="space-y-3">
+                        <h4 class="text-[11px] font-black uppercase tracking-wider text-slate-700">Datos del Representante</h4>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Nombre Representante</label>
+                            <input type="text" id="nombreRepresentante" placeholder="Nombre completo" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Cédula Rep.</label>
+                                <input type="text" id="cedulaRepresentante" placeholder="V-12345678" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1">Teléfono Rep.</label>
+                                <input type="text" id="telefonoRepresentante" placeholder="0414-1234567" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                             </div>
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
-                                    <th class="px-4 py-3">Atleta</th>
-                                    <th class="px-4 py-3">Fecha Nac.</th>
-                                    <th class="px-4 py-3">Cédula</th>
-                                    <th class="px-4 py-3">Cat.</th>
-                                    <th class="px-4 py-3">Representante</th>
-                                    <th class="px-4 py-3 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="nTB" class="divide-y divide-slate-100 text-xs">
-                                <!-- Dinámico -->
-                            </tbody>
-                        </table>
+                    <!-- PAGOS -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Frecuencia</label>
+                            <select id="frecuenciaPago" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                                <option value="mensual">Mensual</option>
+                                <option value="semanal">Semanal</option>
+                                <option value="anual">Anual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Monto ($)</label>
+                            <input type="number" step="0.01" id="montoPago" placeholder="20.00" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">Último Pago</label>
+                            <input type="date" id="fechaUltimoPago" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
                     </div>
+
+                    <button type="submit" id="bS" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer mt-3">
+                        <i class="fas fa-save"></i> Guardar Atleta
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. NÓMINA DE ATLETAS (ABAJO) -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <h3 class="text-sm font-black uppercase tracking-tight text-slate-900">Nómina de Atletas Registrados</h3>
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <select id="filtroSede" onchange="filterNomina()" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm outline-none">
+                            <option value="todos">Todas las sedes</option>
+                            <option value="Principal">Principal</option>
+                            <option value="Norte">Norte</option>
+                            <option value="Este">Este</option>
+                        </select>
+                        <div class="relative flex-1 sm:w-72">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><i class="fas fa-search text-xs"></i></span>
+                            <input type="text" id="sAt" oninput="filterNomina()" placeholder="Buscar por cédula o nombre..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-500 tracking-wider">
+                                <th class="px-4 py-3">Atleta</th>
+                                <th class="px-4 py-3">Fecha Nac.</th>
+                                <th class="px-4 py-3">Cédula</th>
+                                <th class="px-4 py-3">Cat.</th>
+                                <th class="px-4 py-3">Representante</th>
+                                <th class="px-4 py-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nTB" class="divide-y divide-slate-100 text-xs">
+                            <!-- Dinámico -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -235,5 +234,11 @@
 
     <!-- MÓDULO JS -->
     <script type="module" src="js/atletas.js"></script>
+    <script>
+        // Función global para redirigir a la ficha completa al hacer clic en el atleta
+        window.verFicha = function(id) {
+            window.location.href = `index_ficha.html?id=${id}`;
+        };
+    </script>
 </body>
 </html>
