@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Panel de Usuario y Licencias</title>
+    <title>Control Voley | Panel de Gestión Maestro (Firebase + Supabase)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -71,7 +71,7 @@
                 <i class="fas fa-shield-alt text-2xl"></i>
             </div>
             <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel de Gestión Maestro</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Administración de Clubes y Licencias Supabase</p>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Firebase (Datos Automáticos) + Supabase (Fotos)</p>
         </div>
 
         <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-6">
@@ -81,7 +81,7 @@
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Buscar Club Existente</label>
                 <div class="flex gap-2">
                     <input type="text" id="busquedaInput" placeholder="Ej: RCDEP-CIAR o Nombre..." autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none shadow-sm">
-                    <button class="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2">
+                    <button id="btnBuscarManual" class="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-sm flex items-center gap-2 cursor-pointer">
                         <i class="fas fa-search"></i> Buscar
                     </button>
                 </div>
@@ -99,12 +99,12 @@
             <!-- CONFIGURACIÓN DEL CLUB -->
             <div>
                 <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric mb-4 flex items-center gap-2">
-                    <i class="fas fa-volleyball-ball"></i> Configuración del Club
+                    <i class="fas fa-volleyball-ball"></i> Configuración General del Club
                 </h3>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación (Documento Firebase)</label>
                         <input type="text" id="empresaID" placeholder="Ej: RCDEP-CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm uppercase">
                     </div>
 
@@ -139,12 +139,31 @@
                 </div>
             </div>
 
-            <!-- PROYECTO SUPABASE DEL CLUB -->
+            <!-- BASE DE DATOS FIREBASE DEL CLUB (Opcional o Independiente) -->
             <div class="p-5 bg-brand-50/60 border border-brand-electric/20 rounded-2xl space-y-4">
                 <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric flex items-center gap-2">
-                    <i class="fas fa-database"></i> Proyecto Supabase del Club (Base de Datos + Fotos)
+                    <i class="fas fa-fire text-amber-500"></i> Credenciales Firebase (Datos del Club)
                 </h3>
-                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí la URL y la Anon Key del proyecto Supabase dedicado a este club.</p>
+                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Si lo dejas en blanco, usará la base de datos principal de Firebase por defecto.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Firebase API Key</label>
+                        <input type="text" id="fbApiKey" placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Firebase Project ID</label>
+                        <input type="text" id="fbProjectId" placeholder="proyecto-cliente" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUPABASE STORAGE (Para gestión y compresión de fotos de atletas) -->
+            <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                    <i class="fas fa-database text-brand-electric"></i> Supabase Storage (Almacenamiento de Fotos)
+                </h3>
+                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Credenciales de Supabase para guardar las fotografías comprimidas de los atletas.</p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -158,13 +177,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Anon Key (Llave Pública)</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Supabase Anon Key</label>
                     <input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5c..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
                 </div>
             </div>
 
             <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-                <i class="fas fa-key"></i> Generar Licencia y Aprovisionar Club
+                <i class="fas fa-save"></i> Guardar en Firebase y Generar Licencia
             </button>
             <div id="status" class="text-center font-bold text-xs text-emerald-600"></div>
 
@@ -178,24 +197,37 @@
         </div>
     </div>
 
+    <!-- MÓDULO FIREBASE MAESTRO -->
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        const SUPABASE_URL = "https://zgkbjpesmgqiprvfowju.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_VC9fuoRhlPpJ-8ZrERYfiA_TT_FyciK";
+        const firebaseConfigMaster = {
+            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q", 
+            authDomain: "youcontrol-1d60a.firebaseapp.com",
+            projectId: "youcontrol-1d60a",
+            storageBucket: "youcontrol-1d60a.firebasestorage.app",
+            messagingSenderId: "812100760013",
+            appId: "1:812100760013:web:7574906aa285555faf5484"
+        };
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-        let cacheClubes = [];
+        const appMaster = initializeApp(firebaseConfigMaster);
+        const dbMaster = getFirestore(appMaster);
 
-        async function cargarCache() {
+        let cacheEmpresas = [];
+
+        async function cargarCacheEmpresas() {
             try {
-                const { data, error } = await supabase.from('licencias_master').select('*');
-                if (!error && data) cacheClubes = data;
+                const snap = await getDocs(collection(dbMaster, "empresas_config"));
+                cacheEmpresas = snap.docs.map(d => ({ 
+                    uid: d.id, 
+                    ...d.data() 
+                }));
             } catch (e) {
-                console.error("Error cargando licencias:", e);
+                console.error("Error al precargar empresas desde Firebase:", e);
             }
         }
-        cargarCache();
+        cargarCacheEmpresas();
 
         const inputBusqueda = document.getElementById('busquedaInput');
         const listaResultados = document.getElementById('lista-resultados-busqueda');
@@ -204,45 +236,58 @@
             const term = e.target.value.toLowerCase().trim();
             if (term.length === 0) { listaResultados.style.display = 'none'; return; }
 
-            const filtrados = cacheClubes.filter(emp => 
+            const filtrados = cacheEmpresas.filter(emp => 
                 (emp.nombre && emp.nombre.toLowerCase().includes(term)) ||
-                (emp.club_id && emp.club_id.toLowerCase().includes(term)) ||
+                (emp.uid && emp.uid.toLowerCase().includes(term)) ||
                 (emp.rif && emp.rif.toLowerCase().includes(term))
             );
 
             if (filtrados.length > 0) {
                 listaResultados.style.display = 'block';
                 listaResultados.innerHTML = filtrados.map(emp => `
-                    <div class="item-res-busqueda" onclick="window.seleccionarClub('${emp.club_id}')">
-                        <strong>${emp.nombre}</strong><br>
-                        <small class="text-slate-500">ID: ${emp.club_id} | RIF: ${emp.rif || 'N/A'}</small>
+                    <div class="item-res-busqueda" onclick="window.seleccionarEmpresaBusqueda('${emp.uid}')">
+                        <strong>${emp.nombre || 'Sin Nombre'}</strong><br>
+                        <small class="text-slate-500">ID: ${emp.uid} | RIF: ${emp.rif || 'N/A'}</small>
                     </div>
                 `).join('');
             } else {
                 listaResultados.style.display = 'block';
-                listaResultados.innerHTML = `<div class="p-3 text-slate-400 text-xs">No se encontraron clubes.</div>`;
+                listaResultados.innerHTML = `<div class="p-3 text-slate-400 text-xs">No se encontraron empresas.</div>`;
             }
         });
 
-        window.seleccionarClub = (clubId) => {
+        window.seleccionarEmpresaBusqueda = async (id) => {
             listaResultados.style.display = 'none';
-            const club = cacheClubes.find(c => c.club_id === clubId);
-            if (!club) return;
+            inputBusqueda.value = id;
 
-            document.getElementById('empresaID').value = club.club_id;
-            document.getElementById('nombreEmpresa').value = club.nombre;
-            document.getElementById('rif').value = club.rif || "";
-            document.getElementById('email').value = club.email || "";
-            document.getElementById('limite').value = club.limite_dispositivos || "3";
-            document.getElementById('supaUrl').value = club.supabase_url || "";
-            document.getElementById('supaKey').value = club.supabase_key || "";
-            document.getElementById('supaBucket').value = club.bucket_name || "control-voley";
+            try {
+                const docSnap = await getDoc(doc(dbMaster, "empresas_config", id));
+                if (!docSnap.exists()) return alert("No se encontró el registro de este club en Firebase.");
+                
+                const data = docSnap.data();
+                document.getElementById('empresaID').value = id;
+                document.getElementById('nombreEmpresa').value = data.nombre || "";
+                document.getElementById('rif').value = data.rif || "";
+                document.getElementById('email').value = data.email || "";
+                document.getElementById('limite').value = data.limite_dispositivos || "3";
 
-            if (club.token_licencia) {
-                document.getElementById('tokenResult').value = club.token_licencia;
-                document.getElementById('resultBox').classList.remove('hidden');
+                const fbCli = data.firebaseConfig || {};
+                document.getElementById('fbApiKey').value = fbCli.apiKey || "";
+                document.getElementById('fbProjectId').value = fbCli.projectId || "";
+
+                const supCli = data.supabaseConfig || {};
+                document.getElementById('supaUrl').value = supCli.supabaseUrl || "";
+                document.getElementById('supaKey').value = supCli.supabaseKey || "";
+                document.getElementById('supaBucket').value = supCli.bucket || "control-voley";
+
+                if (data.token_licencia) {
+                    document.getElementById('tokenResult').value = data.token_licencia;
+                    document.getElementById('resultBox').classList.remove('hidden');
+                }
+                document.getElementById('status').innerText = "✅ Datos del club cargados desde Firebase.";
+            } catch (e) {
+                alert("Error al cargar empresa: " + e.message);
             }
-            document.getElementById('status').innerText = "✅ Club cargado correctamente.";
         };
 
         document.addEventListener('click', (e) => {
@@ -255,6 +300,8 @@
             document.getElementById('rif').value = "";
             document.getElementById('email').value = "";
             document.getElementById('limite').value = "3";
+            document.getElementById('fbApiKey').value = "";
+            document.getElementById('fbProjectId').value = "";
             document.getElementById('supaUrl').value = "";
             document.getElementById('supaKey').value = "";
             document.getElementById('supaBucket').value = "control-voley";
@@ -264,69 +311,63 @@
         });
 
         document.getElementById('btnGuardar').addEventListener('click', async () => {
-            const clubId = document.getElementById('empresaID').value.trim().toUpperCase();
+            const id = document.getElementById('empresaID').value.trim().toUpperCase();
             const nombre = document.getElementById('nombreEmpresa').value.trim();
             const rif = document.getElementById('rif').value.trim();
             const email = document.getElementById('email').value.trim();
             const limite = document.getElementById('limite').value;
+
+            const apiKey = document.getElementById('fbApiKey').value.trim();
+            const projectId = document.getElementById('fbProjectId').value.trim();
+
             const supaUrl = document.getElementById('supaUrl').value.trim();
             const supaKey = document.getElementById('supaKey').value.trim();
             const supaBucket = document.getElementById('supaBucket').value.trim();
 
-            if (!clubId || !nombre || !supaUrl || !supaKey) {
-                return alert("Completa el ID del Club, Nombre y las credenciales de Supabase.");
+            if (!id || !nombre) {
+                return alert("El ID del Club y el Nombre de la Empresa son obligatorios.");
             }
 
+            // Paquete de credenciales encapsulado en el token Base64 para el index del club
             const tokenData = {
-                clubId: clubId,
+                clubId: id,
                 clubNombre: nombre,
                 limite: limite,
+                firebaseConfig: apiKey && projectId ? { apiKey, projectId, authDomain: `${projectId}.firebaseapp.com`, storageBucket: `${projectId}.firebasestorage.app` } : null,
                 supabaseUrl: supaUrl,
                 supabaseKey: supaKey,
                 bucket: supaBucket || "control-voley"
             };
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
+            const datosGuardar = {
+                nombre: nombre,
+                rif: rif,
+                email: email,
+                limite_dispositivos: limite,
+                firebaseConfig: apiKey && projectId ? { apiKey, projectId } : null,
+                supabaseConfig: supaUrl && supaKey ? { supabaseUrl: supaUrl, supabaseKey: supaKey, bucket: supaBucket || "control-voley" } : null,
+                token_licencia: tokenBase64,
+                updated_at: new Date().toISOString()
+            };
+
             const btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Aprovisionando tablas y guardando...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Firebase...`;
 
             try {
-                // 1. Guardar en la tabla maestra general
-                const { error } = await supabase
-                    .from('licencias_master')
-                    .upsert([{
-                        club_id: clubId,
-                        nombre: nombre,
-                        rif: rif,
-                        email: email,
-                        limite_dispositivos: limite,
-                        supabase_url: supaUrl,
-                        supabase_key: supaKey,
-                        bucket_name: supaBucket || "control-voley",
-                        token_licencia: tokenBase64,
-                        updated_at: new Date().toISOString()
-                    }], { onConflict: 'club_id' });
+                // Firebase guarda todo de forma automática sin requerir tablas previas
+                await setDoc(doc(dbMaster, "empresas_config", id), datosGuardar, { merge: true });
 
-                if (error) throw error;
-
-                // 2. Conexión automática al Supabase del club para ejecutar la función RPC que crea las tablas
-                const supabaseClub = createClient(supaUrl, supaKey);
-                const { error: rpcError } = await supabaseClub.rpc('inicializar_esquema_club');
-                
-                if (rpcError) {
-                    console.warn("Aviso de esquema automático (asegúrate de haber creado la función RPC en el proyecto del club una vez):", rpcError.message);
-                }
-
-                cargarCache();
+                cargarCacheEmpresas();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').classList.remove('hidden');
-                document.getElementById('status').innerText = "🚀 ¡Club registrado, aprovisionado y listo con éxito!";
+                document.getElementById('status').innerText = "🚀 ¡Guardado en Firebase con éxito y licencia generada!";
             } catch (err) {
-                alert("Error al guardar o aprovisionar en Supabase: " + err.message);
+                alert("Error al guardar en Firebase: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-key"></i> Generar Licencia y Aprovisionar Club`;
+                btn.innerHTML = `<i class="fas fa-save"></i> Guardar en Firebase y Generar Licencia`;
             }
         });
 
