@@ -1,119 +1,229 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Activación y Acceso</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#001F3F">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="img/icon-192.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --c1: #001F3F; --c2: #0074D9; --bg: #f0f8ff; --success: #10B981; --error: #EF4444; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,31,63,0.12); width: 100%; max-width: 420px; text-align: center; border-top: 8px solid var(--c1); }
-        textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #E2E8F0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: monospace; font-size: 0.8rem; height: 90px; resize: none; transition: 0.3s; }
-        textarea:focus { border-color: var(--c2); }
-        button { width: 100%; padding: 14px; background: var(--c1); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,31,63,0.2); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        button:hover { transform: translateY(-1px); }
-        .btn-install { background: #10B981; }
-        .btn-install:hover { background: #059669; }
-        .hidden { display: none !important; }
-        .error-msg { color: var(--error); font-size: 0.8rem; font-weight: 600; margin-top: 8px; }
-        .banner-logo { width: 90px; height: 90px; object-fit: contain; margin: 0 auto 15px auto; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid var(--c2); display: flex; align-items: center; justify-content: center; background: #fff; }
-    </style>
-
-    <script>
-        let deferredPrompt = null;
-
-        // Capturar el evento de instalación PWA si el navegador lo emite
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        // VERIFICACIÓN AUTOMÁTICA DE LICENCIA Y REDIRECCIÓN PWA
-        document.addEventListener('DOMContentLoaded', () => {
-            const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
-            const clubID = localStorage.getItem('control_voley_club_id');
-
-            // Comprobar si se está ejecutando desde la App / Acceso Directo instalado
-            const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-
-            if (licenciaValidada === 'true' && clubID) {
-                // Si viene desde la App instalada, entra directo al menú sin detenerse en esta pantalla
-                if (isPWA) {
-                    window.location.replace('index_menu.html');
-                    return;
-                }
-
-                // Si se abre desde un navegador web normal, muestra la tarjeta de acceso/instalación
-                document.getElementById('cardActivacion').classList.add('hidden');
-                document.getElementById('cardLogin').classList.remove('hidden');
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW no disponible:', err));
-            });
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Voley | Activación y Acceso PWA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0055FF">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        },
+        colors: {
+          brand: {
+            50: '#f0f6ff',
+            100: '#e0edff',
+            500: '#0066ff',
+            600: '#0052cc',
+            700: '#003db3',
+            electric: '#0055FF',
+            cyan: '#00D2FF',
+            dark: '#030B1E'
+          }
+        },
+        boxShadow: {
+          'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+          'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
+          'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
+          'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
         }
-    </script>
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #F8FAFC;
+  }
+  .bg-sports-pattern {
+    background-color: #F1F5F9;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.1) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+</style>
 </head>
-<body oncontextmenu="return false">
+<body class="bg-sports-pattern min-h-screen flex flex-col justify-between items-center text-slate-800 antialiased p-4 sm:p-6" oncontextmenu="return false">
 
-    <!-- TARJETA 1: ACTIVACIÓN DE LICENCIA -->
-    <div class="card" id="cardActivacion">
-        <div class="banner-logo">
-            <i class="fas fa-volleyball-ball" style="color: var(--c2); font-size: 2.5rem;"></i>
-        </div>
-        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Control Voley</h2>
-        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 20px;">Pega tu código de licencia para activar este dispositivo:</p>
+    <!-- CONTENEDOR CENTRAL -->
+    <div class="w-full max-w-md my-auto">
         
-        <textarea id="tokenInput" placeholder="Pega el código de licencia aquí..."></textarea>
-        <button id="btnActivar"><i class="fas fa-key"></i> ACTIVAR SISTEMA</button>
-        <p id="errActivacion" class="error-msg hidden"></p>
-    </div>
-
-    <!-- TARJETA 2: INSTALAR / ACCEDER AL SISTEMA -->
-    <div class="card hidden" id="cardLogin">
-        <div class="banner-logo">
-            <i class="fas fa-user-shield" style="color: var(--c2); font-size: 2.5rem;"></i>
+        <!-- LOGO Y ENCABEZADO -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-4 transform hover:scale-105 transition-transform duration-300">
+                <i class="fas fa-volleyball-ball text-4xl animate-pulse"></i>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight uppercase">Control Voley</h1>
+            <p class="text-xs font-extrabold text-brand-electric uppercase tracking-widest mt-1">Plataforma de Gestión Deportiva PRO</p>
         </div>
-        <h2 style="color:var(--c1); margin-top: 0; font-weight: 900;">Acceso al Sistema</h2>
-        <p style="color:#64748b; font-size: 0.85rem; margin-bottom: 15px;">Dispositivo autorizado para el club</p>
-        
-        <button class="btn-install" id="btnInstalarEntrar"><i class="fas fa-download"></i> INSTALAR ACCESO DIRECTO</button>
-    </div>
 
-    <script type="module">
-        // --- PROCESO DE ACTIVACIÓN DE LICENCIA CON SUPABASE ---
-        async function procesarActivacion() {
-            const rawToken = document.getElementById('tokenInput').value.trim();
-            const errEl = document.getElementById('errActivacion');
-            errEl.classList.add('hidden');
+        <!-- PASO 1: VALIDACIÓN DE LICENCIA -->
+        <div id="stepLicencia" class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80">
+            <h2 class="text-lg font-black text-slate-900 mb-2 flex items-center gap-2">
+                <i class="fas fa-key text-brand-electric"></i> Activación del Club
+            </h2>
+            <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">
+                Ingresa la licencia otorgada por tu panel de administración para conectar tu base de datos en Supabase.
+            </p>
 
-            if (!rawToken) {
-                errEl.textContent = "Por favor pega el código de licencia.";
-                errEl.classList.remove('hidden');
-                return;
-            }
+            <form id="formLicencia" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Código de Licencia</label>
+                    <input type="text" id="inputLicencia" placeholder="Ej: CV-PRO-XXXX-YYYY" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none transition shadow-sm uppercase tracking-wider text-center">
+                </div>
+                <button type="submit" class="w-full py-3.5 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                    <span>Activar Sistema</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- PASO 2 Y 3: TARJETA DE INSTALACIÓN Y ACCESO PWA (Oculta por defecto hasta validar) -->
+        <div id="stepApp" class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 hidden text-center space-y-6">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl mx-auto shadow-sm">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+                <h3 id="clubTitle" class="text-xl font-black text-slate-900">¡Club Conectado!</h3>
+                <p class="text-xs font-semibold text-slate-500 mt-1">El sistema se encuentra vinculado correctamente con Supabase.</p>
+            </div>
+
+            <!-- Botón de Instalación PWA (Aparece si el navegador permite instalar) -->
+            <div id="installContainer" class="hidden">
+                <div class="p-4 bg-brand-50 rounded-2xl border border-brand-electric/20 mb-4 text-left">
+                    <p class="text-xs font-bold text-brand-electric mb-1"><i class="fas fa-mobile-screen-button"></i> Aplicación Web Progresiva</p>
+                    <p class="text-xs text-slate-600 font-medium">Instala Control Voley en tu dispositivo para acceder de forma rápida y en pantalla completa.</p>
+                </div>
+                <button id="btnInstall" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl shadow-md transition text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fas fa-download"></i> Instalar App en tu Equipo
+                </button>
+            </div>
+
+            <!-- Botón para Abrir la App Web -->
+            <button id="btnOpenApp" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-electric to-brand-cyan text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fas fa-rocket"></i> Abrir Panel del Club
+            </button>
             
-            try {
-                // Decodificar el Token Base64 de Supabase
-                const jsonString = atob(rawToken);
-                const data = JSON.parse(jsonString);
+            <button onclick="cambiarLicencia()" class="text-xs font-bold text-slate-400 hover:text-rose-600 transition underline">
+                Cambiar de Licencia / Desvincular
+            </button>
+        </div>
 
-                if (!data.activation_id || !data.supaUrl || !data.supaKey) {
-                    throw new Error("El token no contiene credenciales válidas.");
-                }
+    </div>
 
-                // Guardar los datos del club y la licencia en localStorage
-                localStorage.setItem('control_voley_club_id', data.activation_id);
-                localStorage.setItem('control_voley_club_nombre', data.n || '');
-                localStorage.setItem('control_voley_supa_url', data.supaUrl);
-                localStorage.setItem('control_voley_supa_key', data.supaKey);
-                localStorage.setItem('control_voley_supa_bucket', data.bucket || '
+    <!-- PIE DE PÁGINA -->
+    <footer class="w-full py-6 text-center text-xs text-slate-400 font-semibold">
+        <p>&copy; 2026 <span class="text-slate-600 font-bold">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
+    </footer>
+
+<script>
+// --- REGISTRO DEL SERVICE WORKER (PWA) ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('ServiceWorker registrado con éxito:', reg.scope))
+      .catch(err => console.log('Error al registrar ServiceWorker:', err));
+  });
+}
+
+// --- CAPTURA DE EVENTO DE INSTALACIÓN PWA ---
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installContainer = document.getElementById('installContainer');
+  if (installContainer) installContainer.classList.remove('hidden');
+});
+
+document.getElementById('btnInstall').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('Usuario aceptó instalar la PWA');
+    }
+    deferredPrompt = null;
+    document.getElementById('installContainer').classList.add('hidden');
+  }
+});
+
+// --- LÓGICA DE LICENCIA Y SUPABASE ---
+document.addEventListener('DOMContentLoaded', () => {
+  const licenciaValidada = localStorage.getItem('control_voley_licencia_validada');
+  if (licenciaValidada === 'true') {
+    mostrarPanelApp();
+  }
+});
+
+document.getElementById('formLicencia').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const token = document.getElementById('inputLicencia').value.trim();
+
+  try {
+    // Supongamos que la licencia decodifica en Base64 o contiene las credenciales
+    // Formato de prueba o decodificador de token de licencia del club:
+    // Puedes ajustar el parseo según tu generador de licencias exacto.
+    
+    // EJEMPLO DE DECODIFICACIÓN O SIMULACIÓN DE CREDENCIALES:
+    // (Si tus licencias vienen en formato JSON en Base64):
+    let datosClub;
+    try {
+      datosClub = JSON.parse(atob(token));
+    } catch (err) {
+      // Si el token es directo o usa otro formato, puedes mapearlo aquí:
+      // O simular con datos de prueba de Supabase si corresponde:
+      throw new Error("Formato de licencia inválido.");
+    }
+
+    if (!datosClub.supabaseUrl || !datosClub.supabaseKey) {
+      throw new Error("La licencia no contiene credenciales válidas.");
+    }
+
+    // Guardar en localStorage
+    localStorage.setItem('control_voley_supa_url', datosClub.supabaseUrl);
+    localStorage.setItem('control_voley_supa_key', datosClub.supabaseKey);
+    localStorage.setItem('control_voley_supa_bucket', datosClub.bucket || 'control-voley');
+    localStorage.setItem('control_voley_club_id', datosClub.clubId || 'club_pro');
+    localStorage.setItem('control_voley_club_nombre', datosClub.clubNombre || 'Club Deportivo');
+    localStorage.setItem('control_voley_licencia_validada', 'true');
+
+    mostrarPanelApp();
+  } catch (err) {
+    alert("Error de activación: " + (err.message || "Licencia incorrecta"));
+  }
+});
+
+function mostrarPanelApp() {
+  document.getElementById('stepLicencia').classList.add('hidden');
+  document.getElementById('stepApp').classList.remove('hidden');
+  const nombreClub = localStorage.getItem('control_voley_club_nombre') || 'Club Deportivo';
+  document.getElementById('clubTitle').textContent = `¡${nombreClub} Conectado!`;
+}
+
+document.getElementById('btnOpenApp').addEventListener('click', () => {
+  window.location.href = 'index_menu.html';
+});
+
+window.cambiarLicencia = () => {
+  if (confirm("¿Deseas desvincular este equipo e ingresar otra licencia?")) {
+    localStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
