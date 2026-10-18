@@ -172,7 +172,7 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales de tu Supabase Maestro (licencias_clubes) con la llave real integrada
+        // Credenciales de tu Supabase Maestro (licencias_clubes)
         const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
         const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
@@ -296,7 +296,6 @@
                 limite_dispositivos: limite,
                 supabase_url: supaUrl,
                 supabase_key: supaKey,
-                bucket: supaBucket || id,
                 licencia_token: tokenBase64,
                 updated_at: new Date().toISOString()
             };
