@@ -6,10 +6,10 @@
     <title>Control Voley | Fichas de Atletas</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fuentes y Fuentes de Iconos -->
+    <!-- Fuentes y Iconos -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Archivo CSS Personalizado dentro de la carpeta css/ -->
+    <!-- Archivo CSS Personalizado -->
     <link rel="stylesheet" href="css/styles_fichas.css">
     <!-- Configuración de Tailwind -->
     <script>
@@ -56,7 +56,7 @@
                     </a>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Fichas de Atletas</h1>
+                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Ficha Técnica de Atleta</h1>
                             <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20 uppercase tracking-widest">PRO</span>
                         </div>
                         <p id="userEmail" class="text-xs font-bold text-brand-electric mt-1 flex items-center gap-1.5">
@@ -81,13 +81,13 @@
                 
                 <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
                     <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <i class="fas fa-id-card"></i> Expediente Técnico Completo
+                        <i class="fas id-card"></i> Expediente Biométrico e Integral
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-black text-white max-w-2xl leading-tight drop-shadow-md">
-                        Consulta de Fichas e Biometría
+                        Tarjeta de Alta Definición del Atleta
                     </h2>
                     <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl font-medium hidden sm:block">
-                        Fichas técnicas con IMC, proyecciones de crecimiento genético, saltabilidad y datos biométricos.
+                        Consulta detallada de rendimiento, IMC, talla genética y datos institucionales.
                     </p>
                 </div>
             </div>
@@ -97,10 +97,10 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
             
             <!-- Barra de Filtros y Búsqueda -->
-            <div class="glass-card p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div id="seccionBusqueda" class="glass-card p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
-                    <h3 class="text-lg font-black text-slate-900 tracking-tight">Plantilla del Club</h3>
-                    <p class="text-slate-500 text-xs font-semibold">Filtra atletas por nombre, cédula o posición.</p>
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight">Seleccionar Atleta</h3>
+                    <p class="text-slate-500 text-xs font-semibold">Busca y haz clic en un atleta para desplegar su ficha grande completa.</p>
                 </div>
 
                 <div class="w-full md:w-96 relative">
@@ -109,9 +109,9 @@
                 </div>
             </div>
 
-            <!-- GRID DE TARJETAS DE FICHA -->
-            <div id="aLc" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="col-span-full text-center py-16 glass-card rounded-2xl">
+            <!-- CONTENEDOR DE LA FICHA INDIVIDUAL GRANDE O LISTA -->
+            <div id="aLc">
+                <div class="text-center py-16 glass-card rounded-2xl">
                     <i class="fas fa-spinner fa-spin text-3xl text-brand-electric mb-3"></i>
                     <p class="text-slate-500 text-sm font-bold">Cargando nómina de atletas...</p>
                 </div>
@@ -127,7 +127,7 @@
         </div>
     </footer>
 
-    <!-- Cargar Lógica JS Externa desde la carpeta js/ -->
+    <!-- Cargar Lógica JS -->
     <script type="module" src="js/app_fichas.js"></script>
 </body>
 </html>
