@@ -1,85 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control Voley | Fichas de Atletas</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        },
-        colors: {
-          brand: {
-            50: '#f0f6ff',
-            100: '#e0edff',
-            500: '#0066ff',
-            600: '#0052cc',
-            700: '#003db3',
-            electric: '#0055FF',
-            cyan: '#00D2FF',
-            dark: '#030B1E'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley | Fichas de Atletas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuentes y Fuentes de Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Archivo CSS Personalizado dentro de la carpeta css/ -->
+    <link rel="stylesheet" href="css/styles_fichas.css">
+    <!-- Configuración de Tailwind -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50: '#f0f6ff',
+                100: '#e0edff',
+                500: '#0066ff',
+                600: '#0052cc',
+                700: '#003db3',
+                electric: '#0055FF',
+                cyan: '#00D2FF',
+                dark: '#030B1E'
+              }
+            },
+            boxShadow: {
+              'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+              'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
+              'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
+              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
+            }
           }
-        },
-        boxShadow: {
-          'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-          'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
-          'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
-          'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
         }
       }
-    }
-  }
-</script>
-<style>
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-  }
-  
-  .bg-sports-pattern {
-    background-color: #F1F5F9;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-
-  .banner-glow {
-    position: relative;
-  }
-  .banner-glow::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 5%;
-    width: 90%;
-    height: 30px;
-    background: linear-gradient(90deg, #0055FF, #00D2FF);
-    filter: blur(20px);
-    opacity: 0.35;
-    z-index: -1;
-    border-radius: 50%;
-  }
-
-  .card-hover-effect {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .card-hover-effect:hover {
-    transform: translateY(-6px) scale(1.01);
-  }
-</style>
+    </script>
 </head>
 <body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
 
@@ -120,13 +81,13 @@
                 
                 <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
                     <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-1 flex items-center gap-2">
-                        <i class="fas fa-id-card"></i> Expediente Técnico
+                        <i class="fas fa-id-card"></i> Expediente Técnico Completo
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-black text-white max-w-2xl leading-tight drop-shadow-md">
-                        Consulta de Fichas Individuales
+                        Consulta de Fichas e Biometría
                     </h2>
                     <p class="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl font-medium hidden sm:block">
-                        Selecciona a cualquier integrante de la plantilla para ver su expediente, métricas y datos biológicos.
+                        Fichas técnicas con IMC, proyecciones de crecimiento genético, saltabilidad y datos biométricos.
                     </p>
                 </div>
             </div>
@@ -135,21 +96,21 @@
         <!-- CONTENIDO Y BÚSQUEDA -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
             
-            <!-- Barra de Filtros y Búsqueda Glassmorphism -->
+            <!-- Barra de Filtros y Búsqueda -->
             <div class="glass-card p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div>
                     <h3 class="text-lg font-black text-slate-900 tracking-tight">Plantilla del Club</h3>
-                    <p class="text-slate-500 text-xs font-semibold">Usa el buscador para filtrar atletas por nombre o cédula.</p>
+                    <p class="text-slate-500 text-xs font-semibold">Filtra atletas por nombre, cédula o posición.</p>
                 </div>
 
                 <div class="w-full md:w-96 relative">
                     <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
-                    <input type="text" id="sAi" placeholder="Buscar por nombre o C.I..." onkeyup="fAl()" class="w-full pl-11 pr-4 py-2.5 text-sm font-semibold border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none transition bg-white/90 shadow-sm">
+                    <input type="text" id="sAi" placeholder="Buscar por nombre, C.I. o posición..." class="w-full pl-11 pr-4 py-2.5 text-sm font-semibold border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none transition bg-white/90 shadow-sm">
                 </div>
             </div>
 
             <!-- GRID DE TARJETAS DE FICHA -->
-            <div id="aLc" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="aLc" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="col-span-full text-center py-16 glass-card rounded-2xl">
                     <i class="fas fa-spinner fa-spin text-3xl text-brand-electric mb-3"></i>
                     <p class="text-slate-500 text-sm font-bold">Cargando nómina de atletas...</p>
@@ -166,152 +127,7 @@
         </div>
     </footer>
 
-<script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-const _0xa = i => document.getElementById(i);
-let _aL = [];
-
-// Deshabilitar inspección
-window.addEventListener('keydown', function(e) {
-  if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || (e.ctrlKey && e.keyCode == 88)) {
-    e.preventDefault(); return false;
-  }
-});
-
-// Lectura de credenciales dinámicas de localStorage
-const supaUrl = localStorage.getItem('control_voley_supa_url');
-const supaKey = localStorage.getItem('control_voley_supa_key');
-const clubID = localStorage.getItem('control_voley_club_id');
-const clubNombre = localStorage.getItem('control_voley_club_nombre');
-
-// Verificación de sesión flexible para prevenir rebotes innecesarios
-if (!supaUrl || !supaKey) {
-    console.warn("Faltan credenciales de Supabase. Redirigiendo a activación.");
-    window.location.href = 'index.html';
-}
-
-// Inicializar cliente Supabase exclusivo del club
-const supabase = createClient(supaUrl, supaKey);
-
-// Cálculo de edad
-const calcularEdad = (fecha) => {
-    if (!fecha) return 'N/A';
-    const a = new Date(fecha), o = new Date();
-    let s = o.getFullYear() - a.getFullYear();
-    if (o.getMonth() < a.getMonth() || (o.getMonth() === a.getMonth() && o.getDate() < a.getDate())) s--;
-    return s;
-};
-
-// Cargar atletas desde Supabase
-async function cargarFichas() {
-    _0xa('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre || clubID || 'Activo'}`;
-
-    try {
-        const { data, error } = await supabase
-            .from('atletas')
-            .select('*')
-            .order('nombre', { ascending: true });
-
-        if (error) throw error;
-        _aL = data || [];
-        _rL(_aL);
-    } catch (err) {
-        console.error("Error al obtener atletas:", err.message);
-        _0xa('aLc').innerHTML = `
-            <div class="col-span-full text-center py-12 glass-card rounded-2xl border border-rose-200">
-                <i class="fas fa-exclamation-triangle text-3xl text-rose-500 mb-2"></i>
-                <p class="text-rose-600 font-bold text-sm">Error al conectar con Supabase (${err.message}).</p>
-            </div>`;
-    }
-}
-
-// Renderizar Tarjetas de Ficha
-function _rL(p) {
-    const c = _0xa('aLc');
-    c.innerHTML = '';
-    
-    if (!p.length) {
-        c.innerHTML = `
-            <div class="col-span-full text-center py-12 glass-card rounded-2xl">
-                <i class="fas fa-folder-open text-3xl text-slate-300 mb-2"></i>
-                <p class="text-slate-400 font-bold text-sm">No se encontraron registros de atletas.</p>
-            </div>`;
-        return;
-    }
-
-    p.forEach(k => {
-        const age = calcularEdad(k.fechaNacimiento || k.fecha_nacimiento);
-        const foto = k.fotoUrl || k.foto_url;
-        const cedula = k.cedulaIdentidad || k.cedula_identidad;
-        const nombre = k.nombre || '';
-        const apellido = k.apellido || '';
-        
-        const avatar = foto 
-            ? `<img src="${foto}" class="w-24 h-24 rounded-full object-cover shadow-electric border-2 border-brand-cyan mx-auto mb-3">` 
-            : `<div class="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center font-black justify-center text-2xl mx-auto mb-3 shadow-electric border-2 border-white">${(nombre[0]||'')+(apellido[0]||'')}</div>`;
-
-        const card = document.createElement('div');
-        card.className = "glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric text-center flex flex-col justify-between group relative overflow-hidden cursor-pointer";
-        
-        card.innerHTML = `
-            <div class="absolute top-0 right-0 w-20 h-20 bg-brand-electric/5 rounded-bl-full transition-all group-hover:scale-110 group-hover:bg-brand-electric/10"></div>
-            <div>
-                ${avatar}
-                <h4 class="text-lg font-black text-slate-900 leading-tight group-hover:text-brand-electric transition-colors mb-1">${nombre} ${apellido}</h4>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4"><i class="fas fa-location-dot text-brand-electric"></i> ${k.sede || 'Sin Sede'}</p>
-                
-                <div class="text-xs text-slate-600 space-y-2 text-left bg-slate-50/80 p-3.5 rounded-xl border border-slate-100 font-semibold mb-2">
-                    <div class="flex justify-between border-b border-slate-200/60 pb-1">
-                        <span class="text-slate-400">Cédula:</span>
-                        <span class="font-black text-slate-800">${cedula || 'N/A'}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-slate-200/60 pb-1">
-                        <span class="text-slate-400">Edad:</span>
-                        <span class="font-black text-slate-800">${age} años</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">Categoría:</span>
-                        <span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-md font-extrabold text-[11px] border border-brand-electric/20">${k.categoria || 'N/A'}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs font-black text-brand-electric group-hover:text-brand-cyan transition-colors">
-                <span class="uppercase tracking-wider">Ver Ficha Completa</span>
-                <i class="fas fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
-            </div>
-        `;
-
-        card.addEventListener('click', () => {
-            window.location.href = 'index_datos.html?id=' + k.id;
-        });
-
-        c.appendChild(card);
-    });
-}
-
-// Búsqueda en tiempo real
-window.fAl = () => {
-    const t = _0xa('sAi').value.toLowerCase();
-    const f = _aL.filter(x => {
-        const nom = (x.nombre + ' ' + x.apellido).toLowerCase();
-        const ci = (x.cedulaIdentidad || x.cedula_identidad || '').toString();
-        return nom.includes(t) || ci.includes(t);
-    });
-    _rL(f);
-};
-
-// Cerrar Sesión
-document.getElementById('btnLogout').addEventListener('click', () => {
-    if (confirm("¿Deseas salir del menú del club?")) {
-        localStorage.removeItem('control_voley_licencia_validada');
-        window.location.href = 'index.html';
-    }
-});
-
-// Inicializar la carga al renderizar
-cargarFichas();
-</script>
+    <!-- Cargar Lógica JS Externa desde la carpeta js/ -->
+    <script type="module" src="js/app_fichas.js"></script>
 </body>
 </html>
