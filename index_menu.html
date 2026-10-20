@@ -235,7 +235,7 @@
                             <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-brand-electric text-white flex items-center justify-center shadow-electric group-hover:shadow-glow-cyan transition-all">
                                 <i class="fas fa-globe text-2xl"></i>
                             </div>
-                            <!-- Indicador Visual unificado -->
+                            <!-- Indicador Visual unificado con el Club Activo -->
                             <span id="badgeMenuPortal" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
                                 <i class="fas fa-spinner fa-spin text-[8px]"></i> Verificando...
                             </span>
@@ -271,10 +271,10 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-const clubID = localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('control_voley_club_id') || localStorage.getItem('club_id') || 'YCDEP-CIAR';
+// Unificar lectura exacta del ID del club activo con todas las posibles llaves
+const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || localStorage.getItem('activation_id') || 'YCDEP-CIAR';
 let portalEstaAbierto = false;
 
-// Verificación unificada idéntica al Panel Admin
 async function chequearEstatusPortalMenu() {
     const badge = document.getElementById('badgeMenuPortal');
 
@@ -289,7 +289,7 @@ async function chequearEstatusPortalMenu() {
         const dbStatus = data ? data.portal_abierto : null;
         const localStatus = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
 
-        // Si la base de datos tiene un valor booleano explícito, manda ese; si no, toma el localStorage
+        // Sincronización estricta: Base de datos manda, respaldado por localStorage
         if (dbStatus !== undefined && dbStatus !== null) {
             portalEstaAbierto = dbStatus === true;
         } else {
@@ -308,10 +308,10 @@ async function chequearEstatusPortalMenu() {
     }
 }
 
-// Bloqueo estricto si está cerrado
+// Bloqueo total condicionado
 window.verificarYAccederPortal = () => {
-    // Re-evaluar estado local actual antes de abrir por seguridad
     const localCheck = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
+    
     if (!portalEstaAbierto && !localCheck) {
         alert("⚠️ Acceso denegado: El portal de inscripciones públicas se encuentra CERRADO actualmente por la administración del club.");
         return;
@@ -333,7 +333,7 @@ window.addEventListener('keydown', function(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const clubNombre = localStorage.getItem('control_voley_club_nombre') || localStorage.getItem('club_nombre') || localStorage.getItem('n');
-    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('club_id') || localStorage.getItem('activation_id') || 'YCDEP-CIAR';
+    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || localStorage.getItem('activation_id') || 'YCDEP-CIAR';
     const userEmailEl = document.getElementById('userEmail');
 
     const nombreMostrar = clubNombre || clubID;
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.copiarEnlacePublico = () => {
-    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('club_id') || localStorage.getItem('activation_id') || 'YCDEP-CIAR';
+    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || localStorage.getItem('activation_id') || 'YCDEP-CIAR';
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const linkPublico = `${baseUrl}public_registro.html?club=${clubID}`;
 
