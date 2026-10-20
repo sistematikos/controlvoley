@@ -3,7 +3,6 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
 
-// 1. Obtener identificadores y configuraciones independientes del club desde localStorage
 const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
 const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'Club Voley';
 
@@ -24,10 +23,8 @@ if (userEmailEl) {
     userEmailEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
 }
 
-// 2. Inicializar el cliente unificado de Supabase
 const supabase = createClient(supaUrl, supaKey);
 
-// COMPRESIÓN MÁXIMA Y RECORTE CUADRADO DE FOTO PARA SUPABASE STORAGE
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -63,7 +60,6 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// CARGAR ATLETAS DESDE LA TABLA 'atletas' EN SUPABASE
 async function cargarAtletas() {
     try {
         const { data, error } = await supabase
@@ -83,7 +79,6 @@ async function cargarAtletas() {
     }
 }
 
-// GUARDAR O ACTUALIZAR ATLETA EN SUPABASE
 const aForm = _0xa('aForm');
 if (aForm) {
     aForm.addEventListener('submit', async (e) => {
@@ -102,7 +97,7 @@ if (aForm) {
         const archivo = inputArchivo ? inputArchivo.files[0] : null;
         const sedeAtleta = _0xa('sede').value;
         
-        // Capturar el valor escrito de forma manual en el input de Sede Club
+        // Capturar el valor escrito de forma manual en el campo Sede Club
         const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
         
         let urlFoto = _0xa('fotoUrlActual').value;
@@ -134,7 +129,7 @@ if (aForm) {
                 telefono: _0xa('telefono').value.trim(),
                 fechaNacimiento: _0xa('fechaNacimiento').value,
                 sede: sedeAtleta,
-                sede_club: sedeClubManual, // Campo agregado para la Sede Club modificable manual
+                sede_club: sedeClubManual, // Guardado directo en Supabase
                 categoria: _0xa('categoria').value,
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
@@ -201,8 +196,7 @@ function renderTable(arr) {
     const cedula = k.cedulaIdentidad || 'N/A';
     const fechaNac = k.fechaNacimiento || k.fecha_nacimiento || 'N/A';
     const rep = k.nombreRepresentante || 'N/A';
-    // Mapear el campo sede_club (o sedeClub) para mostrarlo en la tabla
-    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A';
+    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A'; // Lectura del campo manual
 
     const avatar = foto 
       ? `<img src="${foto}" class="w-10 h-10 rounded-full object-cover shadow-sm border border-brand-cyan">` 
@@ -218,7 +212,7 @@ function renderTable(arr) {
       <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
       <td class="px-4 py-3 text-brand-electric font-bold cursor-pointer" onclick="verFicha('${k.id}')">${cedula}</td>
       <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
-      <td class="px-4 py-3 text-slate-700 font-medium cursor-pointer" onclick="verFicha('${k.id}')">${sedeClubVal}</td>
+      <td class="px-4 py-3 text-slate-700 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${sedeClubVal}</td>
       <td class="px-4 py-3 text-slate-600 cursor-pointer" onclick="verFicha('${k.id}')">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
         <button onclick="event.stopPropagation(); editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
@@ -257,7 +251,7 @@ window.editAtleta = (id) => {
   _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
   _0xa('sede').value = k.sede || '';
   
-  // Rellenar el input de Sede Club manual al editar
+  // Cargar el valor manual de Sede Club al editar
   if (_0xa('sedeClub')) {
       _0xa('sedeClub').value = k.sede_club || k.sedeClub || '';
   }
