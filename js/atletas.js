@@ -78,7 +78,7 @@ async function cargarAtletas() {
         console.error("Error al cargar atletas de Supabase:", err.message);
         const nTB = _0xa('nTB');
         if (nTB) {
-            nTB.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
+            nTB.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
         }
     }
 }
@@ -101,6 +101,9 @@ if (aForm) {
         const inputArchivo = _0xa('fotoAtleta');
         const archivo = inputArchivo ? inputArchivo.files[0] : null;
         const sedeAtleta = _0xa('sede').value;
+        
+        // Capturar el valor escrito de forma manual en el input de Sede Club
+        const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
         
         let urlFoto = _0xa('fotoUrlActual').value;
 
@@ -131,6 +134,7 @@ if (aForm) {
                 telefono: _0xa('telefono').value.trim(),
                 fechaNacimiento: _0xa('fechaNacimiento').value,
                 sede: sedeAtleta,
+                sede_club: sedeClubManual, // Campo agregado para la Sede Club modificable manual
                 categoria: _0xa('categoria').value,
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
@@ -183,7 +187,7 @@ function renderTable(arr) {
   tb.innerHTML = '';
   
   if (!arr.length) { 
-      tb.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; 
+      tb.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; 
       return; 
   }
 
@@ -197,6 +201,8 @@ function renderTable(arr) {
     const cedula = k.cedulaIdentidad || 'N/A';
     const fechaNac = k.fechaNacimiento || k.fecha_nacimiento || 'N/A';
     const rep = k.nombreRepresentante || 'N/A';
+    // Mapear el campo sede_club (o sedeClub) para mostrarlo en la tabla
+    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A';
 
     const avatar = foto 
       ? `<img src="${foto}" class="w-10 h-10 rounded-full object-cover shadow-sm border border-brand-cyan">` 
@@ -212,6 +218,7 @@ function renderTable(arr) {
       <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
       <td class="px-4 py-3 text-brand-electric font-bold cursor-pointer" onclick="verFicha('${k.id}')">${cedula}</td>
       <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
+      <td class="px-4 py-3 text-slate-700 font-medium cursor-pointer" onclick="verFicha('${k.id}')">${sedeClubVal}</td>
       <td class="px-4 py-3 text-slate-600 cursor-pointer" onclick="verFicha('${k.id}')">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
         <button onclick="event.stopPropagation(); editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
@@ -232,7 +239,8 @@ window.filterNomina = () => {
     const nom = ((x.nombre || '') + ' ' + (x.apellido || '')).toLowerCase();
     const ci = (x.cedulaIdentidad || '').toString().toLowerCase();
     const rep = (x.nombreRepresentante || '').toLowerCase();
-    const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t);
+    const sedeClubTexto = (x.sede_club || x.sedeClub || '').toLowerCase();
+    const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t) || sedeClubTexto.includes(t);
     return coincideSede && coincideTexto;
   });
   renderTable(f);
@@ -248,6 +256,12 @@ window.editAtleta = (id) => {
   _0xa('telefono').value = k.telefono || '';
   _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
   _0xa('sede').value = k.sede || '';
+  
+  // Rellenar el input de Sede Club manual al editar
+  if (_0xa('sedeClub')) {
+      _0xa('sedeClub').value = k.sede_club || k.sedeClub || '';
+  }
+
   _0xa('categoria').value = k.categoria || '';
   _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
   _0xa('peso').value = k.peso || '';
