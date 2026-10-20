@@ -100,18 +100,10 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nacimiento</label>
                             <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede (Sistema)</label>
-                            <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
-                                <option value="">Seleccione...</option>
-                                <option value="Lara">Lara</option>
-                                <option value="Principal">Principal</option>
-                            </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede Club (Manual)</label>
@@ -289,8 +281,8 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             cedulaIdentidad: cedula,
             telefono: _0xa('telefono').value.trim(),
             fechaNacimiento: _0xa('fechaNacimiento').value,
-            sede: _0xa('sede').value,
-            sede_club: sedeClubManual, // Guardado manual desde el portal público
+            estatus: 'Activo', // Por defecto los nuevos registros entran como Activos
+            sede_club: sedeClubManual,
             categoria: _0xa('categoria').value,
             nroCamiseta: _0xa('nroCamiseta').value.trim(),
             peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
