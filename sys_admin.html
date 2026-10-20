@@ -156,50 +156,28 @@
         <div class="glass-card p-6 rounded-2xl border-l-4 border-l-brand-electric shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Clubes Activos
+                    <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Licencias Registradas
                 </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el estado del portal de inscripciones públicas y la auditoría de licencias en Firebase.</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">Administra la auditoría central de licencias en Supabase Maestro.</p>
             </div>
             <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
                 <i class="fas fa-shield-halved"></i> Exclusivo Staff
             </span>
         </div>
 
-        <!-- CONTROL DE APERTURA DE REGISTROS PÚBLICOS -->
-        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-id-card-clip text-brand-electric"></i> Portal de Autoregistro para Representantes
-                    </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">
-                        Activa o desactiva el acceso a <code>public_registro.html</code> para que los representantes puedan inscribir atletas de forma autónoma.
-                    </p>
-                </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span id="estadoPortalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
-                        Cargando estado...
-                    </span>
-                    <button id="btnTogglePortal" onclick="togglePortal()" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric cursor-pointer">
-                        Cambiar Estado
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN FIREBASE -->
+        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN SUPABASE -->
         <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                     <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-shield-halved text-brand-electric"></i> Auditoría de Clubes y Licencias Activas
+                        <i class="fas fa-database text-brand-electric"></i> Auditoría de Clubes y Licencias en Supabase
                     </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado oficial sincronizado desde la base de datos de Firebase.</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado maestro sincronizado en tiempo real.</p>
                 </div>
                 <div class="flex items-center gap-2.5 w-full md:w-auto">
                     <div class="relative w-full md:w-72">
                         <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-                        <input type="text" id="buscar-club-tech" placeholder="Buscar por ID o Club..." class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium shadow-sm">
+                        <input type="text" id="buscar-club-tech" placeholder="Buscar por ID, Club o Ciudad..." class="w-full pl-9 pr-3 py-2.5 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium shadow-sm">
                     </div>
                     <button id="btn-recargar-clubes" class="bg-slate-100 text-slate-700 border border-slate-200 p-2.5 rounded-xl text-xs font-bold hover:bg-slate-200 cursor-pointer shadow-sm transition">
                         <i class="fas fa-rotate"></i>
@@ -207,50 +185,37 @@
                 </div>
             </div>
 
-            <!-- TABLA DE CLUBES -->
+            <!-- TABLA DE LICENCIAS -->
             <div class="overflow-x-auto border border-slate-200/80 rounded-xl bg-white shadow-sm">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 text-slate-600 text-xs font-black uppercase border-b border-slate-200">
-                            <th class="p-3.5">ID Licencia / Club</th>
+                            <th class="p-3.5">ID Licencia</th>
                             <th class="p-3.5">Nombre del Club</th>
-                            <th class="p-3.5">Fecha de Registro</th>
-                            <th class="p-3.5 text-center">Límite Dispositivos</th>
+                            <th class="p-3.5">Contacto / Email</th>
+                            <th class="p-3.5">Ciudad</th>
+                            <th class="p-3.5 text-center">Límite Disp.</th>
+                            <th class="p-3.5 text-center">Fecha Registro</th>
                             <th class="p-3.5 text-center">Estado</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-clubes-registrados" class="text-xs divide-y divide-slate-100 font-medium">
                         <tr>
-                            <td colspan="5" class="text-center py-10 text-slate-400 italic">
-                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando clubes desde Firebase...
+                            <td colspan="7" class="text-center py-10 text-slate-400 italic">
+                                <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Cargando licencias desde Supabase...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="mt-4 text-right">
-                <span id="total-clubes-count" class="text-xs text-slate-500 font-bold">Total clubes registrados: 0</span>
+                <span id="total-clubes-count" class="text-xs text-slate-500 font-bold">Total licencias registradas: 0</span>
             </div>
         </div>
 
         <!-- TARJETAS DE ACCESOS RÁPIDOS Y UTILIDADES -->
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-5">
-            
-            <!-- 1. ABRIR PORTAL PÚBLICO -->
-            <div class="tool-card">
-                <div>
-                    <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Portal Público</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario <code>public_registro.html</code> de representantes.</p>
-                </div>
-                <a href="public_registro.html" target="_blank" class="w-full bg-brand-electric text-white text-center py-3 rounded-xl text-xs font-black hover:bg-brand-600 transition shadow-electric flex items-center justify-center gap-2">
-                    <i class="fas fa-external-link-alt"></i> Ver Portal
-                </a>
-            </div>
-
-            <!-- 2. GESTIÓN DE ATLETAS -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <!-- 1. GESTIÓN DE ATLETAS -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-emerald-200">
@@ -264,7 +229,7 @@
                 </a>
             </div>
 
-            <!-- 3. PANEL DE USUARIOS / LICENCIAS -->
+            <!-- 2. PANEL DE USUARIOS / LICENCIAS -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-cyan-50 text-cyan-700 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-cyan-200">
@@ -278,7 +243,7 @@
                 </a>
             </div>
 
-            <!-- 4. MENÚ PRINCIPAL -->
+            <!-- 3. MENÚ PRINCIPAL -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-indigo-200">
@@ -291,7 +256,6 @@
                     <i class="fas fa-arrow-left"></i> Volver al Menú
                 </a>
             </div>
-
         </div>
 
     </div>
@@ -304,101 +268,46 @@
         </div>
     </footer>
 
-    <!-- LÓGICA DE CONTROL EN FIREBASE -->
+    <!-- LÓGICA DE AUDITORÍA EN SUPABASE MAESTRO -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        const firebaseConfigMaster = {
-            apiKey: "AIzaSyAMkpj9tFps526mL6hO-ciePWrTdx_NK9Q", 
-            authDomain: "youcontrol-1d60a.firebaseapp.com",
-            projectId: "youcontrol-1d60a",
-            storageBucket: "youcontrol-1d60a.firebasestorage.app",
-            messagingSenderId: "812100760013",
-            appId: "1:812100760013:web:7574906aa285555faf5484"
-        };
+        // Credenciales del Supabase Maestro (licencias_clubes)
+        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-        const appMaster = initializeApp(firebaseConfigMaster);
-        const dbMaster = getFirestore(appMaster);
-
-        const empresaIdActiva = localStorage.getItem('youcontrol_empresa_id');
-        let portalAbiertoActual = false;
+        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         let listaClubesMaster = [];
-
-        async function inicializarPanel() {
-            await consultarEstadoPortal();
-            await cargarClubesMaster();
-        }
-
-        async function consultarEstadoPortal() {
-            if (!empresaIdActiva) {
-                const badge = document.getElementById('estadoPortalBadge');
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
-                badge.innerHTML = '<i class="fas fa-triangle-exclamation mr-1"></i> SIN SESIÓN DE CLUB';
-                return;
-            }
-            try {
-                const docRef = doc(dbMaster, "empresas_config", empresaIdActiva);
-                const docSnap = await getDoc(docRef);
-
-                portalAbiertoActual = (docSnap.exists() && docSnap.data().portal_abierto === true);
-                actualizarInterfazEstado();
-            } catch (err) {
-                console.error("Error consultando estado del portal en Firebase:", err);
-            }
-        }
-
-        function actualizarInterfazEstado() {
-            const badge = document.getElementById('estadoPortalBadge');
-            if (portalAbiertoActual) {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ABIERTO';
-            } else {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1"></i> CERRADO';
-            }
-        }
-
-        window.togglePortal = async () => {
-            if (!empresaIdActiva) {
-                alert("No hay sesión de club activa para cambiar el estado del portal.");
-                return;
-            }
-            const nuevoEstado = !portalAbiertoActual;
-            const btn = document.getElementById('btnTogglePortal');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
-
-            try {
-                const docRef = doc(dbMaster, "empresas_config", empresaIdActiva);
-                await setDoc(docRef, { portal_abierto: nuevoEstado }, { merge: true });
-
-                portalAbiertoActual = nuevoEstado;
-                actualizarInterfazEstado();
-                alert(nuevoEstado ? "¡Portal de inscripciones abierto con éxito!" : "Portal de inscripciones cerrado.");
-            } catch (err) {
-                console.error("Error al actualizar estado en Firebase:", err);
-                alert("Error al cambiar el estado del portal.");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `Cambiar Estado`;
-            }
-        };
 
         async function cargarClubesMaster() {
             const tbody = document.getElementById('tabla-clubes-registrados');
             if (!tbody) return;
 
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-10 text-slate-400 italic">
+                        <i class="fas fa-spinner fa-spin text-lg mr-2 text-brand-electric"></i> Consultando licencias en Supabase Maestro...
+                    </td>
+                </tr>`;
+
             try {
-                const snap = await getDocs(collection(dbMaster, "empresas_config"));
-                listaClubesMaster = snap.docs.map(d => ({
-                    club_id: d.id,
-                    ...d.data()
-                }));
+                const { data, error } = await supabaseMaster
+                    .from('licencias')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                listaClubesMaster = data || [];
                 renderizarTablaClubes(listaClubesMaster);
             } catch (err) {
-                console.error("Error cargando empresas desde Firebase:", err);
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-rose-500 font-bold">Error al conectar con Firebase.</td></tr>`;
+                console.error("Error cargando licencias desde Supabase:", err.message);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-10 text-rose-500 font-bold">
+                            <i class="fas fa-exclamation-triangle mr-2"></i> Error al conectar con Supabase Maestro (${err.message}).
+                        </td>
+                    </tr>`;
             }
         }
 
@@ -407,20 +316,22 @@
             const totalCount = document.getElementById('total-clubes-count');
             if (!tbody) return;
 
-            if (totalCount) totalCount.innerText = `Total clubes registrados: ${lista.length}`;
+            if (totalCount) totalCount.innerText = `Total licencias registradas: ${lista.length}`;
 
             if (lista.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-slate-400 italic">No hay clubes registrados en el sistema.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-slate-400 italic">No hay licencias registradas en la base de datos.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = lista.map(item => {
                 const nombreClub = item.nombre || 'Club Deportivo';
-                const idLicencia = item.club_id || 'N/A';
+                const idLicencia = item.id || 'N/A';
+                const email = item.email || item.telefono || 'Sin datos contacto';
+                const ciudad = item.ciudad || 'Lara';
                 
                 let fechaReg = 'N/A';
-                if (item.timestamp) {
-                    fechaReg = new Date(item.timestamp).toLocaleDateString();
+                if (item.created_at) {
+                    fechaReg = new Date(item.created_at).toLocaleDateString();
                 } else if (item.updated_at) {
                     fechaReg = new Date(item.updated_at).toLocaleDateString();
                 }
@@ -434,8 +345,10 @@
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3.5 font-mono font-bold text-brand-electric">${idLicencia}</td>
                         <td class="p-3.5 font-bold text-slate-900">${nombreClub}</td>
-                        <td class="p-3.5 text-slate-600 font-semibold">${fechaReg}</td>
+                        <td class="p-3.5 text-slate-600 font-semibold">${email}</td>
+                        <td class="p-3.5 text-slate-600 font-semibold">${ciudad}</td>
                         <td class="p-3.5 text-center text-slate-800 font-black">${limiteDispositivos}</td>
+                        <td class="p-3.5 text-center text-slate-600 font-semibold">${fechaReg}</td>
                         <td class="p-3.5 text-center">
                             <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
                                 <i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ACTIVO
@@ -449,15 +362,18 @@
         document.getElementById('buscar-club-tech')?.addEventListener('input', (ev) => {
             const criterio = ev.target.value.toLowerCase().trim();
             const filtrados = listaClubesMaster.filter(item => 
-                (item.club_id || '').toLowerCase().includes(criterio) ||
-                (item.nombre || '').toLowerCase().includes(criterio)
+                (item.id || '').toLowerCase().includes(criterio) ||
+                (item.nombre || '').toLowerCase().includes(criterio) ||
+                (item.ciudad || '').toLowerCase().includes(criterio) ||
+                (item.email || '').toLowerCase().includes(criterio)
             );
             renderizarTablaClubes(filtrados);
         });
 
         document.getElementById('btn-recargar-clubes')?.addEventListener('click', cargarClubesMaster);
 
-        inicializarPanel();
+        // Cargar las licencias al abrir el panel
+        cargarClubesMaster();
     </script>
 </body>
 </html>
