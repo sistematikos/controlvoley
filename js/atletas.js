@@ -97,8 +97,9 @@ if (aForm) {
         const archivo = inputArchivo ? inputArchivo.files[0] : null;
         const sedeAtleta = _0xa('sede').value;
         
-        // Capturar el valor escrito de forma manual en el campo Sede Club
+        // Capturar el valor escrito de forma manual en el campo Sede Club y el Estatus administrativo
         const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
+        const estatusAtleta = _0xa('estatus') ? _0xa('estatus').value : 'Activo';
         
         let urlFoto = _0xa('fotoUrlActual').value;
 
@@ -129,7 +130,8 @@ if (aForm) {
                 telefono: _0xa('telefono').value.trim(),
                 fechaNacimiento: _0xa('fechaNacimiento').value,
                 sede: sedeAtleta,
-                sede_club: sedeClubManual, // Guardado directo en Supabase
+                sede_club: sedeClubManual,
+                estatus: estatusAtleta, // Guardado del estatus administrativo en Supabase
                 categoria: _0xa('categoria').value,
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
@@ -196,7 +198,16 @@ function renderTable(arr) {
     const cedula = k.cedulaIdentidad || 'N/A';
     const fechaNac = k.fechaNacimiento || k.fecha_nacimiento || 'N/A';
     const rep = k.nombreRepresentante || 'N/A';
-    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A'; // Lectura del campo manual
+    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A';
+    const estatusVal = k.estatus || 'Activo';
+
+    // Insignia visual según el estatus
+    let estatusBadge = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-xs border border-emerald-200">Activo</span>`;
+    if (estatusVal === 'Inactivo') {
+        estatusBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg font-bold text-xs border border-amber-200">Inactivo</span>`;
+    } else if (estatusVal === 'Retirado') {
+        estatusBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-lg font-bold text-xs border border-rose-200">Retirado</span>`;
+    }
 
     const avatar = foto 
       ? `<img src="${foto}" class="w-10 h-10 rounded-full object-cover shadow-sm border border-brand-cyan">` 
@@ -207,6 +218,7 @@ function renderTable(arr) {
         ${avatar}
         <div>
           <div class="font-bold text-slate-900 hover:text-brand-electric transition">${nombre} ${apellido}</div>
+          <div class="text-[11px] text-slate-400">Estatus: ${estatusBadge}</div>
         </div>
       </td>
       <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
@@ -251,9 +263,12 @@ window.editAtleta = (id) => {
   _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
   _0xa('sede').value = k.sede || '';
   
-  // Cargar el valor manual de Sede Club al editar
+  // Cargar Sede Club y Estatus al editar
   if (_0xa('sedeClub')) {
       _0xa('sedeClub').value = k.sede_club || k.sedeClub || '';
+  }
+  if (_0xa('estatus')) {
+      _0xa('estatus').value = k.estatus || 'Activo';
   }
 
   _0xa('categoria').value = k.categoria || '';
@@ -296,6 +311,7 @@ window.resetForm = () => {
   if (aForm) aForm.reset();
   _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
+  if (_0xa('estatus')) _0xa('estatus').value = 'Activo';
   
   const fT = _0xa('fT');
   const bS = _0xa('bS');
