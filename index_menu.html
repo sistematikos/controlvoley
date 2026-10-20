@@ -83,6 +83,7 @@
         <!-- NAVEGACIÓN SUPERIOR FLOTANTE -->
         <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 glass-card border-b border-slate-200/80 shadow-sm">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
+                
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric">
                         <i class="fas fa-volleyball-ball text-lg animate-pulse"></i>
@@ -92,10 +93,14 @@
                             <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Control Voley</h1>
                             <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20 uppercase tracking-widest">PRO</span>
                         </div>
-                        <p id="userEmail" class="text-xs font-bold text-brand-electric mt-1 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                            <span>Cargando club...</span>
-                        </p>
+                        <!-- Información detallada del Club e ID -->
+                        <div class="flex items-center gap-2 mt-1">
+                            <p id="userEmail" class="text-xs font-bold text-brand-electric flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                                <span id="textoClubInfo">Cargando club...</span>
+                            </p>
+                            <span id="badgeClubId" class="text-[10px] font-mono font-extrabold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md border border-slate-200">ID: ...</span>
+                        </div>
                     </div>
                 </div>
 
@@ -110,6 +115,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
             <div class="banner-glow rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-brand-dark">
                 <img src="img/banner.png" alt="Control Voley Banner" class="w-full h-44 sm:h-64 object-cover opacity-85" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
+                
                 <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
                     <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-2 flex items-center gap-2">
                         <i class="fas fa-bolt"></i> Rendimiento &amp; Gestión Deportiva
@@ -123,6 +129,7 @@
 
         <!-- CONTENIDO Y MÓDULOS -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 <!-- 1. Gestión de Atletas -->
@@ -200,7 +207,7 @@
                     </div>
                 </a>
 
-                <!-- 6. Portal de Registro Público (Sincronizado con Supabase) -->
+                <!-- 6. Portal de Registro Público -->
                 <div class="glass-card rounded-2xl p-6 card-hover-effect border border-cyan-200 hover:border-cyan-400 hover:shadow-glow-cyan flex flex-col justify-between group relative overflow-hidden bg-gradient-to-br from-white via-cyan-50/20 to-brand-50/30">
                     <div>
                         <div class="flex items-center justify-between mb-5">
@@ -238,24 +245,44 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || 'YCDEP-CIAR';
+// Capturar el ID del club activo desde cualquier posible llave de almacenamiento local
+const clubID = localStorage.getItem('control_voley_club_id') || 
+               localStorage.getItem('youcontrol_empresa_id') || 
+               localStorage.getItem('club_id') || 
+               localStorage.getItem('activation_id') || 
+               'YCDEP-CIAR';
+
 let portalEstaAbierto = false;
 
 async function chequearEstatusPortalMenu() {
     const badge = document.getElementById('badgeMenuPortal');
+    const textoClubInfo = document.getElementById('textoClubInfo');
+    const badgeClubId = document.getElementById('badgeClubId');
+
+    // Mostrar inmediatamente el ID en la etiqueta dedicada
+    badgeClubId.textContent = `ID: ${clubID}`;
+    textoClubInfo.textContent = `Club ID: ${clubID}`;
 
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
+        
         const { data, error } = await supabaseMaster
             .from('licencias')
-            .select('portal_abierto')
+            .select('portal_abierto, nombre')
             .eq('id', clubID)
-            .single();
+            .maybeSingle();
 
         if (error) throw error;
 
-        // Lectura directa y estricta de Supabase
-        portalEstaAbierto = data && data.portal_abierto === true;
+        if (data) {
+            portalEstaAbierto = data.portal_abierto === true;
+            if (data.nombre) {
+                textoClubInfo.textContent = data.nombre;
+            }
+        } else {
+            console.warn("No se encontró la licencia en Supabase con el ID:", clubID);
+            portalEstaAbierto = false;
+        }
     } catch (err) {
         console.warn("Error consultando Supabase:", err.message);
         portalEstaAbierto = false;
@@ -272,7 +299,7 @@ async function chequearEstatusPortalMenu() {
 
 window.verificarYAccederPortal = () => {
     if (!portalEstaAbierto) {
-        alert("⚠️ Acceso denegado: El portal de inscripciones públicas se encuentra CERRADO actualmente en la base de datos del club.");
+        alert(`⚠️ Acceso denegado: El portal para el club "${clubID}" está CERRADO en la base de datos.`);
         return;
     }
     window.open(`public_registro.html?club=${clubID}`, '_blank');
@@ -282,14 +309,8 @@ chequearEstatusPortalMenu();
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const clubNombre = localStorage.getItem('control_voley_club_nombre') || localStorage.getItem('club_nombre') || 'Club Activo';
-    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
-    document.getElementById('userEmail').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre} (${clubID})`;
-});
-
 window.copiarEnlacePublico = () => {
-    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
+    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || 'YCDEP-CIAR';
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const linkPublico = `${baseUrl}public_registro.html?club=${clubID}`;
 
