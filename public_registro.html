@@ -100,18 +100,22 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nacimiento</label>
                             <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede</label>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede (Sistema)</label>
                             <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
                                 <option value="">Seleccione...</option>
                                 <option value="Lara">Lara</option>
                                 <option value="Principal">Principal</option>
                             </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede Club (Manual)</label>
+                            <input type="text" id="sedeClub" placeholder="Ej: Gimnasio Cubierto" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Categoría</label>
@@ -264,6 +268,7 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
 
     const cedula = _0xa('cedulaIdentidad').value.trim();
     const archivo = _0xa('fotoAtleta').files[0];
+    const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
 
     try {
         let urlFoto = "";
@@ -285,6 +290,7 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             telefono: _0xa('telefono').value.trim(),
             fechaNacimiento: _0xa('fechaNacimiento').value,
             sede: _0xa('sede').value,
+            sede_club: sedeClubManual, // Guardado manual desde el portal público
             categoria: _0xa('categoria').value,
             nroCamiseta: _0xa('nroCamiseta').value.trim(),
             peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
