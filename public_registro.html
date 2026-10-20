@@ -102,7 +102,7 @@
                 </div>
                 <h2 class="text-xl font-black text-slate-900 mb-2">Inscripciones Cerradas</h2>
                 <p class="text-slate-500 text-sm max-w-md mx-auto font-medium">
-                    En este momento el portal de autoregistro se encuentra cerrado por la administración. Por favor comunícate con el club para más información.
+                    En este momento el portal de autoregistro se encuentra cerrado por la administración del club. Por favor comunícate con el personal técnico para más información.
                 </p>
             </div>
 
@@ -153,6 +153,7 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede</label>
                             <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
                                 <option value="">Seleccione...</option>
+                                <option value="Lara">Lara</option>
                                 <option value="Principal">Principal</option>
                                 <option value="Sucursal">Sucursal</option>
                             </select>
@@ -242,19 +243,17 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const _0xa = i => document.getElementById(i);
 
-// Lectura de credenciales del club guardadas en localStorage
-const supaUrl = localStorage.getItem('control_voley_supa_url');
-const supaKey = localStorage.getItem('control_voley_supa_key');
-const supaBucket = localStorage.getItem('control_voley_supa_bucket') || 'control-voley';
-const clubNombre = localStorage.getItem('control_voley_club_nombre') || 'Control Voley';
+// Supabase Maestro
+const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-_0xa('tituloClub').textContent = clubNombre;
+// Determinar el club activo por la URL (?club=YCDEP-CIAR) o localStorage
+const urlParams = new URLSearchParams(window.location.search);
+const clubID = urlParams.get('club') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('control_voley_club_id') || 'YCDEP-CIAR';
 
-if (!supaUrl || !supaKey) {
-    alert("Atención: No se detectaron las credenciales de Supabase del club en este navegador. Asegúrate de iniciar sesión desde la aplicación principal.");
-}
-
-const supabase = createClient(supaUrl || "", supaKey || "");
+let supabaseClub = null;
+let supaBucket = 'control-voley';
+let clubInfo = null;
 
 // COMPRESIÓN Y RECORTE AUTOMÁTICO DE FOTO (300x300 px, ~30KB)
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
@@ -291,28 +290,60 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// 1. VERIFICAR SI EL PORTAL ESTÁ ABIERTO O CERRADO EN SUPABASE
+// 1. VERIFICAR SI EL PORTAL ESTÁ ABIERTO EN SUPABASE MAESTRO
 async function verificarEstadoPortal() {
-    if (!supaUrl || !supaKey) {
-        _0xa('estadoCargando').classList.add('hidden');
-        _0xa('estadoCerrado').classList.remove('hidden');
-        return;
-    }
-
     try {
-        const { data, error } = await supabase
-            .from('config_club')
-            .select('portal_abierto')
+        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
+
+        // Obtener configuración de la licencia
+        const { data: licencia, error } = await supabaseMaster
+            .from('licencias')
+            .select('*')
+            .eq('id', clubID)
             .single();
 
         _0xa('estadoCargando').classList.add('hidden');
 
-        if (data && data.portal_abierto === true) {
+        let estaAbierto = false;
+
+        if (licencia) {
+            clubInfo = licencia;
+            _0xa('tituloClub').textContent = licencia.nombre || 'Control Voley';
+            
+            // Revisa si está abierto en Supabase o en fallback local
+            if (licencia.portal_abierto !== undefined && licencia.portal_abierto !== null) {
+                estaAbierto = licencia.portal_abierto === true;
+            } else {
+                estaAbierto = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
+            }
+
+            // Inicializar cliente del club
+            const supaUrl = licencia.supabase_url || localStorage.getItem('control_voley_supa_url');
+            const supaKey = licencia.supabase_key || localStorage.getItem('control_voley_supa_key');
+            supaBucket = licencia.bucket || 'control-voley';
+
+            if (supaUrl && supaKey) {
+                supabaseClub = createClient(supaUrl, supaKey);
+            }
+        } else {
+            // Fallback directo a localStorage
+            estaAbierto = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
+            const supaUrl = localStorage.getItem('control_voley_supa_url');
+            const supaKey = localStorage.getItem('control_voley_supa_key');
+
+            if (supaUrl && supaKey) {
+                supabaseClub = createClient(supaUrl, supaKey);
+            }
+        }
+
+        if (estaAbierto) {
             _0xa('estadoAbierto').classList.remove('hidden');
         } else {
             _0xa('estadoCerrado').classList.remove('hidden');
         }
+
     } catch (err) {
+        console.error("Error al verificar estado del portal:", err);
         _0xa('estadoCargando').classList.add('hidden');
         _0xa('estadoCerrado').classList.remove('hidden');
     }
@@ -321,6 +352,12 @@ async function verificarEstadoPortal() {
 // 2. ENVIAR REGISTRO DESDE EL PORTAL PÚBLICO
 _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!supabaseClub) {
+        alert("Atención: No se pudo conectar con la base de datos del club. Por favor intenta más tarde.");
+        return;
+    }
+
     const btn = _0xa('btnEnviarRegistro');
     btn.disabled = true;
     btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo y registrando...`;
@@ -336,17 +373,17 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
             const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
 
-            const { error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabaseClub.storage
                 .from(supaBucket)
                 .upload(fileName, archivoOptimizado, { upsert: true });
 
-            if (uploadError) throw uploadError;
+            if (!uploadError) {
+                const { data: publicURLData } = supabaseClub.storage
+                    .from(supaBucket)
+                    .getPublicUrl(fileName);
 
-            const { data: publicURLData } = supabase.storage
-                .from(supaBucket)
-                .getPublicUrl(fileName);
-
-            urlFoto = publicURLData.publicUrl;
+                urlFoto = publicURLData.publicUrl;
+            }
         }
 
         const atletaData = {
@@ -368,22 +405,22 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             fotoUrl: urlFoto
         };
 
-        const { error } = await supabase.from('atletas').insert([atletaData]);
+        const { error } = await supabaseClub.from('atletas').insert([atletaData]);
         if (error) throw error;
 
-        // Mostrar pantalla de éxito
+        // Pantalla de éxito
         _0xa('estadoAbierto').classList.add('hidden');
         _0xa('estadoExito').classList.remove('hidden');
 
     } catch (err) {
-        console.error(err);
+        console.error("Error en registro público:", err);
         alert("Error al enviar la inscripción: " + (err.message || err));
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> Enviar Inscripción al Club`;
     }
 });
 
-// Inicializar verificación de apertura
+// Inicializar verificación
 verificarEstadoPortal();
 </script>
 </body>
