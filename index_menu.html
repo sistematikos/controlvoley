@@ -93,12 +93,10 @@
                             <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Control Voley</h1>
                             <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20 uppercase tracking-widest">PRO</span>
                         </div>
-                        <!-- Información detallada del Club e ID -->
+                        <!-- Nombre del club en azul y su ID al lado -->
                         <div class="flex items-center gap-2 mt-1">
-                            <p id="userEmail" class="text-xs font-bold text-brand-electric flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-                                <span id="textoClubInfo">Cargando club...</span>
-                            </p>
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+                            <span id="nombreClubLabel" class="text-xs font-black text-brand-electric">Cargando club...</span>
                             <span id="badgeClubId" class="text-[10px] font-mono font-extrabold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md border border-slate-200">ID: ...</span>
                         </div>
                     </div>
@@ -245,49 +243,62 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-// Capturar el ID del club activo desde cualquier posible llave de almacenamiento local
+// Obtener el identificador guardado en la sesión local
 const clubID = localStorage.getItem('control_voley_club_id') || 
                localStorage.getItem('youcontrol_empresa_id') || 
                localStorage.getItem('club_id') || 
-               localStorage.getItem('activation_id') || 
                'YCDEP-CIAR';
 
 let portalEstaAbierto = false;
+let idLicenciaReal = clubID;
 
 async function chequearEstatusPortalMenu() {
     const badge = document.getElementById('badgeMenuPortal');
-    const textoClubInfo = document.getElementById('textoClubInfo');
+    const nombreClubLabel = document.getElementById('nombreClubLabel');
     const badgeClubId = document.getElementById('badgeClubId');
 
-    // Mostrar inmediatamente el ID en la etiqueta dedicada
     badgeClubId.textContent = `ID: ${clubID}`;
-    textoClubInfo.textContent = `Club ID: ${clubID}`;
+    nombreClubLabel.textContent = `Buscando en Supabase...`;
 
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         
+        // Consultar la tabla de licencias en Supabase Maestro
         const { data, error } = await supabaseMaster
             .from('licencias')
-            .select('portal_abierto, nombre')
-            .eq('id', clubID)
-            .maybeSingle();
+            .select('*');
 
         if (error) throw error;
 
-        if (data) {
-            portalEstaAbierto = data.portal_abierto === true;
-            if (data.nombre) {
-                textoClubInfo.textContent = data.nombre;
+        if (data && data.length > 0) {
+            // Buscar la licencia que coincida con el ID o cuyo token/url contenga el identificador actual
+            const licenciaEncontrada = data.find(item => 
+                item.id === clubID || 
+                (item.supabase_url && item.supabase_url.includes(clubID)) ||
+                (item.nombre && item.nombre.toLowerCase().includes(clubID.toLowerCase()))
+            );
+
+            if (licenciaEncontrada) {
+                portalEstaAbierto = licenciaEncontrada.portal_abierto === true;
+                idLicenciaReal = licenciaEncontrada.id;
+                nombreClubLabel.textContent = licenciaEncontrada.nombre || "Club Deportivo";
+                badgeClubId.textContent = `ID: ${idLicenciaReal}`;
+            } else {
+                // Si no hay coincidencia exacta, tomamos la primera licencia registrada en Supabase como predeterminada
+                const primeraLicencia = data[0];
+                portalEstaAbierto = primeraLicencia.portal_abierto === true;
+                idLicenciaReal = primeraLicencia.id;
+                nombreClubLabel.textContent = primeraLicencia.nombre || "Club Deportivo";
+                badgeClubId.textContent = `ID: ${idLicenciaReal}`;
             }
-        } else {
-            console.warn("No se encontró la licencia en Supabase con el ID:", clubID);
-            portalEstaAbierto = false;
         }
     } catch (err) {
-        console.warn("Error consultando Supabase:", err.message);
+        console.warn("Error consultando Supabase Maestro:", err.message);
         portalEstaAbierto = false;
+        nombreClubLabel.textContent = "Club Activo";
     }
 
+    // Actualizar indicador visual en la tarjeta
     if (portalEstaAbierto) {
         badge.className = "text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1";
         badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Abierto`;
@@ -299,10 +310,10 @@ async function chequearEstatusPortalMenu() {
 
 window.verificarYAccederPortal = () => {
     if (!portalEstaAbierto) {
-        alert(`⚠️ Acceso denegado: El portal para el club "${clubID}" está CERRADO en la base de datos.`);
+        alert(`⚠️ Acceso denegado: El portal de inscripciones públicas para este club se encuentra CERRADO.`);
         return;
     }
-    window.open(`public_registro.html?club=${clubID}`, '_blank');
+    window.open(`public_registro.html?club=${idLicenciaReal}`, '_blank');
 };
 
 chequearEstatusPortalMenu();
@@ -310,7 +321,7 @@ chequearEstatusPortalMenu();
 
 <script>
 window.copiarEnlacePublico = () => {
-    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('club_id') || 'YCDEP-CIAR';
+    const clubID = localStorage.getItem('control_voley_club_id') || localStorage.getItem('youcontrol_empresa_id') || 'YCDEP-CIAR';
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
     const linkPublico = `${baseUrl}public_registro.html?club=${clubID}`;
 
