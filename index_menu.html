@@ -11,24 +11,15 @@
   tailwind.config = {
     theme: {
       extend: {
-        fontFamily: {
-          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        },
+        fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
         colors: {
           brand: {
-            50: '#f0f6ff',
-            100: '#e0edff',
-            500: '#0066ff',
-            600: '#0052cc',
-            700: '#003db3',
-            electric: '#0055FF',
-            cyan: '#00D2FF',
-            dark: '#030B1E'
+            50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+            electric: '#0055FF', cyan: '#00D2FF', dark: '#030B1E'
           }
         },
         boxShadow: {
           'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-          'electric-hover': '0 20px 40px -5px rgba(0, 85, 255, 0.45)',
           'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
           'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
         }
@@ -37,63 +28,27 @@
   }
 </script>
 <style>
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-  }
-  .bg-sports-pattern {
-    background-color: #F1F5F9;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-  }
-  .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-  .banner-glow {
-    position: relative;
-  }
-  .banner-glow::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 5%;
-    width: 90%;
-    height: 30px;
-    background: linear-gradient(90deg, #0055FF, #00D2FF);
-    filter: blur(20px);
-    opacity: 0.35;
-    z-index: -1;
-    border-radius: 50%;
-  }
-  .card-hover-effect {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .card-hover-effect:hover {
-    transform: translateY(-6px) scale(1.01);
-  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+  .bg-sports-pattern { background-color: #F1F5F9; background-image: radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%); }
+  .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); }
+  .card-hover-effect { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .card-hover-effect:hover { transform: translateY(-6px) scale(1.01); }
 </style>
 </head>
 <body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
 
     <div>
-        <!-- NAVEGACIÓN SUPERIOR FLOTANTE -->
         <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 glass-card border-b border-slate-200/80 shadow-sm">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
-                
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric">
                         <i class="fas fa-volleyball-ball text-lg animate-pulse"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase tracking-tight">Control Voley</h1>
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20 uppercase tracking-widest">PRO</span>
+                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none uppercase">Control Voley</h1>
+                            <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20">PRO</span>
                         </div>
-                        <!-- Nombre del club en azul y su ID al lado -->
                         <div class="flex items-center gap-2 mt-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping"></span>
                             <span id="nombreClubLabel" class="text-xs font-black text-brand-electric">Cargando club...</span>
@@ -101,117 +56,65 @@
                         </div>
                     </div>
                 </div>
-
-                <button id="btnLogout" class="py-2.5 px-4 sm:px-5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold rounded-xl text-xs sm:text-sm border border-slate-200 hover:border-rose-200 transition-all duration-300 flex items-center gap-2 shadow-sm group">
-                    <i class="fas fa-sign-out-alt text-slate-400 group-hover:text-rose-600 transition-colors"></i>
-                    <span class="hidden sm:inline">Cerrar Sesión</span>
+                <button id="btnLogout" class="py-2.5 px-4 sm:px-5 bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold rounded-xl text-xs border border-slate-200 flex items-center gap-2">
+                    <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
                 </button>
             </div>
         </header>
 
-        <!-- BANNER HERO PRINCIPAL -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
-            <div class="banner-glow rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-brand-dark">
-                <img src="img/banner.png" alt="Control Voley Banner" class="w-full h-44 sm:h-64 object-cover opacity-85" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
-                
-                <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/70 to-transparent flex flex-col justify-center px-6 sm:px-12">
-                    <span class="text-brand-cyan text-xs sm:text-sm font-extrabold uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <i class="fas fa-bolt"></i> Rendimiento &amp; Gestión Deportiva
-                    </span>
-                    <h2 class="text-2xl sm:text-4xl font-black text-white max-w-2xl leading-tight drop-shadow-md">
-                        Potencia tu Club al Siguiente Nivel
-                    </h2>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTENIDO Y MÓDULOS -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-10">
-            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                <!-- 1. Gestión de Atletas -->
-                <a href="index_atletas.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric flex flex-col justify-between group relative overflow-hidden">
+                <a href="index_atletas.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 flex flex-col justify-between group">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5 shadow-electric">
-                            <i class="fas fa-users-line text-2xl"></i>
-                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5"><i class="fas fa-users-line text-2xl"></i></div>
                         <h4 class="text-lg font-black text-slate-900 mb-1">Gestión de Atletas</h4>
                         <p class="text-xs font-semibold text-slate-500">Registro, datos personales, categorías y fotografías.</p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric">
-                        <span>ACCEDER A ATLETAS</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric"><span>ACCEDER A ATLETAS</span><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <!-- 2. Ficha de Atletas -->
-                <a href="index_ficha.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric flex flex-col justify-between group relative overflow-hidden">
+                <a href="index_ficha.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 flex flex-col justify-between group">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5 shadow-electric">
-                            <i class="fas fa-id-card text-2xl"></i>
-                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5"><i class="fas fa-id-card text-2xl"></i></div>
                         <h4 class="text-lg font-black text-slate-900 mb-1">Ficha de Atletas</h4>
                         <p class="text-xs font-semibold text-slate-500">Consulta individual, historial físico y representante.</p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric">
-                        <span>VER FICHAS</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric"><span>VER FICHAS</span><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <!-- 3. Nómina y Pagos -->
-                <a href="index_pagos.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric flex flex-col justify-between group relative overflow-hidden">
+                <a href="index_pagos.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 flex flex-col justify-between group">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5 shadow-electric">
-                            <i class="fas fa-file-invoice-dollar text-2xl"></i>
-                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5"><i class="fas fa-file-invoice-dollar text-2xl"></i></div>
                         <h4 class="text-lg font-black text-slate-900 mb-1">Nómina y Pagos</h4>
                         <p class="text-xs font-semibold text-slate-500">Administración financiera, mensualidades y solvencias.</p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric">
-                        <span>GESTIONAR NÓMINA</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric"><span>GESTIONAR NÓMINA</span><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <!-- 4. Cumpleaños -->
-                <a href="index_cumple.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric flex flex-col justify-between group relative overflow-hidden">
+                <a href="index_cumple.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 flex flex-col justify-between group">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5 shadow-electric">
-                            <i class="fas fa-cake-candles text-2xl"></i>
-                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5"><i class="fas fa-cake-candles text-2xl"></i></div>
                         <h4 class="text-lg font-black text-slate-900 mb-1">Cumpleaños</h4>
                         <p class="text-xs font-semibold text-slate-500">Listado mensual de aniversarios de atletas.</p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric">
-                        <span>VER CALENDARIO</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric"><span>VER CALENDARIO</span><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <!-- 5. Estadísticas -->
-                <a href="estad/index_estad.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 hover:shadow-electric flex flex-col justify-between group relative overflow-hidden">
+                <a href="estad/index_estad.html" class="glass-card rounded-2xl p-6 card-hover-effect border border-slate-200/80 hover:border-brand-electric/50 flex flex-col justify-between group">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5 shadow-electric">
-                            <i class="fas fa-chart-line text-2xl"></i>
-                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center mb-5"><i class="fas fa-chart-line text-2xl"></i></div>
                         <h4 class="text-lg font-black text-slate-900 mb-1">Estadísticas de Juego</h4>
                         <p class="text-xs font-semibold text-slate-500">Análisis estadístico de partidos y efectividad.</p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric">
-                        <span>VER MÉTRICAS</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-brand-electric"><span>VER MÉTRICAS</span><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <!-- 6. Portal de Registro Público -->
-                <div class="glass-card rounded-2xl p-6 card-hover-effect border border-cyan-200 hover:border-cyan-400 hover:shadow-glow-cyan flex flex-col justify-between group relative overflow-hidden bg-gradient-to-br from-white via-cyan-50/20 to-brand-50/30">
+                <!-- TARJETA DEL PORTAL PÚBLICO -->
+                <div class="glass-card rounded-2xl p-6 card-hover-effect border border-cyan-200 hover:border-cyan-400 flex flex-col justify-between group bg-gradient-to-br from-white via-cyan-50/20 to-brand-50/30">
                     <div>
                         <div class="flex items-center justify-between mb-5">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-brand-electric text-white flex items-center justify-center shadow-electric">
-                                <i class="fas fa-globe text-2xl"></i>
-                            </div>
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-600 to-brand-electric text-white flex items-center justify-center shadow-electric"><i class="fas fa-globe text-2xl"></i></div>
                             <span id="badgeMenuPortal" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
                                 <i class="fas fa-spinner fa-spin text-[8px]"></i> Verificando...
                             </span>
@@ -233,8 +136,8 @@
         </main>
     </div>
 
-    <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold shadow-inner mt-12">
-        <p>&copy; 2026 <span class="font-bold text-slate-800">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
+    <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold mt-12">
+        <p>&copy; 2026 Control Voley — Desarrollado por Sistematikos</p>
     </footer>
 
 <script type="module">
@@ -243,7 +146,6 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
-// Obtener el identificador guardado en la sesión local
 const clubID = localStorage.getItem('control_voley_club_id') || 
                localStorage.getItem('youcontrol_empresa_id') || 
                localStorage.getItem('club_id') || 
@@ -258,20 +160,14 @@ async function chequearEstatusPortalMenu() {
     const badgeClubId = document.getElementById('badgeClubId');
 
     badgeClubId.textContent = `ID: ${clubID}`;
-    nombreClubLabel.textContent = `Buscando en Supabase...`;
 
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
-        
-        // Consultar la tabla de licencias en Supabase Maestro
-        const { data, error } = await supabaseMaster
-            .from('licencias')
-            .select('*');
+        const { data, error } = await supabaseMaster.from('licencias').select('*');
 
         if (error) throw error;
 
         if (data && data.length > 0) {
-            // Buscar la licencia que coincida con el ID o cuyo token/url contenga el identificador actual
             const licenciaEncontrada = data.find(item => 
                 item.id === clubID || 
                 (item.supabase_url && item.supabase_url.includes(clubID)) ||
@@ -284,7 +180,6 @@ async function chequearEstatusPortalMenu() {
                 nombreClubLabel.textContent = licenciaEncontrada.nombre || "Club Deportivo";
                 badgeClubId.textContent = `ID: ${idLicenciaReal}`;
             } else {
-                // Si no hay coincidencia exacta, tomamos la primera licencia registrada en Supabase como predeterminada
                 const primeraLicencia = data[0];
                 portalEstaAbierto = primeraLicencia.portal_abierto === true;
                 idLicenciaReal = primeraLicencia.id;
@@ -293,12 +188,10 @@ async function chequearEstatusPortalMenu() {
             }
         }
     } catch (err) {
-        console.warn("Error consultando Supabase Maestro:", err.message);
         portalEstaAbierto = false;
         nombreClubLabel.textContent = "Club Activo";
     }
 
-    // Actualizar indicador visual en la tarjeta
     if (portalEstaAbierto) {
         badge.className = "text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1";
         badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Abierto`;
@@ -315,6 +208,13 @@ window.verificarYAccederPortal = () => {
     }
     window.open(`public_registro.html?club=${idLicenciaReal}`, '_blank');
 };
+
+// 🔄 ESCUCHA INTELIGENTE PARA ACTUALIZACIÓN AUTOMÁTICA DESDE EL ADMIN
+window.addEventListener('storage', (e) => {
+    if (e.key === 'portal_actualizado_trigger') {
+        chequearEstatusPortalMenu();
+    }
+});
 
 chequearEstatusPortalMenu();
 </script>
