@@ -280,7 +280,6 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales del Supabase Maestro (licencias_clubes)
         const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
         const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
@@ -292,7 +291,6 @@
 
         document.getElementById('txtClubActivoId').innerText = empresaIdActiva;
 
-        // --- CONSULTA Y MANEJO DEL ESTADO DEL PORTAL PÚBLICO ---
         async function consultarEstadoPortal() {
             if (!empresaIdActiva) {
                 const badge = document.getElementById('estadoPortalBadge');
@@ -311,13 +309,11 @@
                 if (data && data.portal_abierto !== undefined) {
                     portalAbiertoActual = data.portal_abierto === true;
                 } else {
-                    // Fallback a localStorage si la columna no existe aún
                     portalAbiertoActual = localStorage.getItem(`portal_abierto_${empresaIdActiva}`) === 'true';
                 }
 
                 actualizarInterfazEstado();
             } catch (err) {
-                console.warn("Consultando estado de portal alternativo:", err.message);
                 portalAbiertoActual = localStorage.getItem(`portal_abierto_${empresaIdActiva}`) === 'true';
                 actualizarInterfazEstado();
             }
@@ -346,13 +342,11 @@
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
 
             try {
-                // Actualizar en la tabla licencias de Supabase Maestro
-                const { error } = await supabaseMaster
+                await supabaseMaster
                     .from('licencias')
                     .update({ portal_abierto: nuevoEstado })
                     .eq('id', empresaIdActiva);
 
-                // Guardar réplica local
                 localStorage.setItem(`portal_abierto_${empresaIdActiva}`, nuevoEstado ? 'true' : 'false');
 
                 portalAbiertoActual = nuevoEstado;
@@ -361,7 +355,6 @@
 
                 alert(nuevoEstado ? "¡Portal de inscripciones público ABIERTO!" : "Portal de inscripciones CERRADO.");
             } catch (err) {
-                console.error("Error al actualizar estado del portal:", err);
                 localStorage.setItem(`portal_abierto_${empresaIdActiva}`, nuevoEstado ? 'true' : 'false');
                 portalAbiertoActual = nuevoEstado;
                 actualizarInterfazEstado();
@@ -373,7 +366,6 @@
 
         document.getElementById('btnTogglePortal').addEventListener('click', window.togglePortal);
 
-        // --- CARGA Y RENDERIZADO DE LICENCIAS EN SUPABASE ---
         async function cargarClubesMaster() {
             const tbody = document.getElementById('tabla-clubes-registrados');
             if (!tbody) return;
@@ -389,7 +381,6 @@
                 listaClubesMaster = data || [];
                 renderizarTablaClubes(listaClubesMaster);
             } catch (err) {
-                console.error("Error cargando licencias desde Supabase:", err.message);
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center py-10 text-rose-500 font-bold">
@@ -419,7 +410,7 @@
                 
                 let portalStatus = item.portal_abierto 
                     ? `<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">ABIERTO</span>` 
-                    : `<span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-rose-200">CERRADO</span>`;
+                    : `<span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">CERRADO</span>`;
 
                 let limVal = item.limite_dispositivos || item.limite_equipos;
                 let limiteDispositivos = (limVal !== undefined && limVal !== null && limVal !== "") 
@@ -457,7 +448,6 @@
 
         document.getElementById('btn-recargar-clubes')?.addEventListener('click', cargarClubesMaster);
 
-        // Inicialización
         consultarEstadoPortal();
         cargarClubesMaster();
     </script>
