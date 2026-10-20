@@ -11,19 +11,11 @@
   tailwind.config = {
     theme: {
       extend: {
-        fontFamily: {
-          sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-        },
+        fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
         colors: {
           brand: {
-            50: '#f0f6ff',
-            100: '#e0edff',
-            500: '#0066ff',
-            600: '#0052cc',
-            700: '#003db3',
-            electric: '#0055FF',
-            cyan: '#00D2FF',
-            dark: '#030B1E'
+            50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+            electric: '#0055FF', cyan: '#00D2FF', dark: '#030B1E'
           }
         },
         boxShadow: {
@@ -36,73 +28,32 @@
   }
 </script>
 <style>
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #F8FAFC;
-  }
-  .bg-sports-pattern {
-    background-color: #F1F5F9;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-  }
-  .glass-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-  }
-  .banner-glow {
-    position: relative;
-  }
-  .banner-glow::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 5%;
-    width: 90%;
-    height: 30px;
-    background: linear-gradient(90deg, #0055FF, #00D2FF);
-    filter: blur(20px);
-    opacity: 0.35;
-    z-index: -1;
-    border-radius: 50%;
-  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+  .bg-sports-pattern { background-color: #F1F5F9; background-image: radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%); }
+  .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); }
 </style>
 </head>
 <body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
 
     <div class="max-w-3xl mx-auto px-4 py-8 w-full">
-        
-        <!-- ENCABEZADO Y BANNER -->
-        <div class="banner-glow rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-brand-dark mb-8">
+        <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-brand-dark mb-8">
             <img src="img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-44 object-cover opacity-80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
             <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/80 to-transparent flex flex-col justify-center px-6 sm:px-10">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="text-brand-cyan text-xs font-extrabold uppercase tracking-widest flex items-center gap-2">
-                        <i class="fas fa-id-card"></i> Portal de Inscripción Pública
-                    </span>
-                    <!-- Estatus Conectado Automático -->
-                    <div id="estatusConectadoClub" class="hidden items-center gap-1.5 px-3 py-1 bg-emerald-500/20 border border-emerald-500/40 rounded-full text-emerald-300 text-[11px] font-extrabold backdrop-blur-md">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-                        <span>Conectado</span>
-                    </div>
-                </div>
+                <span class="text-brand-cyan text-xs font-extrabold uppercase tracking-widest flex items-center gap-2 mb-1">
+                    <i class="fas fa-id-card"></i> Portal de Inscripción Pública
+                </span>
                 <h1 id="tituloClub" class="text-2xl sm:text-3xl font-black text-white leading-tight">Cargando club...</h1>
-                <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">Formulario oficial de autoregistro para nuevos atletas del club.</p>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">Formulario oficial de autoregistro para nuevos atletas.</p>
             </div>
         </div>
 
-        <!-- CONTENEDOR DE ESTADO (Abierto / Cerrado) -->
         <div id="contenedorPortal" class="glass-card p-8 rounded-3xl shadow-glass border border-slate-200/80 text-center">
             
-            <!-- ESTADO: CARGANDO -->
             <div id="estadoCargando" class="py-12">
                 <i class="fas fa-spinner fa-spin text-3xl text-brand-electric mb-3"></i>
                 <p class="text-slate-500 font-bold text-sm">Verificando disponibilidad del portal de inscripciones...</p>
             </div>
 
-            <!-- ESTADO: CERRADO (BLOQUEO TOTAL) -->
             <div id="estadoCerrado" class="hidden py-10">
                 <div class="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm">
                     <i class="fas fa-lock"></i>
@@ -113,65 +64,59 @@
                 </p>
             </div>
 
-            <!-- ESTADO: ABIERTO (FORMULARIO) -->
             <div id="estadoAbierto" class="hidden text-left">
                 <div class="mb-6 pb-4 border-b border-slate-200">
                     <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
                         <i class="fas fa-user-plus text-brand-electric"></i> Ficha de Registro del Atleta
                     </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Completa los datos del atleta y del representante solicitados a continuación.</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Completa los datos del atleta y del representante.</p>
                 </div>
 
                 <form id="formRegistroAtleta" class="space-y-4">
-                    <!-- Foto del Atleta -->
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Fotografía del Atleta (Se recortará y optimizará automáticamente)</label>
-                        <input type="file" id="fotoAtleta" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-50 file:text-brand-electric hover:file:bg-brand-100 transition cursor-pointer border border-slate-200 rounded-xl p-1 bg-white">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Fotografía del Atleta</label>
+                        <input type="file" id="fotoAtleta" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-brand-50 file:text-brand-electric cursor-pointer border border-slate-200 rounded-xl p-1 bg-white">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre</label>
-                            <input type="text" id="nombre" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <input type="text" id="nombre" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Apellido</label>
-                            <input type="text" id="apellido" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <input type="text" id="apellido" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad</label>
-                            <input type="text" id="cedulaIdentidad" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium" placeholder="Ej: V-30123456">
+                            <input type="text" id="cedulaIdentidad" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium" placeholder="Ej: V-30123456">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono del Atleta</label>
-                            <input type="text" id="telefono" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium" placeholder="Ej: 0412-1234567">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono</label>
+                            <input type="text" id="telefono" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Fecha de Nacimiento</label>
-                            <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nacimiento</label>
+                            <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Sede</label>
-                            <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
+                            <select id="sede" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
                                 <option value="">Seleccione...</option>
                                 <option value="Lara">Lara</option>
                                 <option value="Principal">Principal</option>
-                                <option value="Sucursal">Sucursal</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Categoría</label>
-                            <select id="categoria" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-semibold">
+                            <select id="categoria" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
                                 <option value="">Seleccione...</option>
-                                <option value="U7">U7</option>
-                                <option value="U9">U9</option>
-                                <option value="U11">U11</option>
                                 <option value="U13">U13</option>
                                 <option value="U15">U15</option>
                                 <option value="U17">U17</option>
@@ -183,16 +128,16 @@
 
                     <div class="grid grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nro. Camiseta</label>
-                            <input type="number" id="nroCamiseta" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Camiseta</label>
+                            <input type="number" id="nroCamiseta" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Peso (kg)</label>
-                            <input type="number" step="0.1" id="peso" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <input type="number" step="0.1" id="peso" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Altura (m)</label>
-                            <input type="number" step="0.01" id="talla" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium" placeholder="Ej: 1.75">
+                            <input type="number" step="0.01" id="talla" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                     </div>
 
@@ -201,18 +146,18 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre del Representante</label>
-                            <input type="text" id="nombreRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nombre Representante</label>
+                            <input type="text" id="nombreRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula del Representante</label>
-                            <input type="text" id="cedulaRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula Representante</label>
+                            <input type="text" id="cedulaRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono del Representante</label>
-                        <input type="text" id="telefonoRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-electric focus:border-brand-electric outline-none bg-white font-medium" placeholder="Ej: 0414-1234567">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono Representante</label>
+                        <input type="text" id="telefonoRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                     </div>
 
                     <div class="pt-4">
@@ -223,42 +168,33 @@
                 </form>
             </div>
 
-            <!-- ESTADO: EXITOSO -->
             <div id="estadoExito" class="hidden py-10">
                 <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <h2 class="text-2xl font-black text-slate-900 mb-2">¡Inscripción Exitosa!</h2>
-                <p class="text-slate-600 text-sm max-w-md mx-auto font-medium mb-6">
-                    Los datos y la fotografía del atleta han sido enviados y registrados correctamente en el sistema del club.
-                </p>
-                <button onclick="location.reload()" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition">
-                    Registrar Otro Atleta
-                </button>
+                <p class="text-slate-600 text-sm max-w-md mx-auto font-medium mb-6">Los datos del atleta han sido registrados correctamente.</p>
+                <button onclick="location.reload()" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition">Registrar Otro Atleta</button>
             </div>
-
         </div>
     </div>
 
-    <!-- PIE DE PÁGINA -->
     <footer class="w-full py-6 text-center text-xs text-slate-400 font-semibold">
-        <p>&copy; 2026 <span class="text-slate-600 font-bold">Control Voley</span> — Desarrollado por <span class="text-brand-electric font-black">Sistematikos</span></p>
+        <p>&copy; 2026 Control Voley — Desarrollado por Sistematikos</p>
     </footer>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i);
-
 const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
 const urlParams = new URLSearchParams(window.location.search);
-const clubID = urlParams.get('club') || localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('control_voley_club_id') || 'YCDEP-CIAR';
+const clubID = urlParams.get('club') || localStorage.getItem('control_voley_club_id') || 'YCDEP-CIAR';
 
 let supabaseClub = null;
 let supaBucket = 'control-voley';
-let clubInfo = null;
 
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   return new Promise((resolve, reject) => {
@@ -269,22 +205,12 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
       img.src = event.target.result;
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const width = img.width;
-        const height = img.height;
-        const minDim = Math.min(width, height);
-        const startX = (width - minDim) / 2;
-        const startY = (height - minDim) / 2;
-
-        canvas.width = size;
-        canvas.height = size;
-
+        const minDim = Math.min(img.width, img.height);
+        canvas.width = size; canvas.height = size;
         const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
-
+        ctx.drawImage(img, (img.width - minDim) / 2, (img.height - minDim) / 2, minDim, minDim, 0, 0, size, size);
         canvas.toBlob((blob) => {
-          if (!blob) { reject(new Error('Error al comprimir imagen')); return; }
+          if (!blob) { reject(new Error('Error')); return; }
           resolve(new File([blob], `${Date.now()}_atleta.jpg`, { type: 'image/jpeg' }));
         }, 'image/jpeg', quality);
       };
@@ -294,108 +220,60 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
-// VERIFICACIÓN ESTRICTA DE APERTURA DESDE SUPABASE MAESTRO Y RESPALDO LOCAL
 async function verificarEstadoPortal() {
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
-
-        const { data: licencia, error } = await supabaseMaster
-            .from('licencias')
-            .select('*')
-            .eq('id', clubID)
-            .single();
+        const { data: licencia, error } = await supabaseMaster.from('licencias').select('*').eq('id', clubID).maybeSingle();
 
         _0xa('estadoCargando').classList.add('hidden');
-
         let estaAbierto = false;
 
         if (licencia) {
-            clubInfo = licencia;
             _0xa('tituloClub').textContent = licencia.nombre || 'Control Voley';
-            
-            const estatusBadge = _0xa('estatusConectadoClub');
-            if (estatusBadge) {
-                estatusBadge.classList.remove('hidden');
-                estatusBadge.classList.add('flex');
-            }
+            estaAbierto = licencia.portal_abierto === true;
 
-            // Comprobar estado en base de datos o almacenamiento local de respaldo
-            const estadoDB = licencia.portal_abierto;
-            const estadoLocal = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
-
-            if (estadoDB !== undefined && estadoDB !== null) {
-                estaAbierto = estadoDB === true;
-            } else {
-                estaAbierto = estadoLocal;
-            }
-
-            const supaUrl = licencia.supabase_url || localStorage.getItem('control_voley_supa_url');
-            const supaKey = licencia.supabase_key || localStorage.getItem('control_voley_supa_key');
+            const supaUrl = licencia.supabase_url;
+            const supaKey = licencia.supabase_key;
             supaBucket = licencia.bucket || 'control-voley';
 
-            if (supaUrl && supaKey) {
-                supabaseClub = createClient(supaUrl, supaKey);
-            }
+            if (supaUrl && supaKey) supabaseClub = createClient(supaUrl, supaKey);
         } else {
-            estaAbierto = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
-            const supaUrl = localStorage.getItem('control_voley_supa_url');
-            const supaKey = localStorage.getItem('control_voley_supa_key');
-
-            if (supaUrl && supaKey) {
-                supabaseClub = createClient(supaUrl, supaKey);
-            }
+            estaAbierto = false;
         }
 
-        // CONTROL ESTRICTO DE VISIBILIDAD DEL FORMULARIO
-        if (estaAbierto === true) {
+        if (estaAbierto === true && supabaseClub) {
             _0xa('estadoAbierto').classList.remove('hidden');
             _0xa('estadoCerrado').classList.add('hidden');
         } else {
             _0xa('estadoCerrado').classList.remove('hidden');
             _0xa('estadoAbierto').classList.add('hidden');
         }
-
     } catch (err) {
-        console.warn("Error validando estado del portal, aplicando bloqueo por seguridad.");
         _0xa('estadoCargando').classList.add('hidden');
         _0xa('estadoCerrado').classList.remove('hidden');
-        _0xa('estadoAbierto').classList.add('hidden');
     }
 }
 
-// BLOQUEO DE ENVÍO SI ESTÁ CERRADO
 _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
     e.preventDefault();
-
-    if (!supabaseClub) {
-        alert("Atención: El portal se encuentra cerrado o sin conexión activa.");
-        return;
-    }
+    if (!supabaseClub) { alert("Portal cerrado o sin conexión."); return; }
 
     const btn = _0xa('btnEnviarRegistro');
     btn.disabled = true;
-    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo y registrando...`;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo...`;
 
     const cedula = _0xa('cedulaIdentidad').value.trim();
-    const sedeAtleta = _0xa('sede').value;
     const archivo = _0xa('fotoAtleta').files[0];
 
     try {
         let urlFoto = "";
         if (archivo) {
             const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
-            const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
-            const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
+            const fileName = `general/${cedula}_${Date.now()}.jpg`;
 
-            const { error: uploadError } = await supabaseClub.storage
-                .from(supaBucket)
-                .upload(fileName, archivoOptimizado, { upsert: true });
-
+            const { error: uploadError } = await supabaseClub.storage.from(supaBucket).upload(fileName, archivoOptimizado, { upsert: true });
             if (!uploadError) {
-                const { data: publicURLData } = supabaseClub.storage
-                    .from(supaBucket)
-                    .getPublicUrl(fileName);
-
+                const { data: publicURLData } = supabaseClub.storage.from(supaBucket).getPublicUrl(fileName);
                 urlFoto = publicURLData.publicUrl;
             }
         }
@@ -406,7 +284,7 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             cedulaIdentidad: cedula,
             telefono: _0xa('telefono').value.trim(),
             fechaNacimiento: _0xa('fechaNacimiento').value,
-            sede: sedeAtleta,
+            sede: _0xa('sede').value,
             categoria: _0xa('categoria').value,
             nroCamiseta: _0xa('nroCamiseta').value.trim(),
             peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
@@ -424,9 +302,8 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
 
         _0xa('estadoAbierto').classList.add('hidden');
         _0xa('estadoExito').classList.remove('hidden');
-
     } catch (err) {
-        alert("Error al enviar la inscripción: " + (err.message || err));
+        alert("Error al enviar: " + err.message);
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> Enviar Inscripción al Club`;
     }
