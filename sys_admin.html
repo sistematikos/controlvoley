@@ -158,43 +158,21 @@
                 <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
                     <i class="fas fa-sliders text-brand-electric"></i> Panel de Control Técnico y Licencias Registradas
                 </h1>
-                <p class="text-xs text-slate-500 font-semibold mt-1">Administra el portal público de autoregistro y la auditoría central de licencias en Supabase Maestro.</p>
+                <p class="text-xs text-slate-500 font-semibold mt-1">Controla individualmente la apertura de autoregistros públicos y licencias en Supabase Maestro.</p>
             </div>
             <span class="bg-brand-50 text-brand-electric px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 border border-brand-electric/20 shadow-sm">
                 <i class="fas fa-shield-halved"></i> Exclusivo Staff
             </span>
         </div>
 
-        <!-- CONTROL DE APERTURA DE REGISTROS PÚBLICOS -->
-        <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-base font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-id-card-clip text-brand-electric"></i> Portal Público de Autoregistro
-                    </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">
-                        Activa o desactiva el acceso a <code>public_registro.html</code> para el club activo (<span id="txtClubActivoId" class="font-bold text-brand-electric">...</span>).
-                    </p>
-                </div>
-                <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                    <span id="estadoPortalBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-600">
-                        Cargando estado...
-                    </span>
-                    <button id="btnTogglePortal" class="py-2.5 px-5 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow-electric cursor-pointer">
-                        Cambiar Estado
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- REGISTRO GENERAL DE LICENCIAS Y CLUBES EN SUPABASE -->
+        <!-- REGISTRO GENERAL DE LICENCIAS Y CONTROL DE PORTALES -->
         <div class="glass-card p-6 rounded-2xl shadow-sm border border-slate-200/80">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
                     <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-database text-brand-electric"></i> Auditoría de Clubes y Licencias en Supabase
+                        <i class="fas fa-database text-brand-electric"></i> Auditoría de Clubes y Control de Registros
                     </h2>
-                    <p class="text-xs text-slate-500 font-semibold mt-1">Listado maestro sincronizado en tiempo real.</p>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Haz clic en el estado del portal de cualquier club para Abrir o Cerrar sus inscripciones públicas.</p>
                 </div>
                 <div class="flex items-center gap-2.5 w-full md:w-auto">
                     <div class="relative w-full md:w-72">
@@ -207,7 +185,7 @@
                 </div>
             </div>
 
-            <!-- TABLA DE LICENCIAS -->
+            <!-- TABLA DE LICENCIAS CON SWITCH POR CLUB -->
             <div class="overflow-x-auto border border-slate-200/80 rounded-xl bg-white shadow-sm">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -218,7 +196,7 @@
                             <th class="p-3.5">Ciudad</th>
                             <th class="p-3.5 text-center">Límite Disp.</th>
                             <th class="p-3.5 text-center">Portal Público</th>
-                            <th class="p-3.5 text-center">Estado</th>
+                            <th class="p-3.5 text-center">Estado Licencia</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-clubes-registrados" class="text-xs divide-y divide-slate-100 font-medium">
@@ -237,17 +215,17 @@
 
         <!-- TARJETAS DE HERRAMIENTAS ADMINISTRATIVAS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <!-- 1. ABRIR PORTAL PÚBLICO -->
+            <!-- 1. ABRIR PORTAL PÚBLICO ENLACE -->
             <div class="tool-card">
                 <div>
                     <div class="w-12 h-12 bg-brand-50 text-brand-electric rounded-2xl flex items-center justify-center text-xl mb-4 shadow-sm border border-brand-electric/20">
                         <i class="fas fa-globe"></i>
                     </div>
-                    <h3 class="font-black text-slate-900 text-base mb-1">Portal Público de Registro</h3>
-                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Visualiza el formulario público <code>public_registro.html</code> de inscripción para representantes.</p>
+                    <h3 class="font-black text-slate-900 text-base mb-1">Ver Portal Público</h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-6 leading-relaxed">Prueba el enlace <code>public_registro.html</code> de inscripción para representantes.</p>
                 </div>
                 <a href="public_registro.html" target="_blank" class="w-full bg-brand-electric text-white text-center py-3 rounded-xl text-xs font-black hover:bg-brand-600 transition shadow-electric flex items-center justify-center gap-2">
-                    <i class="fas fa-external-link-alt"></i> Ver Portal Público
+                    <i class="fas fa-external-link-alt"></i> Ver Formulario Público
                 </a>
             </div>
 
@@ -276,7 +254,7 @@
         </div>
     </footer>
 
-    <!-- LÓGICA DE CONTROL Y AUDITORÍA EN SUPABASE MAESTRO -->
+    <!-- LÓGICA DE AUDITORÍA Y CAMBIO INDIVIDUAL EN SUPABASE MAESTRO -->
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -284,87 +262,7 @@
         const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
-
-        const empresaIdActiva = localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('control_voley_club_id') || 'YCDEP-CIAR';
-        let portalAbiertoActual = false;
         let listaClubesMaster = [];
-
-        document.getElementById('txtClubActivoId').innerText = empresaIdActiva;
-
-        async function consultarEstadoPortal() {
-            if (!empresaIdActiva) {
-                const badge = document.getElementById('estadoPortalBadge');
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
-                badge.innerHTML = '<i class="fas fa-triangle-exclamation mr-1"></i> SIN CLUB ACTIVO';
-                return;
-            }
-
-            try {
-                const { data, error } = await supabaseMaster
-                    .from('licencias')
-                    .select('portal_abierto')
-                    .eq('id', empresaIdActiva)
-                    .single();
-
-                if (data && data.portal_abierto !== undefined) {
-                    portalAbiertoActual = data.portal_abierto === true;
-                } else {
-                    portalAbiertoActual = localStorage.getItem(`portal_abierto_${empresaIdActiva}`) === 'true';
-                }
-
-                actualizarInterfazEstado();
-            } catch (err) {
-                portalAbiertoActual = localStorage.getItem(`portal_abierto_${empresaIdActiva}`) === 'true';
-                actualizarInterfazEstado();
-            }
-        }
-
-        function actualizarInterfazEstado() {
-            const badge = document.getElementById('estadoPortalBadge');
-            if (portalAbiertoActual) {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ABIERTO';
-            } else {
-                badge.className = "text-xs font-extrabold px-3 py-1 rounded-full bg-rose-100 text-rose-700 border border-rose-200";
-                badge.innerHTML = '<i class="fas fa-circle text-[6px] mr-1"></i> CERRADO';
-            }
-        }
-
-        window.togglePortal = async () => {
-            if (!empresaIdActiva) {
-                alert("No hay sesión de club activa para cambiar el estado del portal.");
-                return;
-            }
-
-            const nuevoEstado = !portalAbiertoActual;
-            const btn = document.getElementById('btnTogglePortal');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
-
-            try {
-                await supabaseMaster
-                    .from('licencias')
-                    .update({ portal_abierto: nuevoEstado })
-                    .eq('id', empresaIdActiva);
-
-                localStorage.setItem(`portal_abierto_${empresaIdActiva}`, nuevoEstado ? 'true' : 'false');
-
-                portalAbiertoActual = nuevoEstado;
-                actualizarInterfazEstado();
-                await cargarClubesMaster();
-
-                alert(nuevoEstado ? "¡Portal de inscripciones público ABIERTO!" : "Portal de inscripciones CERRADO.");
-            } catch (err) {
-                localStorage.setItem(`portal_abierto_${empresaIdActiva}`, nuevoEstado ? 'true' : 'false');
-                portalAbiertoActual = nuevoEstado;
-                actualizarInterfazEstado();
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `Cambiar Estado`;
-            }
-        };
-
-        document.getElementById('btnTogglePortal').addEventListener('click', window.togglePortal);
 
         async function cargarClubesMaster() {
             const tbody = document.getElementById('tabla-clubes-registrados');
@@ -381,6 +279,7 @@
                 listaClubesMaster = data || [];
                 renderizarTablaClubes(listaClubesMaster);
             } catch (err) {
+                console.error("Error cargando licencias:", err.message);
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7" class="text-center py-10 text-rose-500 font-bold">
@@ -407,10 +306,15 @@
                 const idLicencia = item.id || 'N/A';
                 const email = item.email || item.telefono || 'Sin datos contacto';
                 const ciudad = item.ciudad || 'Lara';
+                const estaAbierto = item.portal_abierto === true;
                 
-                let portalStatus = item.portal_abierto 
-                    ? `<span class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">ABIERTO</span>` 
-                    : `<span class="bg-rose-100 text-rose-700 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-200">CERRADO</span>`;
+                let btnPortalStatus = estaAbierto
+                    ? `<button onclick="window.togglePortalClub('${idLicencia}', false)" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[10px] font-black px-3 py-1.5 rounded-full border border-emerald-300 transition cursor-pointer shadow-sm flex items-center gap-1.5 mx-auto">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ABIERTO (Cerrar)
+                       </button>` 
+                    : `<button onclick="window.togglePortalClub('${idLicencia}', true)" class="bg-rose-100 hover:bg-rose-200 text-rose-800 text-[10px] font-black px-3 py-1.5 rounded-full border border-rose-300 transition cursor-pointer shadow-sm flex items-center gap-1.5 mx-auto">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> CERRADO (Abrir)
+                       </button>`;
 
                 let limVal = item.limite_dispositivos || item.limite_equipos;
                 let limiteDispositivos = (limVal !== undefined && limVal !== null && limVal !== "") 
@@ -424,16 +328,38 @@
                         <td class="p-3.5 text-slate-600 font-semibold">${email}</td>
                         <td class="p-3.5 text-slate-600 font-semibold">${ciudad}</td>
                         <td class="p-3.5 text-center text-slate-800 font-black">${limiteDispositivos}</td>
-                        <td class="p-3.5 text-center">${portalStatus}</td>
+                        <td class="p-3.5 text-center">${btnPortalStatus}</td>
                         <td class="p-3.5 text-center">
-                            <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
-                                <i class="fas fa-circle text-[6px] mr-1 animate-pulse"></i> ACTIVO
+                            <span class="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2.5 py-1 rounded-full border border-emerald-200">
+                                <i class="fas fa-check text-[8px] mr-1"></i> ACTIVO
                             </span>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
+
+        // Función global para alternar el portal de un club específico
+        window.togglePortalClub = async (clubId, nuevoEstado) => {
+            try {
+                const { error } = await supabaseMaster
+                    .from('licencias')
+                    .update({ portal_abierto: nuevoEstado })
+                    .eq('id', clubId);
+
+                if (error) throw error;
+
+                // Guardar respaldo local
+                localStorage.setItem(`portal_abierto_${clubId}`, nuevoEstado ? 'true' : 'false');
+
+                // Recargar tabla
+                await cargarClubesMaster();
+
+            } catch (err) {
+                console.error("Error cambiando estado de portal:", err.message);
+                alert("Error al actualizar el estado del portal: " + err.message);
+            }
+        };
 
         document.getElementById('buscar-club-tech')?.addEventListener('input', (ev) => {
             const criterio = ev.target.value.toLowerCase().trim();
@@ -448,7 +374,6 @@
 
         document.getElementById('btn-recargar-clubes')?.addEventListener('click', cargarClubesMaster);
 
-        consultarEstadoPortal();
         cargarClubesMaster();
     </script>
 </body>
