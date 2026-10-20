@@ -21,6 +21,16 @@ const clubID = localStorage.getItem('youcontrol_empresa_id') || localStorage.get
 let supabaseClub = null;
 let clubInfo = null;
 
+// Formatear fecha a DD/MM/AAAA
+const formatearFecha = (fechaStr) => {
+    if (!fechaStr) return 'N/A';
+    const partes = fechaStr.split('-');
+    if (partes.length === 3) {
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    return fechaStr;
+};
+
 // Cálculo de edad exacta
 const calcularEdad = (fecha) => {
     if (!fecha) return 'N/A';
@@ -215,6 +225,7 @@ function mostrarFichaGrande(k) {
     const apellido = k.apellido || '';
     const foto = k.fotoUrl;
     const cedula = k.cedulaIdentidad || 'N/A';
+    const fechaNac = formatearFecha(k.fechaNacimiento);
     const age = calcularEdad(k.fechaNacimiento);
     const genero = k.genero || 'Masculino';
     const estatura = k.talla || k.estatura || 0;
@@ -279,6 +290,10 @@ function mostrarFichaGrande(k) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/80 p-6 rounded-3xl border border-slate-200/70">
                 <div class="space-y-3">
                     <h4 class="text-xs font-black text-brand-electric uppercase tracking-widest border-b border-slate-200 pb-2"><i class="fas fa-user-shield"></i> Datos Biométricos & Personales</h4>
+                    <div class="flex justify-between text-xs font-semibold py-1 border-b border-slate-200/50">
+                        <span class="text-slate-400">Fecha de Nacimiento:</span>
+                        <span class="font-black text-slate-800">${fechaNac}</span>
+                    </div>
                     <div class="flex justify-between text-xs font-semibold py-1 border-b border-slate-200/50">
                         <span class="text-slate-400">Edad Actual:</span>
                         <span class="font-black text-slate-800">${age} años</span>
