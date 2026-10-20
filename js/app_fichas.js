@@ -227,11 +227,15 @@ function mostrarFichaGrande(k) {
     const cedula = k.cedulaIdentidad || 'N/A';
     const fechaNac = formatearFecha(k.fechaNacimiento);
     const age = calcularEdad(k.fechaNacimiento);
-    const genero = k.genero || 'Masculino';
+    
+    // Obtener género real o indicar 'No registrado' si está vacío
+    const generoRaw = k.genero || k.sexo || k.sexoAtleta || '';
+    const genero = generoRaw ? (generoRaw.toLowerCase().startsWith('f') ? 'Femenino' : 'Masculino') : 'No registrado';
+    
     const estatura = k.talla || k.estatura || 0;
     const peso = k.peso || 0;
     const imcObj = calcularIMC(peso, estatura);
-    const proyeccionTalla = calcularProyeccionTalla(k.estaturaPadre, k.estaturaMadre, genero);
+    const proyeccionTalla = calcularProyeccionTalla(k.estaturaPadre, k.estaturaMadre, generoRaw || 'Masculino');
     const camiseta = k.nroCamiseta ? `#${k.nroCamiseta}` : 'S/N';
 
     const avatar = foto 
@@ -299,7 +303,7 @@ function mostrarFichaGrande(k) {
                         <span class="font-black text-slate-800">${age} años</span>
                     </div>
                     <div class="flex justify-between text-xs font-semibold py-1 border-b border-slate-200/50">
-                        <span class="text-slate-400">Género:</span>
+                        <span class="text-slate-400">Género / Sexo:</span>
                         <span class="font-black text-slate-800">${genero}</span>
                     </div>
                     <div class="flex justify-between text-xs font-semibold py-1 border-b border-slate-200/50">
