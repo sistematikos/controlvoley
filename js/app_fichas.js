@@ -65,7 +65,7 @@ const calcularIMC = (pesoKg, estaturaM) => {
     return { val: imc, diag, color };
 };
 
-// Proyección de Talla Genética
+// Proyección de Talla Genética (Khamis-Roche)
 const calcularProyeccionTalla = (estaturaPadre, estaturaMadre, genero) => {
     const pad = parseFloat(estaturaPadre);
     const mad = parseFloat(estaturaMadre);
@@ -228,7 +228,7 @@ function mostrarFichaGrande(k) {
     const fechaNac = formatearFecha(k.fechaNacimiento);
     const age = calcularEdad(k.fechaNacimiento);
     
-    // Obtener género real o indicar 'No registrado' si está vacío
+    // Género
     const generoRaw = k.genero || k.sexo || k.sexoAtleta || '';
     const genero = generoRaw ? (generoRaw.toLowerCase().startsWith('f') ? 'Femenino' : 'Masculino') : 'No registrado';
     
