@@ -102,14 +102,14 @@
                 <p class="text-slate-500 font-bold text-sm">Verificando disponibilidad del portal de inscripciones...</p>
             </div>
 
-            <!-- ESTADO: CERRADO -->
+            <!-- ESTADO: CERRADO (BLOQUEO TOTAL) -->
             <div id="estadoCerrado" class="hidden py-10">
                 <div class="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center text-2xl mx-auto mb-4 shadow-sm">
                     <i class="fas fa-lock"></i>
                 </div>
                 <h2 class="text-xl font-black text-slate-900 mb-2">Inscripciones Cerradas</h2>
                 <p class="text-slate-500 text-sm max-w-md mx-auto font-medium">
-                    En este momento el portal de autoregistro se encuentra cerrado por la administración del club. Por favor comunícate con el personal técnico para más información.
+                    En este momento el portal de autoregistro se encuentra cerrado por la administración del club. El acceso al formulario está deshabilitado.
                 </p>
             </div>
 
@@ -294,6 +294,7 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   });
 }
 
+// VERIFICACIÓN ESTRICTA DE APERTURA DESDE SUPABASE MAESTRO Y RESPALDO LOCAL
 async function verificarEstadoPortal() {
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
@@ -318,10 +319,14 @@ async function verificarEstadoPortal() {
                 estatusBadge.classList.add('flex');
             }
 
-            if (licencia.portal_abierto !== undefined && licencia.portal_abierto !== null) {
-                estaAbierto = licencia.portal_abierto === true;
+            // Comprobar estado en base de datos o almacenamiento local de respaldo
+            const estadoDB = licencia.portal_abierto;
+            const estadoLocal = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
+
+            if (estadoDB !== undefined && estadoDB !== null) {
+                estaAbierto = estadoDB === true;
             } else {
-                estaAbierto = localStorage.getItem(`portal_abierto_${clubID}`) === 'true';
+                estaAbierto = estadoLocal;
             }
 
             const supaUrl = licencia.supabase_url || localStorage.getItem('control_voley_supa_url');
@@ -341,23 +346,29 @@ async function verificarEstadoPortal() {
             }
         }
 
-        if (estaAbierto) {
+        // CONTROL ESTRICTO DE VISIBILIDAD DEL FORMULARIO
+        if (estaAbierto === true) {
             _0xa('estadoAbierto').classList.remove('hidden');
+            _0xa('estadoCerrado').classList.add('hidden');
         } else {
             _0xa('estadoCerrado').classList.remove('hidden');
+            _0xa('estadoAbierto').classList.add('hidden');
         }
 
     } catch (err) {
+        console.warn("Error validando estado del portal, aplicando bloqueo por seguridad.");
         _0xa('estadoCargando').classList.add('hidden');
         _0xa('estadoCerrado').classList.remove('hidden');
+        _0xa('estadoAbierto').classList.add('hidden');
     }
 }
 
+// BLOQUEO DE ENVÍO SI ESTÁ CERRADO
 _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!supabaseClub) {
-        alert("Atención: No se pudo conectar con la base de datos del club. Por favor intenta más tarde.");
+        alert("Atención: El portal se encuentra cerrado o sin conexión activa.");
         return;
     }
 
