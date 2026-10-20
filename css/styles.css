@@ -1,27 +1,3 @@
-<!-- BANNER SUPERIOR CON GLOW Y DEGRADADO -->
-<div class="banner-glow mb-8">
-    <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-slate-950">
-        <!-- Imagen de Fondo -->
-        <img src="img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-44 object-cover opacity-80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
-        
-        <!-- Degradado y Texto Encima de la Imagen -->
-        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent flex flex-col justify-center px-6 sm:px-10">
-            <!-- Subtítulo o Módulo -->
-            <span class="text-sky-400 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2 mb-1">
-                <i class="fas fa-users-gear"></i> Módulo de Gestión
-            </span>
-            <!-- Título Principal -->
-            <h1 id="bannerTituloClub" class="text-2xl sm:text-3xl font-black text-white leading-tight">
-                Control Voley PRO
-            </h1>
-            <!-- Descripción -->
-            <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">
-                Gestión administrativa, nómina de atletas y control del club.
-            </p>
-        </div>
-    </div>
-</div>
-
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: #F8FAFC;
