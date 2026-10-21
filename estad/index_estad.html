@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Estadísticas y Scouting</title>
+    <title>Control Voley | Scouting & Stats PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -62,7 +62,7 @@
                 <i class="fas fa-arrow-left"></i> Volver al Menú
             </a>
             <span id="userEmail" class="text-xs font-bold text-slate-500">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Cargando club...
+                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Cargando club...
             </span>
         </div>
 
@@ -78,95 +78,124 @@
                         Control Voley <span class="text-brand-cyan">Stats</span>
                     </h1>
                     <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">
-                        Registro de rendimiento, jugadas por set y métricas del partido.
+                        Configuración de partido, roster activo y registro estadístico.
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- CONTENEDOR DE ACCIONES Y ESTADÍSTICAS -->
-        <div class="grid gap-6">
-            
-            <!-- REGISTRO DE ACCIÓN EN VIVO -->
-            <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200">
-                    <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-bolt text-brand-electric"></i> Registrar Acción de Juego
-                    </h2>
-                    
-                    <!-- CONMUTADOR MODO REGISTRADO / MANUAL -->
-                    <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-                        <button type="button" id="btnModoData" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-brand-electric text-white shadow-sm">
-                            <i class="fas fa-database mr-1"></i> Nómina
-                        </button>
-                        <button type="button" id="btnModoManual" class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
-                            <i class="fas fa-user-pen mr-1"></i> Sin Registro / Invitado
-                        </button>
-                    </div>
-                </div>
-
-                <form id="f" class="space-y-3">
-                    
-                    <!-- SECCIÓN SELECCIÓN DE ATLETA (REGISTRADO) -->
-                    <div id="seccionRegistrado">
-                        <select id="ps" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm">
-                            <option value="">Seleccione Atleta de la Nómina...</option>
-                        </select>
-                    </div>
-
-                    <!-- SECCIÓN INGRESO MANUAL DE ATLETA (SIN REGISTRO) -->
-                    <div id="seccionManual" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <input type="number" id="pN" placeholder="Nro Camiseta" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <input type="text" id="pM" placeholder="Nombre o Apodo del Atleta" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm">
-                        </div>
-                    </div>
-
-                    <!-- SELECCIÓN DE ACCIÓN -->
-                    <div>
-                        <select id="as" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm" required>
-                            <option value="">Seleccione Acción de Juego...</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full bg-brand-electric hover:bg-brand-600 text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-electric transition cursor-pointer">
-                        <i class="fas fa-plus-circle mr-1"></i> Registrar Jugada
-                    </button>
-
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button type="button" id="rs" class="bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">Limpiar Set Actual</button>
-                        <button type="button" id="ra" class="bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-sm">Reiniciar Partido</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- RESUMEN ESTADÍSTICO -->
-            <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80">
-                <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 mb-3 pb-2 border-b border-slate-200 flex items-center gap-2">
-                    <i class="fas fa-list-check text-brand-electric"></i> Rendimiento por Atleta
+        <!-- 1. CONFIGURACIÓN DEL PARTIDO -->
+        <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-trophy text-amber-500"></i> Datos del Encuentro
                 </h2>
-                <div id="st" class="space-y-2">
-                    <p class="text-center text-slate-400 text-xs py-4">Cargando estadísticas...</p>
-                </div>
+                <span id="fechaJuegoDisplay" class="text-xs font-bold text-brand-electric bg-brand-50 px-3 py-1 rounded-lg border border-brand-electric/20"></span>
             </div>
 
-            <!-- GRÁFICAS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 h-72">
-                    <canvas id="c1"></canvas>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">Equipo Local / Club</label>
+                    <input type="text" id="equipoLocal" placeholder="Ej: Lara" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-800 outline-none shadow-sm bg-white">
                 </div>
-                <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 h-72">
-                    <canvas id="c2"></canvas>
-                    <div id="sum" class="text-center mt-2 text-xs font-bold text-slate-600"></div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase text-slate-600 mb-1">Equipo Visitante / Rival</label>
+                    <input type="text" id="equipoRival" placeholder="Ej: Carabobo" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-800 outline-none shadow-sm bg-white">
                 </div>
             </div>
-
         </div>
+
+        <!-- 2. GESTIÓN DEL ROSTER (CONVOCATORIA) -->
+        <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
+                <i class="fas fa-users text-brand-electric"></i> Conformar Roster del Partido
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Agregar desde Nómina -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                    <label class="block text-xs font-black uppercase text-slate-700">Añadir Atleta de Nómina</label>
+                    <div class="flex gap-2">
+                        <select id="selectNomina" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                            <option value="">Cargando atletas...</option>
+                        </select>
+                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Agregar Manual / Invitado -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                    <label class="block text-xs font-black uppercase text-slate-700">Añadir Atleta Manual / Invitado</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="manualNum" placeholder="Nro" class="w-16 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                        <input type="text" id="manualNom" placeholder="Nombre / Alias" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                        <button type="button" id="btnAgregarManual" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chips de Atletas Convocados en el Roster -->
+            <div>
+                <label class="block text-[11px] font-bold uppercase text-slate-500 mb-2">Atletas Convocados en Roster (<span id="countRoster">0</span>):</label>
+                <div id="rosterChips" class="flex flex-wrap gap-2 min-h-[40px] p-3 bg-white rounded-2xl border border-slate-200">
+                    <span class="text-xs text-slate-400 italic">No hay atletas añadidos al roster aún.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. REGISTRO DE ACCIONES EN VIVO -->
+        <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
+                <i class="fas fa-bolt text-brand-electric"></i> Registrar Acción
+            </h2>
+
+            <form id="f" class="space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <select id="ps" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm" required>
+                        <option value="">Seleccione Atleta del Roster...</option>
+                    </select>
+                    <select id="as" class="w-full border border-slate-200 p-3 rounded-xl bg-white text-xs font-bold text-slate-700 outline-none shadow-sm" required>
+                        <option value="">Seleccione Acción...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-brand-electric hover:bg-brand-600 text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-electric transition cursor-pointer">
+                    <i class="fas fa-plus-circle mr-1"></i> Registrar Jugada
+                </button>
+
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button type="button" id="rs" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">Limpiar Set Actual</button>
+                    <button type="button" id="ra" class="bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                        <i class="fas fa-trash-can mr-1"></i> Eliminar Juego / Blanquear
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 4. RESUMEN Y GRÁFICAS -->
+        <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 space-y-4">
+            <h2 class="text-sm font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
+                <i class="fas fa-list-check text-brand-electric"></i> Rendimiento del Partido
+            </h2>
+            <div id="st" class="space-y-2"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 h-72">
+                <canvas id="c1"></canvas>
+            </div>
+            <div class="glass-card p-6 rounded-3xl shadow-glass border border-slate-200/80 h-72">
+                <canvas id="c2"></canvas>
+                <div id="sum" class="text-center mt-2 text-xs font-bold text-slate-600"></div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- SCRIPT DE SUPABASE Y LÓGICA DE ESTADÍSTICAS DUAL -->
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -192,11 +221,10 @@
 
         const supabase = createClient(supaUrl, supaKey);
 
-        let L = []; // Atletas de la nómina
-        let M_Manual = []; // Atletas añadidos manualmente sin registro
-        let S = []; // Acciones del set actual
-        let M = []; // Acciones totales del partido
-        let modoManual = false;
+        let L_Nomina = []; // Atletas cargados de Supabase
+        let Roster = [];  // Atletas convocados para el partido (Nomina + Manuales)
+        let S = [];       // Acciones del Set Actual
+        let M = [];       // Acciones Totales del Partido
         let b = null, a = null;
 
         const N = {
@@ -208,49 +236,49 @@
         const P = { b: '#0055FF', r: '#dc2626', o: '#f97316', g: '#10b981' };
         const K = { scales: { y: { ticks: { stepSize: 1 } } }, responsive: true, maintainAspectRatio: false };
 
-        // Cambio de Modo
-        _('btnModoData').onclick = () => {
-            modoManual = false;
-            _('btnModoData').className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-brand-electric text-white shadow-sm';
-            _('btnModoManual').className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
-            _('seccionRegistrado').classList.remove('hidden');
-            _('seccionManual').classList.add('hidden');
-        };
+        // 1. Inicialización de Datos
+        async function init() {
+            // Fecha Automática
+            const hoy = new Date();
+            const fechaStr = hoy.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            _('fechaJuegoDisplay').textContent = fechaStr;
 
-        _('btnModoManual').onclick = () => {
-            modoManual = true;
-            _('btnModoManual').className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-brand-electric text-white shadow-sm';
-            _('btnModoData').className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
-            _('seccionManual').classList.remove('hidden');
-            _('seccionRegistrado').classList.add('hidden');
-        };
+            // Cargar datos locales guardados
+            _('equipoLocal').value = localStorage.getItem('vLocal_' + empresaID) || clubNombre;
+            _('equipoRival').value = localStorage.getItem('vRival_' + empresaID) || 'Rival';
 
-        async function cargarDatosIniciales() {
+            _('equipoLocal').oninput = e => localStorage.setItem('vLocal_' + empresaID, e.target.value);
+            _('equipoRival').oninput = e => localStorage.setItem('vRival_' + empresaID, e.target.value);
+
+            // Cargar Nómina desde Supabase
             try {
                 const { data: atletas } = await supabase.from('atletas').select('*').order('nroCamiseta', { ascending: true });
-                L = atletas || [];
-                rP();
-
-                S = JSON.parse(localStorage.getItem('vS_' + empresaID) || '[]');
-                M = JSON.parse(localStorage.getItem('vM_' + empresaID) || '[]');
-                M_Manual = JSON.parse(localStorage.getItem('vM_Manual_' + empresaID) || '[]');
-                U();
+                L_Nomina = atletas || [];
+                poblaryNominaSelect();
             } catch (err) {
-                console.error("Error al cargar atletas:", err);
+                console.error("Error al cargar atletas de Supabase:", err);
             }
+
+            Roster = JSON.parse(localStorage.getItem('vRoster_' + empresaID) || '[]');
+            S = JSON.parse(localStorage.getItem('vS_' + empresaID) || '[]');
+            M = JSON.parse(localStorage.getItem('vM_' + empresaID) || '[]');
+
+            renderRoster();
+            U();
         }
 
-        function rP() {
-            const ps = _('ps');
-            ps.innerHTML = '<option value="">Seleccione Atleta de la Nómina...</option>';
-            L.forEach(p => {
+        function poblaryNominaSelect() {
+            const select = _('selectNomina');
+            select.innerHTML = '<option value="">Seleccione de Nómina...</option>';
+            L_Nomina.forEach(p => {
                 let o = document.createElement('option');
-                o.value = p.cedulaIdentidad || p.number;
+                o.value = p.cedulaIdentidad || p.id;
                 o.textContent = `#${p.nroCamiseta || '0'} ${p.nombre} ${p.apellido || ''}`;
-                ps.appendChild(o);
+                select.appendChild(o);
             });
         }
 
+        // Llenar selector de acciones
         const as = _('as');
         Object.keys(N).forEach(k => {
             let o = document.createElement('option');
@@ -259,32 +287,108 @@
             as.appendChild(o);
         });
 
-        function G() {
-            localStorage.setItem('vS_' + empresaID, JSON.stringify(S));
-            localStorage.setItem('vM_' + empresaID, JSON.stringify(M));
-            localStorage.setItem('vM_Manual_' + empresaID, JSON.stringify(M_Manual));
+        // 2. Agregar Atleta a Roster desde Nómina
+        _('btnAgregarNomina').onclick = () => {
+            const idKey = _('selectNomina').value;
+            if (!idKey) return;
+            const atleta = L_Nomina.find(x => (x.cedulaIdentidad || x.id) == idKey);
+            if (atleta && !Roster.some(x => x.key == idKey)) {
+                Roster.push({
+                    key: idKey,
+                    num: atleta.nroCamiseta || '0',
+                    name: `${atleta.nombre} ${atleta.apellido || ''}`.trim(),
+                    esManual: false
+                });
+                guardarEstado();
+                renderRoster();
+                U();
+            }
+        };
+
+        // 3. Agregar Atleta a Roster Manualmente
+        _('btnAgregarManual').onclick = () => {
+            const num = _('manualNum').value.trim();
+            const nom = _('manualNom').value.trim();
+            if (!num || !nom) { alert("Ingresa número y nombre."); return; }
+
+            const key = 'MANUAL_' + num + '_' + Date.now();
+            Roster.push({ key: key, num: num, name: nom, esManual: true });
+
+            _('manualNum').value = '';
+            _('manualNom').value = '';
+
+            guardarEstado();
+            renderRoster();
+            U();
+        };
+
+        // Renderizar Lista/Chips de Roster Convocado
+        function renderRoster() {
+            const container = _('rosterChips');
+            const ps = _('ps');
+            _('countRoster').textContent = Roster.length;
+
+            ps.innerHTML = '<option value="">Seleccione Atleta del Roster...</option>';
+
+            if (!Roster.length) {
+                container.innerHTML = '<span class="text-xs text-slate-400 italic">No hay atletas añadidos al roster aún.</span>';
+                return;
+            }
+
+            container.innerHTML = '';
+            Roster.forEach(p => {
+                // Chip en interfaz
+                const chip = document.createElement('div');
+                chip.className = 'inline-flex items-center gap-2 bg-brand-50 border border-brand-electric/20 text-brand-electric px-3 py-1 rounded-xl text-xs font-bold';
+                chip.innerHTML = `<span>#${p.num} ${p.name}</span> <button type="button" class="text-rose-500 hover:text-rose-700 font-bold ml-1" onclick="quitarDeRoster('${p.key}')">&times;</button>`;
+                container.appendChild(chip);
+
+                // Opción en el select de jugadas
+                let o = document.createElement('option');
+                o.value = p.key;
+                o.textContent = `#${p.num} ${p.name}`;
+                ps.appendChild(o);
+            });
         }
 
+        window.quitarDeRoster = (key) => {
+            Roster = Roster.filter(x => x.key !== key);
+            guardarEstado();
+            renderRoster();
+            U();
+        };
+
+        function guardarEstado() {
+            localStorage.setItem('vRoster_' + empresaID, JSON.stringify(Roster));
+            localStorage.setItem('vS_' + empresaID, JSON.stringify(S));
+            localStorage.setItem('vM_' + empresaID, JSON.stringify(M));
+        }
+
+        // 4. Registrar Jugada
+        _('f').onsubmit = e => {
+            e.preventDefault();
+            const playerKey = _('ps').value;
+            const accion = _('as').value;
+
+            if (!playerKey || !accion) return;
+
+            let l = { playerKey: playerKey, action: accion };
+            M.push(l);
+            S.push(l);
+            guardarEstado();
+            U();
+        };
+
+        // 5. Renderizar Estadísticas y Gráficas
         function U() {
             const s = _('st');
             s.innerHTML = '';
 
             let d = {};
-
-            // 1. Cargar lista de atletas de la nómina
-            L.forEach(p => {
-                const key = p.cedulaIdentidad || p.number;
-                d[key] = { p: 0, n: 0, a: {}, name: `${p.nombre} ${p.apellido || ''}`, num: p.nroCamiseta || '0' };
+            Roster.forEach(p => {
+                d[p.key] = { p: 0, n: 0, a: {}, name: p.name, num: p.num };
             });
 
-            // 2. Cargar lista de atletas manuales agregados durante el partido
-            M_Manual.forEach(p => {
-                if (!d[p.key]) {
-                    d[p.key] = { p: 0, n: 0, a: {}, name: p.name, num: p.num };
-                }
-            });
-
-            // 3. Procesar las acciones registradas
             S.forEach(l => {
                 let k = d[l.playerKey];
                 if (k) {
@@ -295,13 +399,10 @@
                 }
             });
 
-            const keysConParticipacion = Object.keys(d).filter(k => d[k].p > 0 || d[k].n > 0 || Object.keys(d[k].a).length > 0);
-
-            if (!keysConParticipacion.length) {
-                s.innerHTML = '<p class="text-center text-slate-400 text-xs py-3">Sin registros en el set actual.</p>';
+            if (!Roster.length) {
+                s.innerHTML = '<p class="text-center text-slate-400 text-xs py-3">Agrega atletas al Roster para iniciar el registro.</p>';
             } else {
-                keysConParticipacion.forEach(key => {
-                    let k = d[key];
+                Object.values(d).forEach(k => {
                     let dt = '';
                     Object.keys(k.a).forEach(x => dt += `<span class="mr-2 font-mono">${x}: <span class="text-emerald-600 font-bold">${k.a[x].p}</span>|<span class="text-rose-600 font-bold">${k.a[x].n}</span></span>`);
                     s.innerHTML += `
@@ -310,7 +411,7 @@
                                 <span>#${k.num} ${k.name}</span>
                                 <span class="px-2 py-0.5 rounded-lg ${k.p - k.n >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">Dif: ${k.p - k.n}</span>
                             </div>
-                            <div class="text-[10px] text-slate-500 mt-1">${dt}</div>
+                            <div class="text-[10px] text-slate-500 mt-1">${dt || '<span class="italic text-slate-400">Sin jugadas registradas en este set</span>'}</div>
                         </div>`;
                 });
             }
@@ -335,62 +436,36 @@
             if (b) b.destroy();
             b = new Chart(x1, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v1.p, backgroundColor: P.b }, { label: 'Negativo (-)', data: v1.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'SET ACTUAL' } } } });
             
-            _('sum').innerHTML = `Total Partido — Positivos: <span class="text-emerald-600 font-bold">${tp}</span> | Negativos: <span class="text-rose-600 font-bold">${tn}</span>`;
+            const loc = _('equipoLocal').value || 'Local';
+            const riv = _('equipoRival').value || 'Rival';
+            _('sum').innerHTML = `${loc} vs ${riv} — Positivos: <span class="text-emerald-600 font-bold">${tp}</span> | Negativos: <span class="text-rose-600 font-bold">${tn}</span>`;
             
             if (a) a.destroy();
             a = new Chart(x2, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v2.p, backgroundColor: P.g }, { label: 'Negativo (-)', data: v2.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'TOTAL PARTIDO' } } } });
         }
 
-        _('f').onsubmit = e => {
-            e.preventDefault();
-            let playerKey = "";
-
-            if (!modoManual) {
-                playerKey = _('ps').value;
-                if (!playerKey) { alert("Por favor seleccione un atleta de la lista."); return; }
-            } else {
-                const num = _('pN').value.trim();
-                const nom = _('pM').value.trim();
-
-                if (!num || !nom) { alert("Por favor complete el número y el nombre del atleta."); return; }
-
-                playerKey = "MANUAL_" + num;
-                
-                // Registrar atleta manual si no existía en este partido
-                if (!M_Manual.some(x => x.key === playerKey)) {
-                    M_Manual.push({ key: playerKey, num: num, name: nom });
-                }
-            }
-
-            const accion = _('as').value;
-            if (!accion) { alert("Por favor seleccione una acción de juego."); return; }
-
-            let l = { playerKey: playerKey, action: accion };
-            M.push(l);
-            S.push(l);
-            G();
-            U();
-
-            if (modoManual) {
-                _('pN').value = '';
-                _('pM').value = '';
-            }
-        };
-
+        // Limpiar Set
         _('rs').onclick = () => {
-            if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; G(); U(); }
+            if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; guardarEstado(); U(); }
         };
 
+        // Eliminar Juego (Blanquear Roster e Información)
         _('ra').onclick = () => {
-            if (confirm('¿Desea reiniciar todo el partido y limpiar las estadísticas?')) {
+            if (confirm('¿Seguro que deseas ELIMINAR EL JUEGO? Esto colocará en blanco el Roster, reseteará las estadísticas a cero y limpiará la información del encuentro.')) {
+                localStorage.removeItem('vRoster_' + empresaID);
                 localStorage.removeItem('vS_' + empresaID);
                 localStorage.removeItem('vM_' + empresaID);
-                localStorage.removeItem('vM_Manual_' + empresaID);
-                location.reload();
+                localStorage.removeItem('vLocal_' + empresaID);
+                localStorage.removeItem('vRival_' + empresaID);
+                Roster = []; S = []; M = [];
+                _('equipoLocal').value = clubNombre;
+                _('equipoRival').value = 'Carabobo';
+                renderRoster();
+                U();
             }
         };
 
-        cargarDatosIniciales();
+        init();
     </script>
 </body>
 </html>
