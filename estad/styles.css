@@ -93,7 +93,17 @@ body {
     background-color: #FDBA74 !important;
 }
 
-/* BOTONES DE CONTROL DE ACCIÓN FUERTES */
+/* BOTONES DE CONTROL (ROJO Y AZUL) */
+.btn-ctrl-red {
+    background-color: #E11D48 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+.btn-ctrl-red:hover {
+    background-color: #BE123C !important;
+}
+
 .btn-ctrl-blue {
     background-color: #0284C7 !important;
     color: #FFFFFF !important;
@@ -102,36 +112,6 @@ body {
 
 .btn-ctrl-blue:hover {
     background-color: #0369A1 !important;
-}
-
-.btn-ctrl-amber {
-    background-color: #D97706 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
-}
-
-.btn-ctrl-amber:hover {
-    background-color: #B45309 !important;
-}
-
-.btn-ctrl-purple {
-    background-color: #7C3AED !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-}
-
-.btn-ctrl-purple:hover {
-    background-color: #6D28D9 !important;
-}
-
-.btn-ctrl-rose {
-    background-color: #E11D48 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
-}
-
-.btn-ctrl-rose:hover {
-    background-color: #BE123C !important;
 }
 
 input::-webkit-inner-spin-button, 
