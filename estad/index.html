@@ -70,7 +70,7 @@
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
-        // VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA -> index_stats.html directo
+        // VALIDACIÓN DE SESIÓN: Solo redirige a stats si ya está validado Y ejecutándose como app instalada
         document.addEventListener('DOMContentLoaded', () => {
             const licenciaValidada = localStorage.getItem('licencia_validada');
             const empresaID = localStorage.getItem('youcontrol_empresa_id');
