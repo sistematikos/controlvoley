@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Activación Módulo Estadístico</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Control Voley | Scouting & Stats Táctil PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     
     <!-- SCRIPT DE SEGURIDAD Y BLOQUEO -->
     <script src="security.js"></script>
@@ -16,211 +16,268 @@
       tailwind.config = {
         theme: {
           extend: {
-            fontFamily: {
-              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            },
+            fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
             colors: {
               brand: {
-                50: '#f0f6ff',
-                100: '#e0edff',
-                500: '#0066ff',
-                600: '#0052cc',
-                700: '#003db3',
-                electric: '#0055FF',
-                cyan: '#00D2FF',
-                orange: '#FF5500',
-                dark: '#030B1E'
+                50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+                electric: '#0055FF', cyan: '#00D2FF', orange: '#FF5500', dark: '#030B1E'
               }
-            },
-            boxShadow: {
-              'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
-              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
             }
           }
         }
       }
     </script>
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #F8FAFC;
-        }
-        .bg-sports-pattern {
-            background-color: #F1F5F9;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-    </style>
-
-    <script>
-        window.deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            window.deferredPrompt = e;
-        });
-
-        function esPWAInstalada() {
-            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        }
-
-        // VALIDACIÓN DE SESIÓN: Solo redirige a stats si ya está validado Y ejecutándose como app instalada
-        document.addEventListener('DOMContentLoaded', () => {
-            const licenciaValidada = localStorage.getItem('licencia_validada');
-            const empresaID = localStorage.getItem('youcontrol_empresa_id');
-
-            if (licenciaValidada === 'true' && empresaID && esPWAInstalada()) {
-                window.location.replace('./index_stats.html');
-            }
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
-            });
-        }
-    </script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-sports-pattern min-h-screen flex items-center justify-center p-4 antialiased text-slate-800" oncontextmenu="return false">
+<body class="bg-sports-pattern min-h-screen text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
-    <div class="glass-card p-8 rounded-3xl shadow-glass border border-slate-200/80 w-full max-w-md text-center space-y-6">
-        
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-2">
-            <i class="fas fa-shield-alt text-2xl animate-pulse"></i>
-        </div>
-
-        <div>
-            <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">Control Voley PRO</h1>
-            <p class="text-xs font-bold text-brand-orange uppercase tracking-widest mt-1">Scouting Táctil y Estadísticas</p>
-        </div>
-
-        <div class="text-left space-y-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Pega tu código de licencia:</label>
-            <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
-        </div>
-
-        <!-- MENSAJE DE BIENVENIDA -->
-        <div class="bg-brand-50 border border-brand-electric/20 rounded-2xl p-4 text-center">
-            <p class="text-xs font-bold text-slate-700 leading-relaxed">
-                Sistema exclusivo y protegido. Valida tu licencia e instala la aplicación para iniciar el módulo de <strong class="text-brand-electric uppercase">Stats</strong>.
-            </p>
-        </div>
-
-        <!-- ÚNICO BOTÓN DE INSTALACIÓN Y ACTIVACIÓN -->
-        <button id="btnActivarEInstalar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar
-        </button>
-
-        <div id="statusMsg" class="text-xs font-bold text-slate-500"></div>
-
-        <div class="pt-2 border-t border-slate-100 text-center">
-            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Módulo 100% Autónomo y Seguro</span>
-        </div>
+    <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
+    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-extrabold flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 translate-y-4 print:hidden">
+        <i class="fas fa-check-circle text-brand-cyan text-sm"></i>
+        <span id="toastTexto">¡Acción registrada correctamente!</span>
     </div>
 
-    <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
-        const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
-
-        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
-        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
-
-        async function procesarActivacionEInstalacion() {
-            const rawToken = document.getElementById('tokenInput').value.trim();
-            const statusDiv = document.getElementById('statusMsg');
-            if (!rawToken) return alert("Por favor, pega el código de licencia primero.");
+    <main class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- BARRA SUPERIOR CON BOTÓN DE CERRAR SESIÓN -->
+        <div class="flex items-center justify-between print:hidden">
+            <button type="button" id="btnCerrarSesion" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-rose-200 cursor-pointer">
+                <i class="fas fa-power-off text-rose-600"></i> Cerrar Sesión
+            </button>
             
-            const btn = document.getElementById('btnActivarEInstalar');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando licencia...`;
+            <div class="flex items-center gap-3">
+                <span id="userEmail" class="text-xs font-bold text-slate-500 hidden sm:inline-block">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Cargando club...
+                </span>
+                <button type="button" id="btnExportarPdf" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition cursor-pointer">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+            </div>
+        </div>
 
-            try {
-                const data = JSON.parse(atob(rawToken));
-                const hwID = getHardwareID();
-                const activationId = data.clubId || data.activation_id;
+        <!-- BANNER SUPERIOR CON GLOW -->
+        <div class="banner-glow mb-2 print:hidden">
+            <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/80 bg-slate-950">
+                <img src="../img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-44 object-cover opacity-80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent flex flex-col justify-center px-6 sm:px-10">
+                    <span class="text-sky-400 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2 mb-1">
+                        <i class="fas fa-chart-line"></i> Scouting Táctil en Vivo
+                    </span>
+                    <h1 class="text-2xl sm:text-3xl font-black text-white leading-tight">
+                        Control Voley <span class="text-brand-orange">Stats PRO</span>
+                    </h1>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">
+                        Reporte oficial y estadísticas del encuentro.
+                    </p>
+                </div>
+            </div>
+        </div>
 
-                if (!activationId) {
-                    throw new Error("El token no contiene un ID de club válido.");
-                }
+        <!-- 1. CONFIGURACIÓN DEL ENCUENTRO -->
+        <div class="glass-card p-5 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-trophy text-brand-orange"></i> Datos del Partido
+                </h2>
+                <span id="fechaJuegoDisplay" class="text-[11px] font-bold text-brand-electric bg-blue-50 px-3 py-1 rounded-xl border border-blue-200"></span>
+            </div>
 
-                const { data: empresaData, error: empresaError } = await supabaseMaster
-                    .from('licencias')
-                    .select('*')
-                    .eq('id', activationId)
-                    .single();
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Equipo Local / Club</label>
+                    <input type="text" id="equipoLocal" placeholder="Ej: Lara" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-900 outline-none shadow-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-brand-electric">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Equipo Visitante / Rival</label>
+                    <input type="text" id="equipoRival" placeholder="Ej: Carabobo" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-900 outline-none shadow-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-brand-orange">
+                </div>
+            </div>
+        </div>
 
-                if (empresaError || !empresaData) {
-                    throw new Error("La empresa o licencia no se encuentra registrada en el sistema central.");
-                }
+        <!-- 2. CONFORMACIÓN DEL ROSTER (Oculto en PDF) -->
+        <div class="glass-card p-5 rounded-3xl space-y-3 print:hidden">
+            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
+                <i class="fas fa-user-plus text-brand-electric"></i> Cargar Atletas al Roster
+            </h2>
 
-                let equiposLicencia = Array.isArray(empresaData.equipos) ? empresaData.equipos : [];
-                let limiteStr = empresaData.limite_dispositivos || data.limite || "3";
-                let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 space-y-1">
+                    <label class="block text-[10px] font-bold uppercase text-slate-600">Desde Nómina del Club</label>
+                    <div class="flex gap-2">
+                        <select id="selectNomina" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                            <option value="">Cargando atletas...</option>
+                        </select>
+                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-black transition shadow-md cursor-pointer">
+                            <i class="fas fa-plus mr-1"></i> Registrar
+                        </button>
+                    </div>
+                </div>
 
-                if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
-                    alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
-                    return;
-                }
+                <div class="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 space-y-1">
+                    <label class="block text-[10px] font-bold uppercase text-slate-600">Manual / Invitado / Rival</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="manualNum" placeholder="Nro" class="w-16 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                        <input type="text" id="manualNom" placeholder="Nombre o Alias" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
+                        <button type="button" id="btnAgregarManual" class="bg-brand-orange hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-black transition shadow-md cursor-pointer">
+                            <i class="fas fa-plus mr-1"></i> Registrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                if (!equiposLicencia.includes(hwID)) {
-                    equiposLicencia.push(hwID);
-                    await supabaseMaster
-                        .from('licencias')
-                        .update({ equipos: equiposLicencia })
-                        .eq('id', activationId);
-                }
+        <!-- 3. PANEL TÁCTIL DE ACCIONES Y TARJETAS (Oculto en PDF) -->
+        <div class="glass-card p-6 rounded-3xl space-y-5 print:hidden">
+            
+            <!-- PASO 1: SELECCIONAR ATLETA DE ROSTER -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-brand-electric text-white flex items-center justify-center text-[10px]">1</span> 
+                        Selecciona el Atleta
+                    </h3>
+                    <span class="text-[10px] text-slate-500 font-bold">Convocados: <span id="countRoster" class="text-brand-electric font-black">0</span></span>
+                </div>
 
-                localStorage.setItem('control_voley_supa_url', empresaData.supabase_url || data.supabaseUrl);
-                localStorage.setItem('control_voley_supa_key', empresaData.supabase_key || data.supabaseKey);
-                localStorage.setItem('control_voley_supa_bucket', empresaData.bucket || data.bucket || activationId);
+                <div id="rosterCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 min-h-[60px]">
+                    <div class="col-span-full text-center py-4 text-xs text-slate-400 italic">No hay atletas en el roster del partido.</div>
+                </div>
+            </div>
 
-                if (empresaData.nombre || data.clubNombre) {
-                    localStorage.setItem('control_voley_club_nombre', empresaData.nombre || data.clubNombre);
-                }
+            <hr class="border-slate-100">
 
-                localStorage.setItem('youcontrol_empresa_id', activationId);
-                localStorage.setItem('licencia_validada', 'true');
+            <!-- PASO 2: BOTONES DE ACCIONES (+ / -) -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-brand-orange text-white flex items-center justify-center text-[10px]">2</span> 
+                        Toca la Acción de Juego
+                    </h3>
+                    <span id="atletaSeleccionadoBadge" class="text-xs font-black text-brand-electric bg-blue-50 px-3 py-1 rounded-xl border border-blue-200 hidden">
+                        Seleccionado: <span id="nombreAtletaSel">--</span>
+                    </span>
+                </div>
 
-                statusDiv.className = "text-xs font-bold text-emerald-600";
-                statusDiv.innerText = "¡Licencia válida! Iniciando instalación...";
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
+                    <button type="button" onclick="registrarAccionDirecta('Servicio#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                        <span>Servicio #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Servicio=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                        <span>Servicio =</span>
+                    </button>
 
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    const userChoice = await window.deferredPrompt.userChoice;
-                    window.deferredPrompt = null;
+                    <button type="button" onclick="registrarAccionDirecta('Ataque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-fist text-sm"></i>
+                        <span>Ataque #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Ataque=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-fist text-sm"></i>
+                        <span>Ataque =</span>
+                    </button>
 
-                    if (userChoice.outcome === 'accepted') {
-                        window.location.replace('./index_stats.html');
-                    } else {
-                        alert("Es necesario instalar la aplicación para ingresar.");
-                        btn.disabled = false;
-                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
-                        statusDiv.innerText = "";
-                    }
-                } else {
-                    window.location.replace('./index_stats.html');
-                }
-                
-            } catch (e) {
-                console.error("Error al procesar activación:", e);
-                alert("Código de licencia inválido o error en la conexión: " + e.message);
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
-                statusDiv.innerText = "";
+                    <button type="button" onclick="registrarAccionDirecta('Bloqueo#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-shield-halved text-sm"></i>
+                        <span>Bloqueo #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Bloqueo=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-shield-halved text-sm"></i>
+                        <span>Bloqueo =</span>
+                    </button>
+
+                    <button type="button" onclick="registrarAccionDirecta('Coloque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-pointer text-sm"></i>
+                        <span>Coloque #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Coloque=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-pointer text-sm"></i>
+                        <span>Coloque =</span>
+                    </button>
+
+                    <button type="button" onclick="registrarAccionDirecta('Recepción#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hands-holding-circle text-sm"></i>
+                        <span>Recepción #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Recepción=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hands-holding-circle text-sm"></i>
+                        <span>Recepción =</span>
+                    </button>
+
+                    <button type="button" onclick="registrarAccionDirecta('Defensa#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-person-falling text-sm"></i>
+                        <span>Defensa #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Defensa=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-person-falling text-sm"></i>
+                        <span>Defensa =</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CONTROLES -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
+                <button type="button" id="btnDeshacer" class="btn-ctrl-red py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-undo"></i> Deshacer Jugada
+                </button>
+                <button type="button" id="rs" class="btn-ctrl-blue py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-rotate-left"></i> Culminar Set Actual
+                </button>
+                <button type="button" id="btnCulminarPartido" class="btn-ctrl-blue py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-flag-checkered"></i> Culminar Partido
+                </button>
+                <button type="button" id="ra" class="btn-ctrl-red py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-trash-can"></i> Eliminar Juego / Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. RENDIMIENTO Y GRÁFICAS -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fas fa-arrow-down-wide-short text-brand-electric"></i> Resumen por Efectividad</span>
+                <span class="text-[10px] text-slate-400 font-bold lowercase">Ordenado por % efectividad</span>
+            </h2>
+            <div id="st" class="space-y-2"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-3xl h-72">
+                <canvas id="c1"></canvas>
+            </div>
+            <div class="glass-card p-6 rounded-3xl h-72">
+                <canvas id="c2"></canvas>
+                <div id="sum" class="text-center mt-2 text-xs font-bold text-slate-700"></div>
+            </div>
+        </div>
+
+        <!-- 5. TARJETA DE RECONOCIMIENTOS (TOP 4, MVP Y ALL-STAR) -->
+        <div class="glass-card p-6 rounded-3xl space-y-4 border border-amber-200/60 bg-gradient-to-br from-white via-amber-50/20 to-blue-50/30">
+            <div class="flex items-center justify-between border-b border-amber-100 pb-3">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-crown text-amber-500 text-sm"></i> Cuadro de Honor del Partido — Top 4 Atletas
+                </h2>
+                <span class="text-[10px] font-extrabold text-amber-700 bg-amber-100/80 px-2.5 py-0.5 rounded-lg border border-amber-200">Recomendación Oficial</span>
+            </div>
+
+            <div id="cuadroHonorGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <p class="col-span-full text-center text-slate-400 text-xs py-4 italic">Se requieren acciones registradas en el partido para determinar los reconocimientos.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT PARA GESTIONAR EL CIERRE DE SESIÓN -->
+    <script>
+        document.getElementById('btnCerrarSesion').onclick = () => {
+            if (confirm('¿Deseas cerrar sesión en este dispositivo? Se requerirá ingresar la licencia nuevamente.')) {
+                localStorage.removeItem('licencia_validada');
+                localStorage.removeItem('youcontrol_empresa_id');
+                window.location.replace('./index.html');
             }
-        }
-
-        document.getElementById('btnActivarEInstalar').addEventListener('click', procesarActivacionEInstalacion);
+        };
     </script>
+
+    <script type="module" src="stats.js"></script>
 </body>
 </html>
