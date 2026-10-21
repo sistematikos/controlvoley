@@ -1,12 +1,9 @@
-const CACHE_NAME = 'voley-stats-pro-v1';
+const CACHE_NAME = 'voley-stats-pro-v2';
 const assetsToCache = [
   './index.html',
   './index_stats.html',
   './security.js',
-  './manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-  'https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js'
+  './manifest.json'
 ];
 
 // Instalación del Service Worker
@@ -40,7 +37,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request).catch(() => {
-        // Fallback en caso de estar offline para la interfaz principal
         if (event.request.mode === 'navigate') {
           return caches.match('./index.html');
         }
