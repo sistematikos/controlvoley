@@ -30,16 +30,20 @@ let atletaSeleccionadoKey = null;
 let b = null, a = null;
 let toastTimeout = null;
 
+// Mapa de puntuación (# suma +1, = resta -1)
 const N = {
-    'Servicio Bueno S#': 1, 'Ataque Bueno A#': 1, 'Bloqueo Bueno B#': 1, 'Coloque Bueno C#': 1,
-    'Servicio Malo S=': -1, 'Ataque Malo A=': -1, 'Bloqueo Malo B=': -1, 'Recepción Mala R=': -1, 
-    'Coloque Malo C=': -1, 'Defensa Mala D=': -1
+    'Servicio#': 1,  'Servicio=': -1,
+    'Ataque#': 1,    'Ataque=': -1,
+    'Bloqueo#': 1,   'Bloqueo=': -1,
+    'Coloque#': 1,   'Coloque=': -1,
+    'Recepción#': 1, 'Recepción=': -1,
+    'Defensa#': 1,   'Defensa=': -1
 };
-const O = { S: 'Servicio', A: 'Ataque', B: 'Bloqueo', R: 'Recepción', C: 'Coloque', D: 'Defensa' };
-const P = { b: '#0055FF', r: '#dc2626', o: '#f97316', g: '#10b981' };
+
+const O = { Servicio: 'Servicio', Ataque: 'Ataque', Bloqueo: 'Bloqueo', Coloque: 'Coloque', Recepción: 'Recepción', Defensa: 'Defensa' };
+const P = { b: '#0055FF', r: '#dc2626', o: '#FF5500', g: '#10b981' };
 const K = { scales: { y: { ticks: { stepSize: 1 } } }, responsive: true, maintainAspectRatio: false };
 
-// FUNCIÓN PARA MOSTRAR MENSAJE TOAST FLOTANTE (Duración 2 segundos)
 function mostrarToast(mensaje) {
     const toast = _('toastNotificacion');
     const texto = _('toastTexto');
@@ -93,7 +97,6 @@ function poblaryNominaSelect() {
     });
 }
 
-// AGREGAR AL ROSTER
 _('btnAgregarNomina').onclick = () => {
     const idKey = _('selectNomina').value;
     if (!idKey) return;
@@ -128,7 +131,6 @@ _('btnAgregarManual').onclick = () => {
     mostrarToast('Atleta invitado añadido');
 };
 
-// RENDERIZAR TARJETAS DEL ROSTER
 function renderRosterCards() {
     const container = _('rosterCardsGrid');
     _('countRoster').textContent = Roster.length;
@@ -145,15 +147,15 @@ function renderRosterCards() {
         const card = document.createElement('div');
         const isSelected = (atletaSeleccionadoKey === p.key);
         
-        card.className = `relative p-3 rounded-2xl border transition-all cursor-pointer bg-white flex flex-col justify-between hover:border-brand-electric shadow-sm ${isSelected ? 'card-atleta-selected' : 'border-slate-200'}`;
+        card.className = `relative p-3 rounded-2xl cursor-pointer flex flex-col justify-between card-atleta-item shadow-sm ${isSelected ? 'card-atleta-selected' : ''}`;
         
         card.onclick = () => seleccionarAtleta(p.key, p.num, p.name);
 
         card.innerHTML = `
             <button type="button" class="absolute top-1 right-2 text-slate-300 hover:text-rose-600 font-bold text-xs z-10" onclick="event.stopPropagation(); quitarDeRoster('${p.key}')">&times;</button>
             <div class="text-center py-1">
-                <span class="inline-block px-2 py-0.5 rounded-lg bg-brand-50 text-brand-electric font-black text-sm mb-1">#${p.num}</span>
-                <div class="font-extrabold text-slate-800 text-xs truncate max-w-full">${p.name}</div>
+                <span class="inline-block px-2.5 py-0.5 rounded-lg bg-blue-50 text-brand-electric font-black text-sm mb-1 border border-blue-100">#${p.num}</span>
+                <div class="font-extrabold text-slate-900 text-xs truncate max-w-full">${p.name}</div>
             </div>
         `;
         container.appendChild(card);
@@ -178,7 +180,6 @@ window.quitarDeRoster = (key) => {
     U();
 };
 
-// REGISTRAR ACCIÓN AL TOCAR BOTÓN DE JUGADA
 window.registrarAccionDirecta = (accion) => {
     if (!atletaSeleccionadoKey) {
         alert("Por favor selecciona un atleta del roster primero (Paso 1).");
@@ -191,7 +192,6 @@ window.registrarAccionDirecta = (accion) => {
     guardarEstado();
     U();
     
-    // Mostrar Toast de éxito que dura 2 segundos
     mostrarToast(`Registrado: ${accion}`);
 };
 
@@ -201,7 +201,6 @@ function guardarEstado() {
     localStorage.setItem('vM_' + empresaID, JSON.stringify(M));
 }
 
-// BOTÓN DESHACER / ELIMINAR JUGADA ANTERIOR
 _('btnDeshacer').onclick = () => {
     if (!S.length && !M.length) {
         alert("No hay jugadas registradas para deshacer.");
@@ -209,7 +208,6 @@ _('btnDeshacer').onclick = () => {
     }
 
     if (confirm("¿Deseas eliminar la última jugada registrada por error?")) {
-        // Remover última jugada del set actual y del partido total
         S.pop();
         M.pop();
         guardarEstado();
@@ -218,7 +216,6 @@ _('btnDeshacer').onclick = () => {
     }
 };
 
-// ACTUALIZAR RENDERIZADO Y GRÁFICAS
 function U() {
     const s = _('st');
     s.innerHTML = '';
@@ -231,10 +228,12 @@ function U() {
     S.forEach(l => {
         let k = d[l.playerKey];
         if (k) {
-            let v = N[l.action], t = l.action.charAt(l.action.length - 2);
-            v > 0 ? k.p++ : k.n++;
+            let v = N[l.action];
+            let t = l.action.replace(/[#=]/g, '');
+            
+            if (v > 0) k.p++; else k.n++;
             if (!k.a[t]) k.a[t] = { p: 0, n: 0 };
-            v > 0 ? k.a[t].p++ : k.a[t].n++;
+            if (v > 0) k.a[t].p++; else k.a[t].n++;
         }
     });
 
@@ -243,12 +242,12 @@ function U() {
     } else {
         Object.values(d).forEach(k => {
             let dt = '';
-            Object.keys(k.a).forEach(x => dt += `<span class="mr-2 font-mono">${x}: <span class="text-emerald-600 font-bold">${k.a[x].p}</span>|<span class="text-rose-600 font-bold">${k.a[x].n}</span></span>`);
+            Object.keys(k.a).forEach(x => dt += `<span class="mr-2 font-mono">${x}: <span class="text-brand-electric font-bold">${k.a[x].p}</span>|<span class="text-brand-orange font-bold">${k.a[x].n}</span></span>`);
             s.innerHTML += `
                 <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
                     <div class="flex justify-between font-black text-slate-800">
                         <span>#${k.num} ${k.name}</span>
-                        <span class="px-2 py-0.5 rounded-lg ${k.p - k.n >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">Dif: ${k.p - k.n}</span>
+                        <span class="px-2 py-0.5 rounded-lg ${k.p - k.n >= 0 ? 'bg-blue-50 text-brand-electric' : 'bg-orange-50 text-brand-orange'}">Dif: ${k.p - k.n}</span>
                     </div>
                     <div class="text-[10px] text-slate-500 mt-1">${dt || '<span class="italic text-slate-400">Sin jugadas registradas en este set</span>'}</div>
                 </div>`;
@@ -262,9 +261,13 @@ function U() {
     const keys = Object.keys(O);
     keys.forEach((k, idx) => {
         let p = 0, n = 0, ap = 0, an = 0;
-        S.forEach(z => { if (z.action.charAt(z.action.length - 2) === k) N[z.action] > 0 ? p++ : n++; });
+        S.forEach(z => { 
+            let t = z.action.replace(/[#=]/g, '');
+            if (t === k) N[z.action] > 0 ? p++ : n++; 
+        });
         M.forEach(z => { 
-            if (z.action.charAt(z.action.length - 2) === k) {
+            let t = z.action.replace(/[#=]/g, '');
+            if (t === k) {
                 if (N[z.action] > 0) { ap++; tp++; } else { an++; tn++; }
             }
         });
@@ -277,18 +280,16 @@ function U() {
     
     const loc = _('equipoLocal').value || 'Local';
     const riv = _('equipoRival').value || 'Rival';
-    _('sum').innerHTML = `${loc} vs ${riv} — Positivos: <span class="text-emerald-600 font-bold">${tp}</span> | Negativos: <span class="text-rose-600 font-bold">${tn}</span>`;
+    _('sum').innerHTML = `${loc} vs ${riv} — Positivos: <span class="text-brand-electric font-bold">${tp}</span> | Negativos: <span class="text-brand-orange font-bold">${tn}</span>`;
     
     if (a) a.destroy();
-    a = new Chart(x2, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v2.p, backgroundColor: P.g }, { label: 'Negativo (-)', data: v2.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'TOTAL PARTIDO' } } } });
+    a = new Chart(x2, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v2.p, backgroundColor: P.b }, { label: 'Negativo (-)', data: v2.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'TOTAL PARTIDO' } } } });
 }
 
-// REINICIAR SET
 _('rs').onclick = () => {
     if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; guardarEstado(); U(); mostrarToast('Set limpiado'); }
 };
 
-// ELIMINAR JUEGO (REINICIAR TODO)
 _('ra').onclick = () => {
     if (confirm('¿Seguro que deseas ELIMINAR EL JUEGO? Se blanqueará el Roster, se borrarán las estadísticas y se reiniciarán los datos.')) {
         localStorage.removeItem('vRoster_' + empresaID);
