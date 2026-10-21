@@ -28,15 +28,15 @@
 <body class="bg-sports-pattern min-h-screen text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
     <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
-    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-extrabold flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 translate-y-4">
+    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-extrabold flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 translate-y-4 print:hidden">
         <i class="fas fa-check-circle text-brand-cyan text-sm"></i>
         <span id="toastTexto">¡Acción registrada correctamente!</span>
     </div>
 
     <main class="max-w-5xl mx-auto space-y-6">
         
-        <!-- BARRA SUPERIOR -->
-        <div class="flex items-center justify-between">
+        <!-- BARRA SUPERIOR (Oculta en PDF) -->
+        <div class="flex items-center justify-between print:hidden">
             <a href="../index_menu.html" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-slate-200">
                 <i class="fas fa-arrow-left text-brand-electric"></i> Volver al Menú
             </a>
@@ -46,7 +46,7 @@
         </div>
 
         <!-- BANNER SUPERIOR CON GLOW -->
-        <div class="banner-glow mb-2">
+        <div class="banner-glow mb-2 print:hidden">
             <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/80 bg-slate-950">
                 <img src="../img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-44 object-cover opacity-80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
                 <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent flex flex-col justify-center px-6 sm:px-10">
@@ -57,7 +57,7 @@
                         Control Voley <span class="text-brand-orange">Stats PRO</span>
                     </h1>
                     <p class="text-slate-300 text-xs sm:text-sm mt-1 font-medium">
-                        Selecciona el atleta y toca la acción para registrar jugadas en tiempo real.
+                        Reporte oficial y estadísticas del encuentro.
                     </p>
                 </div>
             </div>
@@ -84,8 +84,8 @@
             </div>
         </div>
 
-        <!-- 2. CONFORMACIÓN DEL ROSTER -->
-        <div class="glass-card p-5 rounded-3xl space-y-3">
+        <!-- 2. CONFORMACIÓN DEL ROSTER (Oculto en PDF) -->
+        <div class="glass-card p-5 rounded-3xl space-y-3 print:hidden">
             <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                 <i class="fas fa-user-plus text-brand-electric"></i> Cargar Atletas al Roster
             </h2>
@@ -116,8 +116,8 @@
             </div>
         </div>
 
-        <!-- 3. PANEL TÁCTIL DE ACCIONES Y TARJETAS -->
-        <div class="glass-card p-6 rounded-3xl space-y-5">
+        <!-- 3. PANEL TÁCTIL DE ACCIONES Y TARJETAS (Oculto en PDF) -->
+        <div class="glass-card p-6 rounded-3xl space-y-5 print:hidden">
             
             <!-- PASO 1: SELECCIONAR ATLETA DE ROSTER -->
             <div>
@@ -205,7 +205,7 @@
                 </div>
             </div>
 
-            <!-- CONTROLES CON SECUENCIA DE COLORES (ROJO, AZUL, AZUL, ROJO) -->
+            <!-- CONTROLES (ROJO, AZUL, AZUL, ROJO) -->
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
                 <button type="button" id="btnDeshacer" class="btn-ctrl-red py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
                     <i class="fas fa-undo"></i> Deshacer Jugada
@@ -220,6 +220,13 @@
                     <i class="fas fa-trash-can"></i> Eliminar Juego / Reset
                 </button>
             </div>
+        </div>
+
+        <!-- BOTÓN DE EXPORTAR PDF (Destacado y listo para impresión) -->
+        <div class="glass-card p-4 rounded-3xl text-center print:hidden">
+            <button type="button" id="btnExportarPdf" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3.5 rounded-2xl text-xs font-black transition shadow-lg cursor-pointer flex items-center justify-center gap-2">
+                <i class="fas fa-file-pdf text-base"></i> Exportar Reporte a PDF / Imprimir
+            </button>
         </div>
 
         <!-- 4. RENDIMIENTO Y GRÁFICAS -->
