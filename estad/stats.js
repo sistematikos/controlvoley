@@ -222,7 +222,6 @@ function U() {
         d[p.key] = { key: p.key, p: 0, n: 0, total: 0, efectividad: 0, a: {}, name: p.name, num: p.num };
     });
 
-    // Procesar acciones del Set Actual
     S.forEach(l => {
         let k = d[l.playerKey];
         if (k) {
@@ -237,12 +236,10 @@ function U() {
         }
     });
 
-    // Calcular efectividad por atleta
     Object.values(d).forEach(k => {
         k.efectividad = k.total > 0 ? Math.round((k.p / k.total) * 100) : 0;
     });
 
-    // ORDENAR ATLETAS DE MAYOR A MENOR EFECTIVIDAD EN EL SET
     const listaOrdenada = Object.values(d).sort((a, b) => {
         if (b.efectividad !== a.efectividad) return b.efectividad - a.efectividad;
         return (b.p - b.n) - (a.p - a.n);
@@ -299,7 +296,6 @@ function U() {
     if (a) a.destroy();
     a = new Chart(x2, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v2.p, backgroundColor: P.b }, { label: 'Negativo (-)', data: v2.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'TOTAL PARTIDO' } } } });
 
-    // CÁLCULO DE CUADRO DE HONOR Y DISTINCIÓN MVP / ALL-STAR TOTAL PARTIDO
     renderCuadroHonor();
 }
 
@@ -324,7 +320,6 @@ function renderCuadroHonor() {
         k.efectividad = k.total > 0 ? Math.round((k.p / k.total) * 100) : 0;
     });
 
-    // Ordenar Top 4 del Partido con al menos 1 acción
     const topCuadro = Object.values(dPartido)
         .filter(x => x.total > 0)
         .sort((a, b) => {
@@ -373,10 +368,28 @@ function renderCuadroHonor() {
     });
 }
 
+// CULMINAR SET ACTUAL
 _('rs').onclick = () => {
-    if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; guardarEstado(); U(); mostrarToast('Set limpiado'); }
+    if (confirm('¿Desea culminar el set actual y reiniciar la estadística para el siguiente set?')) {
+        S = [];
+        guardarEstado();
+        U();
+        mostrarToast('Set culminado');
+    }
 };
 
+// CULMINAR PARTIDO (Conserva los atletas en el roster y resetea las acciones)
+_('btnCulminarPartido').onclick = () => {
+    if (confirm('¿Desea culminar el partido? Esto reseteará todas las acciones y sets a cero, conservando los atletas en el roster.')) {
+        S = [];
+        M = [];
+        guardarEstado();
+        U();
+        mostrarToast('Partido culminado — Roster conservado');
+    }
+};
+
+// ELIMINAR JUEGO Y RESET COMPLETO (Borra acciones y limpia el Roster)
 _('ra').onclick = () => {
     if (confirm('¿Seguro que deseas ELIMINAR EL JUEGO? Se blanqueará el Roster, se borrarán las estadísticas y se reiniciarán los datos.')) {
         localStorage.removeItem('vRoster_' + empresaID);
