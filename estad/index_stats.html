@@ -31,6 +31,12 @@
 </head>
 <body class="bg-sports-pattern min-h-screen text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
+    <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
+    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2.5 z-50 border border-white/10 opacity-0 pointer-events-none transition-all duration-300 translate-y-4">
+        <i class="fas fa-check-circle text-emerald-400 text-sm"></i>
+        <span id="toastTexto">¡Acción registrada correctamente!</span>
+    </div>
+
     <main class="max-w-5xl mx-auto space-y-6">
         
         <!-- BARRA SUPERIOR Y MENÚ -->
@@ -96,7 +102,7 @@
                         <select id="selectNomina" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
                             <option value="">Cargando atletas...</option>
                         </select>
-                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -108,7 +114,7 @@
                     <div class="flex gap-2">
                         <input type="number" id="manualNum" placeholder="Nro" class="w-16 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
                         <input type="text" id="manualNom" placeholder="Nombre o Alias" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
-                        <button type="button" id="btnAgregarManual" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                        <button type="button" id="btnAgregarManual" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
                             <i class="fas fa-plus"></i>
                         </button>
                     </div>
@@ -204,11 +210,14 @@
             </div>
 
             <!-- CONTROLES DE PARTIDO Y SET -->
-            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200">
-                <button type="button" id="rs" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-200">
+                <button type="button" id="btnDeshacer" class="bg-sky-600 hover:bg-sky-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
+                    <i class="fas fa-undo mr-1"></i> Deshacer Última Jugada
+                </button>
+                <button type="button" id="rs" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
                     <i class="fas fa-rotate-left mr-1"></i> Limpiar Set Actual
                 </button>
-                <button type="button" id="ra" class="bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                <button type="button" id="ra" class="bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
                     <i class="fas fa-trash-can mr-1"></i> Eliminar Juego / Reset
                 </button>
             </div>
