@@ -39,11 +39,11 @@
 
     <main class="max-w-5xl mx-auto space-y-6">
         
-        <!-- BARRA SUPERIOR -->
+        <!-- BARRA SUPERIOR CON BOTÓN DE CERRAR SESIÓN -->
         <div class="flex items-center justify-between print:hidden">
-            <a href="../index_menu.html" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-slate-200">
-                <i class="fas fa-arrow-left text-brand-electric"></i> Volver al Menú
-            </a>
+            <button type="button" id="btnCerrarSesion" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-rose-200 cursor-pointer">
+                <i class="fas fa-power-off text-rose-600"></i> Cerrar Sesión
+            </button>
             
             <div class="flex items-center gap-3">
                 <span id="userEmail" class="text-xs font-bold text-slate-500 hidden sm:inline-block">
@@ -215,7 +215,7 @@
                 </div>
             </div>
 
-            <!-- CONTROLES (ROJO, AZUL, AZUL, ROJO) -->
+            <!-- CONTROLES -->
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-100">
                 <button type="button" id="btnDeshacer" class="btn-ctrl-red py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
                     <i class="fas fa-undo"></i> Deshacer Jugada
@@ -266,6 +266,17 @@
         </div>
 
     </main>
+
+    <!-- SCRIPT PARA GESTIONAR EL CIERRE DE SESIÓN -->
+    <script>
+        document.getElementById('btnCerrarSesion').onclick = () => {
+            if (confirm('¿Deseas cerrar sesión en este dispositivo? Se requerirá ingresar la licencia nuevamente.')) {
+                localStorage.removeItem('licencia_validada');
+                localStorage.removeItem('youcontrol_empresa_id');
+                window.location.replace('./index.html');
+            }
+        };
+    </script>
 
     <script type="module" src="stats.js"></script>
 </body>
