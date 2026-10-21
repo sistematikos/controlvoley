@@ -1,28 +1,27 @@
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
     background-color: #F8FAFC; 
-    color: #1E293B;
+    color: #0F172A;
     user-select: none; 
 }
 
-/* Fondo deportivo sutil en tonos claros */
+/* Fondo deportivo ligero */
 .bg-sports-pattern {
     background-color: #F8FAFC;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.05) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.05) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.6) 0px, transparent 100%);
+        radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.04) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.04) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.8) 0px, transparent 100%);
 }
 
-/* Tarjetas con efecto Glassmorphism Claro */
+/* Tarjetas contenedoras limpias */
 .glass-card {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 10px 25px -5px rgba(0, 50, 150, 0.05);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 10px 30px -5px rgba(0, 31, 63, 0.05);
 }
 
-/* Resplandor del Banner */
+/* Banner Glow */
 .banner-glow { 
     position: relative; 
 }
@@ -34,46 +33,104 @@ body {
     left: 5%; 
     width: 90%; 
     height: 30px;
-    background: linear-gradient(90deg, #0055FF, #F97316);
+    background: linear-gradient(90deg, #0055FF, #FF5500);
     filter: blur(20px); 
-    opacity: 0.3; 
+    opacity: 0.25; 
     z-index: -1; 
     border-radius: 50%;
 }
 
-/* Tarjeta de Atleta Seleccionada en Azul */
-.card-atleta-selected {
-    border-color: #0055FF !important;
-    background-color: #EFF6FF !important;
-    box-shadow: 0 0 15px rgba(0, 85, 255, 0.25) !important;
+/* Tarjetas de Atletas */
+.card-atleta-item {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    transition: all 0.2s ease-in-out;
+}
+
+.card-atleta-item:hover {
+    border-color: #0055FF;
     transform: translateY(-2px);
 }
 
-/* Botones de Acciones Positivas (Azul Eléctrico) */
+.card-atleta-selected {
+    border-color: #0055FF !important;
+    background-color: #EFF6FF !important;
+    box-shadow: 0 0 18px rgba(0, 85, 255, 0.25) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* BOTONES DE ACCIÓN (AZUL CLARO PASTEL) */
 .btn-action-pos {
-    background: linear-gradient(135deg, #0055FF 0%, #0040D0 100%);
-    border: 1px solid rgba(0, 85, 255, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 85, 255, 0.25);
+    background-color: #E0EDFF !important;
+    border: 1.5px solid #BFDBFE !important;
+    color: #0040C0 !important;
+    box-shadow: 0 2px 8px rgba(0, 85, 255, 0.08);
+    transition: all 0.15s ease;
 }
 
 .btn-action-pos:hover {
-    background: linear-gradient(135deg, #0040D0 0%, #0030B0 100%);
-    box-shadow: 0 6px 16px rgba(0, 85, 255, 0.35);
+    background-color: #D0E3FF !important;
+    border-color: #93C5FD !important;
+    transform: translateY(-1px);
 }
 
-/* Botones de Acciones Negativas (Naranja Deportivo) */
+.btn-action-pos:active {
+    transform: scale(0.96);
+    background-color: #B2D4FF !important;
+}
+
+/* BOTONES DE ACCIÓN (NARANJA CLARO PASTEL) */
 .btn-action-neg {
-    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-    border: 1px solid rgba(249, 115, 22, 0.3);
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+    background-color: #FFEDD5 !important;
+    border: 1.5px solid #FED7AA !important;
+    color: #C2410C !important;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.08);
+    transition: all 0.15s ease;
 }
 
 .btn-action-neg:hover {
-    background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
-    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+    background-color: #FFE4E6 !important;
+    border-color: #FDBA74 !important;
+    transform: translateY(-1px);
 }
 
-/* Ocultar flechas en campos numéricos */
+.btn-action-neg:active {
+    transform: scale(0.96);
+    background-color: #FDBA74 !important;
+}
+
+/* BOTONES DE CONTROL DE ACCIÓN FUERTES */
+.btn-ctrl-blue {
+    background-color: #0284C7 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.btn-ctrl-blue:hover {
+    background-color: #0369A1 !important;
+}
+
+.btn-ctrl-amber {
+    background-color: #D97706 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+.btn-ctrl-amber:hover {
+    background-color: #B45309 !important;
+}
+
+.btn-ctrl-rose {
+    background-color: #E11D48 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+.btn-ctrl-rose:hover {
+    background-color: #BE123C !important;
+}
+
+/* Inputs numéricos */
 input::-webkit-inner-spin-button, 
 input::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
