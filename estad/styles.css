@@ -93,7 +93,6 @@ body {
     background-color: #FDBA74 !important;
 }
 
-/* BOTONES DE CONTROL (ROJO Y AZUL) */
 .btn-ctrl-red {
     background-color: #E11D48 !important;
     color: #FFFFFF !important;
@@ -118,4 +117,25 @@ input::-webkit-inner-spin-button,
 input::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
     margin: 0; 
+}
+
+/* ==========================================
+   CONFIGURACIÓN PARA EXPORTAR A PDF / IMPRESIÓN
+   ========================================== */
+@media print {
+    body {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        padding: 0 !important;
+    }
+    .print\:hidden {
+        display: none !important;
+    }
+    .glass-card {
+        background: #FFFFFF !important;
+        border: 1px solid #CBD5E1 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        margin-bottom: 15px;
+    }
 }
