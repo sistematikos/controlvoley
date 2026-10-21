@@ -1,26 +1,27 @@
 body { 
     font-family: 'Plus Jakarta Sans', sans-serif; 
-    background-color: #F8FAFC; 
+    background-color: #030B1E; 
+    color: #F8FAFC;
     user-select: none; 
 }
 
-/* Fondo deportivo dinámico */
+/* Fondo deportivo con gradientes azul y naranja */
 .bg-sports-pattern {
-    background-color: #F1F5F9;
+    background-color: #030B1E;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.08) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
+        radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(3, 11, 30, 0.8) 0px, transparent 100%);
 }
 
-/* Tarjetas efecto Vidrio/Glassmorphism */
+/* Tarjetas efecto Glassmorphism Oscuro */
 .glass-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(10, 20, 42, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Resplandor del Banner en degradado Azul a Naranja */
+/* Glow en el Banner */
 .banner-glow { 
     position: relative; 
 }
@@ -33,21 +34,42 @@ body {
     width: 90%; 
     height: 30px;
     background: linear-gradient(90deg, #0055FF, #F97316);
-    filter: blur(20px); 
-    opacity: 0.35; 
+    filter: blur(25px); 
+    opacity: 0.45; 
     z-index: -1; 
     border-radius: 50%;
 }
 
-/* Borde y resaltado para la tarjeta del atleta seleccionado en Azul */
+/* Tarjetas de Atletas Seleccionadas */
 .card-atleta-selected {
     border-color: #0055FF !important;
-    background-color: #f0f6ff !important;
-    box-shadow: 0 0 15px rgba(0, 85, 255, 0.25) !important;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(0, 85, 255, 0.25), rgba(0, 85, 255, 0.05)) !important;
+    box-shadow: 0 0 20px rgba(0, 85, 255, 0.4) !important;
+    transform: translateY(-3px) scale(1.02);
 }
 
-/* Ocultar flechas en campos numéricos */
+/* Botones de Acciones Positivas (Azul) */
+.btn-action-pos {
+    background: linear-gradient(135deg, #0055FF 0%, #003DB3 100%);
+    border: 1px solid rgba(0, 210, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 85, 255, 0.3);
+}
+
+.btn-action-pos:hover {
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.5);
+}
+
+/* Botones de Acciones Negativas (Naranja) */
+.btn-action-neg {
+    background: linear-gradient(135deg, #F97316 0%, #C2410C 100%);
+    border: 1px solid rgba(251, 146, 60, 0.4);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+}
+
+.btn-action-neg:hover {
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+}
+
 input::-webkit-inner-spin-button, 
 input::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
