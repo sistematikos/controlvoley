@@ -28,6 +28,7 @@ let S = [];
 let M = [];
 let atletaSeleccionadoKey = null;
 let b = null, a = null;
+let toastTimeout = null;
 
 const N = {
     'Servicio Bueno S#': 1, 'Ataque Bueno A#': 1, 'Bloqueo Bueno B#': 1, 'Coloque Bueno C#': 1,
@@ -37,6 +38,23 @@ const N = {
 const O = { S: 'Servicio', A: 'Ataque', B: 'Bloqueo', R: 'Recepción', C: 'Coloque', D: 'Defensa' };
 const P = { b: '#0055FF', r: '#dc2626', o: '#f97316', g: '#10b981' };
 const K = { scales: { y: { ticks: { stepSize: 1 } } }, responsive: true, maintainAspectRatio: false };
+
+// FUNCIÓN PARA MOSTRAR MENSAJE TOAST FLOTANTE (Duración 2 segundos)
+function mostrarToast(mensaje) {
+    const toast = _('toastNotificacion');
+    const texto = _('toastTexto');
+    texto.textContent = mensaje;
+
+    toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+    toast.classList.add('opacity-100', 'translate-y-0');
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+    }, 2000);
+}
 
 async function init() {
     const hoy = new Date();
@@ -89,6 +107,7 @@ _('btnAgregarNomina').onclick = () => {
         guardarEstado();
         renderRosterCards();
         U();
+        mostrarToast('Atleta añadido al Roster');
     }
 };
 
@@ -106,6 +125,7 @@ _('btnAgregarManual').onclick = () => {
     guardarEstado();
     renderRosterCards();
     U();
+    mostrarToast('Atleta invitado añadido');
 };
 
 // RENDERIZAR TARJETAS DEL ROSTER
@@ -170,6 +190,9 @@ window.registrarAccionDirecta = (accion) => {
     S.push(l);
     guardarEstado();
     U();
+    
+    // Mostrar Toast de éxito que dura 2 segundos
+    mostrarToast(`Registrado: ${accion}`);
 };
 
 function guardarEstado() {
@@ -177,6 +200,23 @@ function guardarEstado() {
     localStorage.setItem('vS_' + empresaID, JSON.stringify(S));
     localStorage.setItem('vM_' + empresaID, JSON.stringify(M));
 }
+
+// BOTÓN DESHACER / ELIMINAR JUGADA ANTERIOR
+_('btnDeshacer').onclick = () => {
+    if (!S.length && !M.length) {
+        alert("No hay jugadas registradas para deshacer.");
+        return;
+    }
+
+    if (confirm("¿Deseas eliminar la última jugada registrada por error?")) {
+        // Remover última jugada del set actual y del partido total
+        S.pop();
+        M.pop();
+        guardarEstado();
+        U();
+        mostrarToast("Última jugada eliminada");
+    }
+};
 
 // ACTUALIZAR RENDERIZADO Y GRÁFICAS
 function U() {
@@ -245,7 +285,7 @@ function U() {
 
 // REINICIAR SET
 _('rs').onclick = () => {
-    if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; guardarEstado(); U(); }
+    if (confirm('¿Desea limpiar los datos del set actual?')) { S = []; guardarEstado(); U(); mostrarToast('Set limpiado'); }
 };
 
 // ELIMINAR JUEGO (REINICIAR TODO)
@@ -262,6 +302,7 @@ _('ra').onclick = () => {
         _('atletaSeleccionadoBadge').classList.add('hidden');
         renderRosterCards();
         U();
+        mostrarToast('Juego eliminado y reiniciado');
     }
 };
 
