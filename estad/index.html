@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Voley | Activación Módulo Estadístico</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- SCRIPT DE SEGURIDAD Y BLOQUEO -->
+    <script src="security.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50: '#f0f6ff',
+                100: '#e0edff',
+                500: '#0066ff',
+                600: '#0052cc',
+                700: '#003db3',
+                electric: '#0055FF',
+                cyan: '#00D2FF',
+                orange: '#FF5500',
+                dark: '#030B1E'
+              }
+            },
+            boxShadow: {
+              'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+              'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .bg-sports-pattern {
+            background-color: #F1F5F9;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.5) 0px, transparent 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+    </style>
+
+    <script>
+        window.deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+        });
+
+        function esPWAInstalada() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        // VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA -> index_stats.html directo
+        document.addEventListener('DOMContentLoaded', () => {
+            const licenciaValidada = localStorage.getItem('licencia_validada');
+            const empresaID = localStorage.getItem('youcontrol_empresa_id');
+
+            if (licenciaValidada === 'true' && empresaID && esPWAInstalada()) {
+                window.location.replace('./index_stats.html');
+            }
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error', err));
+            });
+        }
+    </script>
+</head>
+<body class="bg-sports-pattern min-h-screen flex items-center justify-center p-4 antialiased text-slate-800" oncontextmenu="return false">
+
+    <div class="glass-card p-8 rounded-3xl shadow-glass border border-slate-200/80 w-full max-w-md text-center space-y-6">
+        
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-2">
+            <i class="fas fa-shield-alt text-2xl animate-pulse"></i>
+        </div>
+
+        <div>
+            <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">Control Voley PRO</h1>
+            <p class="text-xs font-bold text-brand-orange uppercase tracking-widest mt-1">Scouting Táctil y Estadísticas</p>
+        </div>
+
+        <div class="text-left space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Pega tu código de licencia:</label>
+            <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
+        </div>
+
+        <!-- MENSAJE DE BIENVENIDA -->
+        <div class="bg-brand-50 border border-brand-electric/20 rounded-2xl p-4 text-center">
+            <p class="text-xs font-bold text-slate-700 leading-relaxed">
+                Sistema exclusivo y protegido. Valida tu licencia e instala la aplicación para iniciar el módulo de <strong class="text-brand-electric uppercase">Stats</strong>.
+            </p>
+        </div>
+
+        <!-- ÚNICO BOTÓN DE INSTALACIÓN Y ACTIVACIÓN -->
+        <button id="btnActivarEInstalar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+            <i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar
+        </button>
+
+        <div id="statusMsg" class="text-xs font-bold text-slate-500"></div>
+
+        <div class="pt-2 border-t border-slate-100 text-center">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Módulo 100% Autónomo y Seguro</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
+
+        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
+        const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
+
+        async function procesarActivacionEInstalacion() {
+            const rawToken = document.getElementById('tokenInput').value.trim();
+            const statusDiv = document.getElementById('statusMsg');
+            if (!rawToken) return alert("Por favor, pega el código de licencia primero.");
+            
+            const btn = document.getElementById('btnActivarEInstalar');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando licencia...`;
+
+            try {
+                const data = JSON.parse(atob(rawToken));
+                const hwID = getHardwareID();
+                const activationId = data.clubId || data.activation_id;
+
+                if (!activationId) {
+                    throw new Error("El token no contiene un ID de club válido.");
+                }
+
+                const { data: empresaData, error: empresaError } = await supabaseMaster
+                    .from('licencias')
+                    .select('*')
+                    .eq('id', activationId)
+                    .single();
+
+                if (empresaError || !empresaData) {
+                    throw new Error("La empresa o licencia no se encuentra registrada en el sistema central.");
+                }
+
+                let equiposLicencia = Array.isArray(empresaData.equipos) ? empresaData.equipos : [];
+                let limiteStr = empresaData.limite_dispositivos || data.limite || "3";
+                let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
+
+                if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
+                    alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
+                    return;
+                }
+
+                if (!equiposLicencia.includes(hwID)) {
+                    equiposLicencia.push(hwID);
+                    await supabaseMaster
+                        .from('licencias')
+                        .update({ equipos: equiposLicencia })
+                        .eq('id', activationId);
+                }
+
+                localStorage.setItem('control_voley_supa_url', empresaData.supabase_url || data.supabaseUrl);
+                localStorage.setItem('control_voley_supa_key', empresaData.supabase_key || data.supabaseKey);
+                localStorage.setItem('control_voley_supa_bucket', empresaData.bucket || data.bucket || activationId);
+
+                if (empresaData.nombre || data.clubNombre) {
+                    localStorage.setItem('control_voley_club_nombre', empresaData.nombre || data.clubNombre);
+                }
+
+                localStorage.setItem('youcontrol_empresa_id', activationId);
+                localStorage.setItem('licencia_validada', 'true');
+
+                statusDiv.className = "text-xs font-bold text-emerald-600";
+                statusDiv.innerText = "¡Licencia válida! Iniciando instalación...";
+
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    const userChoice = await window.deferredPrompt.userChoice;
+                    window.deferredPrompt = null;
+
+                    if (userChoice.outcome === 'accepted') {
+                        window.location.replace('./index_stats.html');
+                    } else {
+                        alert("Es necesario instalar la aplicación para ingresar.");
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
+                        statusDiv.innerText = "";
+                    }
+                } else {
+                    window.location.replace('./index_stats.html');
+                }
+                
+            } catch (e) {
+                console.error("Error al procesar activación:", e);
+                alert("Código de licencia inválido o error en la conexión: " + e.message);
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Módulo y Comenzar`;
+                statusDiv.innerText = "";
+            }
+        }
+
+        document.getElementById('btnActivarEInstalar').addEventListener('click', procesarActivacionEInstalacion);
+    </script>
+</body>
+</html>
