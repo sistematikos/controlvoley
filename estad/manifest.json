@@ -1,11 +1,12 @@
 {
-  "name": "Control Voley Pro",
+  "name": "Control Voley Stats PRO",
   "short_name": "VoleyStats",
-  "description": "Sistema de estadísticas de voleibol profesional",
+  "description": "Módulo independiente de scouting táctil y estadísticas",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#111827",
-  "theme_color": "#2563eb",
+  "background_color": "#030B1E",
+  "theme_color": "#0055FF",
   "icons": [
     {
       "src": "./img/logo.png",
