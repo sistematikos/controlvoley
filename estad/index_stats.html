@@ -149,7 +149,6 @@
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
-                    <!-- Servicio -->
                     <button type="button" onclick="registrarAccionDirecta('Servicio#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-paper-plane text-sm"></i>
                         <span>Servicio #</span>
@@ -159,7 +158,6 @@
                         <span>Servicio =</span>
                     </button>
 
-                    <!-- Ataque -->
                     <button type="button" onclick="registrarAccionDirecta('Ataque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-hand-fist text-sm"></i>
                         <span>Ataque #</span>
@@ -169,7 +167,6 @@
                         <span>Ataque =</span>
                     </button>
 
-                    <!-- Bloqueo -->
                     <button type="button" onclick="registrarAccionDirecta('Bloqueo#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-shield-halved text-sm"></i>
                         <span>Bloqueo #</span>
@@ -179,7 +176,6 @@
                         <span>Bloqueo =</span>
                     </button>
 
-                    <!-- Coloque -->
                     <button type="button" onclick="registrarAccionDirecta('Coloque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-hand-pointer text-sm"></i>
                         <span>Coloque #</span>
@@ -189,7 +185,6 @@
                         <span>Coloque =</span>
                     </button>
 
-                    <!-- Recepción -->
                     <button type="button" onclick="registrarAccionDirecta('Recepción#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-hands-holding-circle text-sm"></i>
                         <span>Recepción #</span>
@@ -199,7 +194,6 @@
                         <span>Recepción =</span>
                     </button>
 
-                    <!-- Defensa -->
                     <button type="button" onclick="registrarAccionDirecta('Defensa#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-person-falling text-sm"></i>
                         <span>Defensa #</span>
@@ -227,8 +221,9 @@
 
         <!-- 4. RENDIMIENTO Y GRÁFICAS -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
-            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-                <i class="fas fa-list-check text-brand-electric"></i> Resumen Estadístico del Partido
+            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fas fa-arrow-down-wide-short text-brand-electric"></i> Resumen por Efectividad</span>
+                <span class="text-[10px] text-slate-400 font-bold lowercase">Ordenado por % efectividad</span>
             </h2>
             <div id="st" class="space-y-2"></div>
         </div>
@@ -240,6 +235,20 @@
             <div class="glass-card p-6 rounded-3xl h-72">
                 <canvas id="c2"></canvas>
                 <div id="sum" class="text-center mt-2 text-xs font-bold text-slate-700"></div>
+            </div>
+        </div>
+
+        <!-- 5. TARJETA DE RECONOCIMIENTOS (TOP 4, MVP Y ALL-STAR) -->
+        <div class="glass-card p-6 rounded-3xl space-y-4 border border-amber-200/60 bg-gradient-to-br from-white via-amber-50/20 to-blue-50/30">
+            <div class="flex items-center justify-between border-b border-amber-100 pb-3">
+                <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-crown text-amber-500 text-sm"></i> Cuadro de Honor del Partido — Top 4 Atletas
+                </h2>
+                <span class="text-[10px] font-extrabold text-amber-700 bg-amber-100/80 px-2.5 py-0.5 rounded-lg border border-amber-200">Recomendación Oficial</span>
+            </div>
+
+            <div id="cuadroHonorGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <p class="col-span-full text-center text-slate-400 text-xs py-4 italic">Se requieren acciones registradas en el partido para determinar los reconocimientos.</p>
             </div>
         </div>
 
