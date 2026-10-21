@@ -16,13 +16,8 @@
             colors: {
               brand: {
                 50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
-                electric: '#0055FF', cyan: '#00D2FF', orange: '#F97316', dark: '#030B1E'
+                electric: '#0055FF', cyan: '#00D2FF', orange: '#FF5500', dark: '#030B1E'
               }
-            },
-            boxShadow: {
-              'electric': '0 10px 25px -5px rgba(0, 85, 255, 0.3)',
-              'orange': '0 10px 25px -5px rgba(249, 115, 22, 0.3)',
-              'glass': '0 15px 35px rgba(0, 31, 63, 0.05)'
             }
           }
         }
@@ -33,16 +28,16 @@
 <body class="bg-sports-pattern min-h-screen text-slate-800 antialiased p-3 sm:p-6" oncontextmenu="return false">
 
     <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
-    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl text-xs font-extrabold flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 translate-y-4">
+    <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-xs font-extrabold flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 translate-y-4">
         <i class="fas fa-check-circle text-brand-cyan text-sm"></i>
         <span id="toastTexto">¡Acción registrada correctamente!</span>
     </div>
 
     <main class="max-w-5xl mx-auto space-y-6">
         
-        <!-- BARRA SUPERIOR Y MENÚ -->
+        <!-- BARRA SUPERIOR -->
         <div class="flex items-center justify-between">
-            <a href="../index_menu.html" class="px-4 py-2 bg-white/90 hover:bg-white text-slate-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-slate-200">
+            <a href="../index_menu.html" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-slate-200">
                 <i class="fas fa-arrow-left text-brand-electric"></i> Volver al Menú
             </a>
             <span id="userEmail" class="text-xs font-bold text-slate-500">
@@ -52,7 +47,7 @@
 
         <!-- BANNER SUPERIOR CON GLOW -->
         <div class="banner-glow mb-2">
-            <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/60 bg-slate-950">
+            <div class="rounded-3xl overflow-hidden shadow-2xl relative border border-white/80 bg-slate-950">
                 <img src="../img/banner.png" alt="Control Voley Banner" class="w-full h-36 sm:h-44 object-cover opacity-80" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1600&auto=format&fit=crop'">
                 <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent flex flex-col justify-center px-6 sm:px-10">
                     <span class="text-sky-400 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2 mb-1">
@@ -69,8 +64,8 @@
         </div>
 
         <!-- 1. CONFIGURACIÓN DEL ENCUENTRO -->
-        <div class="glass-card p-5 rounded-3xl border border-slate-200/80 space-y-3">
-            <div class="flex items-center justify-between border-b border-slate-200/60 pb-2">
+        <div class="glass-card p-5 rounded-3xl space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                     <i class="fas fa-trophy text-brand-orange"></i> Datos del Partido
                 </h2>
@@ -80,51 +75,49 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Equipo Local / Club</label>
-                    <input type="text" id="equipoLocal" placeholder="Ej: Lara" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-800 outline-none shadow-sm bg-white focus:ring-2 focus:ring-brand-electric">
+                    <input type="text" id="equipoLocal" placeholder="Ej: Lara" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-900 outline-none shadow-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-brand-electric">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Equipo Visitante / Rival</label>
-                    <input type="text" id="equipoRival" placeholder="Ej: Carabobo" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-800 outline-none shadow-sm bg-white focus:ring-2 focus:ring-brand-orange">
+                    <input type="text" id="equipoRival" placeholder="Ej: Carabobo" class="w-full border border-slate-200 p-2.5 rounded-xl text-xs font-bold text-slate-900 outline-none shadow-sm bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-brand-orange">
                 </div>
             </div>
         </div>
 
         <!-- 2. CONFORMACIÓN DEL ROSTER -->
-        <div class="glass-card p-5 rounded-3xl border border-slate-200/80 space-y-3">
-            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-200/60 pb-2 flex items-center gap-2">
+        <div class="glass-card p-5 rounded-3xl space-y-3">
+            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
                 <i class="fas fa-user-plus text-brand-electric"></i> Cargar Atletas al Roster
             </h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Desde Nómina -->
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
+                <div class="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 space-y-1">
                     <label class="block text-[10px] font-bold uppercase text-slate-600">Desde Nómina del Club</label>
                     <div class="flex gap-2">
                         <select id="selectNomina" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
                             <option value="">Cargando atletas...</option>
                         </select>
-                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
-                            <i class="fas fa-plus"></i>
+                        <button type="button" id="btnAgregarNomina" class="bg-brand-electric hover:bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-black transition shadow-md cursor-pointer">
+                            <i class="fas fa-plus mr-1"></i> Registrar
                         </button>
                     </div>
                 </div>
 
-                <!-- Manual / Invitado -->
-                <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
+                <div class="bg-slate-50/80 p-3 rounded-2xl border border-slate-200/80 space-y-1">
                     <label class="block text-[10px] font-bold uppercase text-slate-600">Manual / Invitado / Rival</label>
                     <div class="flex gap-2">
                         <input type="number" id="manualNum" placeholder="Nro" class="w-16 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
                         <input type="text" id="manualNom" placeholder="Nombre o Alias" class="flex-1 border border-slate-200 p-2 rounded-xl text-xs font-bold text-slate-800 outline-none bg-white">
-                        <button type="button" id="btnAgregarManual" class="bg-brand-orange hover:bg-orange-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
-                            <i class="fas fa-plus"></i>
+                        <button type="button" id="btnAgregarManual" class="bg-brand-orange hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-black transition shadow-md cursor-pointer">
+                            <i class="fas fa-plus mr-1"></i> Registrar
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. PANEL TÁCTIL DE SELECCIÓN Y REGISTRO EN VIVO -->
-        <div class="glass-card p-6 rounded-3xl border border-slate-200/80 space-y-5">
+        <!-- 3. PANEL TÁCTIL DE ACCIONES Y TARJETAS -->
+        <div class="glass-card p-6 rounded-3xl space-y-5">
             
             <!-- PASO 1: SELECCIONAR ATLETA DE ROSTER -->
             <div>
@@ -136,107 +129,115 @@
                     <span class="text-[10px] text-slate-500 font-bold">Convocados: <span id="countRoster" class="text-brand-electric font-black">0</span></span>
                 </div>
 
-                <!-- GRILLA DE TARJETAS DE ATLETAS -->
                 <div id="rosterCardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 min-h-[60px]">
                     <div class="col-span-full text-center py-4 text-xs text-slate-400 italic">No hay atletas en el roster del partido.</div>
                 </div>
             </div>
 
-            <hr class="border-slate-200">
+            <hr class="border-slate-100">
 
-            <!-- PASO 2: SELECCIONAR ACCIÓN TÁCTIL -->
+            <!-- PASO 2: BOTONES DE ACCIONES (+ / -) -->
             <div>
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 flex items-center gap-2">
                         <span class="w-5 h-5 rounded-full bg-brand-orange text-white flex items-center justify-center text-[10px]">2</span> 
                         Toca la Acción de Juego
                     </h3>
-                    <span id="atletaSeleccionadoBadge" class="text-xs font-bold text-brand-electric bg-blue-50 px-3 py-1 rounded-xl border border-blue-200 hidden">
+                    <span id="atletaSeleccionadoBadge" class="text-xs font-black text-brand-electric bg-blue-50 px-3 py-1 rounded-xl border border-blue-200 hidden">
                         Seleccionado: <span id="nombreAtletaSel">--</span>
                     </span>
                 </div>
 
-                <!-- GRILLA DE BOTONES EN AZUL Y NARANJA -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
                     <!-- Servicio -->
-                    <button type="button" onclick="registrarAccionDirecta('Servicio Bueno S#')" class="btn-action-pos active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <button type="button" onclick="registrarAccionDirecta('Servicio#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-paper-plane text-sm"></i>
-                        <span>Servicio ++</span>
+                        <span>Servicio #</span>
                     </button>
-                    <button type="button" onclick="registrarAccionDirecta('Servicio Malo S=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-paper-plane text-sm opacity-80"></i>
-                        <span>Servicio --</span>
+                    <button type="button" onclick="registrarAccionDirecta('Servicio=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                        <span>Servicio =</span>
                     </button>
 
                     <!-- Ataque -->
-                    <button type="button" onclick="registrarAccionDirecta('Ataque Bueno A#')" class="btn-action-pos active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <button type="button" onclick="registrarAccionDirecta('Ataque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-hand-fist text-sm"></i>
-                        <span>Ataque ++</span>
+                        <span>Ataque #</span>
                     </button>
-                    <button type="button" onclick="registrarAccionDirecta('Ataque Malo A=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-hand-fist text-sm opacity-80"></i>
-                        <span>Ataque --</span>
+                    <button type="button" onclick="registrarAccionDirecta('Ataque=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-fist text-sm"></i>
+                        <span>Ataque =</span>
                     </button>
 
                     <!-- Bloqueo -->
-                    <button type="button" onclick="registrarAccionDirecta('Bloqueo Bueno B#')" class="btn-action-pos active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <button type="button" onclick="registrarAccionDirecta('Bloqueo#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-shield-halved text-sm"></i>
-                        <span>Bloqueo ++</span>
+                        <span>Bloqueo #</span>
                     </button>
-                    <button type="button" onclick="registrarAccionDirecta('Bloqueo Malo B=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-shield-halved text-sm opacity-80"></i>
-                        <span>Bloqueo --</span>
+                    <button type="button" onclick="registrarAccionDirecta('Bloqueo=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-shield-halved text-sm"></i>
+                        <span>Bloqueo =</span>
                     </button>
 
                     <!-- Coloque -->
-                    <button type="button" onclick="registrarAccionDirecta('Coloque Bueno C#')" class="btn-action-pos active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                    <button type="button" onclick="registrarAccionDirecta('Coloque#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
                         <i class="fas fa-hand-pointer text-sm"></i>
-                        <span>Coloque ++</span>
+                        <span>Coloque #</span>
                     </button>
-                    <button type="button" onclick="registrarAccionDirecta('Coloque Malo C=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-hand-pointer text-sm opacity-80"></i>
-                        <span>Coloque --</span>
+                    <button type="button" onclick="registrarAccionDirecta('Coloque=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hand-pointer text-sm"></i>
+                        <span>Coloque =</span>
                     </button>
 
-                    <!-- Recepción y Defensa -->
-                    <button type="button" onclick="registrarAccionDirecta('Recepción Mala R=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-hands-holding-circle text-sm opacity-80"></i>
-                        <span>Recepción --</span>
+                    <!-- Recepción -->
+                    <button type="button" onclick="registrarAccionDirecta('Recepción#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hands-holding-circle text-sm"></i>
+                        <span>Recepción #</span>
                     </button>
-                    <button type="button" onclick="registrarAccionDirecta('Defensa Mala D=')" class="btn-action-neg active:scale-95 text-white p-3.5 rounded-2xl transition font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                        <i class="fas fa-person-falling text-sm opacity-80"></i>
-                        <span>Defensa --</span>
+                    <button type="button" onclick="registrarAccionDirecta('Recepción=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-hands-holding-circle text-sm"></i>
+                        <span>Recepción =</span>
+                    </button>
+
+                    <!-- Defensa -->
+                    <button type="button" onclick="registrarAccionDirecta('Defensa#')" class="btn-action-pos p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-person-falling text-sm"></i>
+                        <span>Defensa #</span>
+                    </button>
+                    <button type="button" onclick="registrarAccionDirecta('Defensa=')" class="btn-action-neg p-3 rounded-2xl font-black text-xs text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+                        <i class="fas fa-person-falling text-sm"></i>
+                        <span>Defensa =</span>
                     </button>
                 </div>
             </div>
 
-            <!-- CONTROLES DE PARTIDO Y SET -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-200">
-                <button type="button" id="btnDeshacer" class="bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-xs font-bold transition shadow-sm border border-slate-300 cursor-pointer">
-                    <i class="fas fa-undo text-brand-electric mr-1"></i> Deshacer Última Jugada
+            <!-- CONTROLES FUERTES -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+                <button type="button" id="btnDeshacer" class="btn-ctrl-blue py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-undo"></i> Deshacer Última Jugada
                 </button>
-                <button type="button" id="rs" class="bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
-                    <i class="fas fa-rotate-left mr-1"></i> Limpiar Set Actual
+                <button type="button" id="rs" class="btn-ctrl-amber py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-rotate-left"></i> Limpiar Set Actual
                 </button>
-                <button type="button" id="ra" class="bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer">
-                    <i class="fas fa-trash-can mr-1"></i> Eliminar Juego / Reset
+                <button type="button" id="ra" class="btn-ctrl-rose py-3 rounded-xl text-xs font-black transition cursor-pointer flex items-center justify-center gap-1.5">
+                    <i class="fas fa-trash-can"></i> Eliminar Juego / Reset
                 </button>
             </div>
         </div>
 
         <!-- 4. RENDIMIENTO Y GRÁFICAS -->
-        <div class="glass-card p-6 rounded-3xl border border-slate-200/80 space-y-4">
-            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+            <h2 class="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
                 <i class="fas fa-list-check text-brand-electric"></i> Resumen Estadístico del Partido
             </h2>
             <div id="st" class="space-y-2"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card p-6 rounded-3xl border border-slate-200/80 h-72">
+            <div class="glass-card p-6 rounded-3xl h-72">
                 <canvas id="c1"></canvas>
             </div>
-            <div class="glass-card p-6 rounded-3xl border border-slate-200/80 h-72">
+            <div class="glass-card p-6 rounded-3xl h-72">
                 <canvas id="c2"></canvas>
                 <div id="sum" class="text-center mt-2 text-xs font-bold text-slate-700"></div>
             </div>
