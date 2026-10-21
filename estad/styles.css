@@ -5,7 +5,6 @@ body {
     user-select: none; 
 }
 
-/* Fondo deportivo ligero */
 .bg-sports-pattern {
     background-color: #F8FAFC;
     background-image: 
@@ -14,14 +13,12 @@ body {
         radial-gradient(at 50% 50%, rgba(241, 245, 249, 0.8) 0px, transparent 100%);
 }
 
-/* Tarjetas contenedoras limpias */
 .glass-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     box-shadow: 0 10px 30px -5px rgba(0, 31, 63, 0.05);
 }
 
-/* Banner Glow */
 .banner-glow { 
     position: relative; 
 }
@@ -40,7 +37,6 @@ body {
     border-radius: 50%;
 }
 
-/* Tarjetas de Atletas */
 .card-atleta-item {
     background-color: #FFFFFF;
     border: 1.5px solid #E2E8F0;
@@ -59,7 +55,6 @@ body {
     transform: translateY(-2px) scale(1.02);
 }
 
-/* BOTONES DE ACCIÓN (AZUL CLARO PASTEL) */
 .btn-action-pos {
     background-color: #E0EDFF !important;
     border: 1.5px solid #BFDBFE !important;
@@ -79,7 +74,6 @@ body {
     background-color: #B2D4FF !important;
 }
 
-/* BOTONES DE ACCIÓN (NARANJA CLARO PASTEL) */
 .btn-action-neg {
     background-color: #FFEDD5 !important;
     border: 1.5px solid #FED7AA !important;
@@ -120,6 +114,16 @@ body {
     background-color: #B45309 !important;
 }
 
+.btn-ctrl-purple {
+    background-color: #7C3AED !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-ctrl-purple:hover {
+    background-color: #6D28D9 !important;
+}
+
 .btn-ctrl-rose {
     background-color: #E11D48 !important;
     color: #FFFFFF !important;
@@ -130,7 +134,6 @@ body {
     background-color: #BE123C !important;
 }
 
-/* Inputs numéricos */
 input::-webkit-inner-spin-button, 
 input::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
