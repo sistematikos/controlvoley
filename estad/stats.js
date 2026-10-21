@@ -30,7 +30,6 @@ let atletaSeleccionadoKey = null;
 let b = null, a = null;
 let toastTimeout = null;
 
-// Mapa de puntuación (# suma +1, = resta -1)
 const N = {
     'Servicio#': 1,  'Servicio=': -1,
     'Ataque#': 1,    'Ataque=': -1,
@@ -148,7 +147,6 @@ function renderRosterCards() {
         const isSelected = (atletaSeleccionadoKey === p.key);
         
         card.className = `relative p-3 rounded-2xl cursor-pointer flex flex-col justify-between card-atleta-item shadow-sm ${isSelected ? 'card-atleta-selected' : ''}`;
-        
         card.onclick = () => seleccionarAtleta(p.key, p.num, p.name);
 
         card.innerHTML = `
@@ -191,7 +189,6 @@ window.registrarAccionDirecta = (accion) => {
     S.push(l);
     guardarEstado();
     U();
-    
     mostrarToast(`Registrado: ${accion}`);
 };
 
@@ -222,9 +219,10 @@ function U() {
 
     let d = {};
     Roster.forEach(p => {
-        d[p.key] = { p: 0, n: 0, a: {}, name: p.name, num: p.num };
+        d[p.key] = { key: p.key, p: 0, n: 0, total: 0, efectividad: 0, a: {}, name: p.name, num: p.num };
     });
 
+    // Procesar acciones del Set Actual
     S.forEach(l => {
         let k = d[l.playerKey];
         if (k) {
@@ -232,29 +230,45 @@ function U() {
             let t = l.action.replace(/[#=]/g, '');
             
             if (v > 0) k.p++; else k.n++;
+            k.total++;
+            
             if (!k.a[t]) k.a[t] = { p: 0, n: 0 };
             if (v > 0) k.a[t].p++; else k.a[t].n++;
         }
     });
 
+    // Calcular efectividad por atleta
+    Object.values(d).forEach(k => {
+        k.efectividad = k.total > 0 ? Math.round((k.p / k.total) * 100) : 0;
+    });
+
+    // ORDENAR ATLETAS DE MAYOR A MENOR EFECTIVIDAD EN EL SET
+    const listaOrdenada = Object.values(d).sort((a, b) => {
+        if (b.efectividad !== a.efectividad) return b.efectividad - a.efectividad;
+        return (b.p - b.n) - (a.p - a.n);
+    });
+
     if (!Roster.length) {
         s.innerHTML = '<p class="text-center text-slate-400 text-xs py-3">Agrega atletas al Roster para iniciar el registro.</p>';
     } else {
-        Object.values(d).forEach(k => {
+        listaOrdenada.forEach(k => {
             let dt = '';
             Object.keys(k.a).forEach(x => dt += `<span class="mr-2 font-mono">${x}: <span class="text-brand-electric font-bold">${k.a[x].p}</span>|<span class="text-brand-orange font-bold">${k.a[x].n}</span></span>`);
             s.innerHTML += `
-                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs">
-                    <div class="flex justify-between font-black text-slate-800">
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs flex flex-col gap-1 shadow-sm">
+                    <div class="flex justify-between items-center font-black text-slate-800">
                         <span>#${k.num} ${k.name}</span>
-                        <span class="px-2 py-0.5 rounded-lg ${k.p - k.n >= 0 ? 'bg-blue-50 text-brand-electric' : 'bg-orange-50 text-brand-orange'}">Dif: ${k.p - k.n}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-lg ${k.p - k.n >= 0 ? 'bg-blue-50 text-brand-electric' : 'bg-orange-50 text-brand-orange'}">Dif: ${k.p - k.n}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 font-black border border-emerald-200">${k.efectividad}% Ef.</span>
+                        </div>
                     </div>
-                    <div class="text-[10px] text-slate-500 mt-1">${dt || '<span class="italic text-slate-400">Sin jugadas registradas en este set</span>'}</div>
+                    <div class="text-[10px] text-slate-500">${dt || '<span class="italic text-slate-400">Sin jugadas registradas en este set</span>'}</div>
                 </div>`;
         });
     }
 
-    // Gráficas Chart.js
+    // Chart.js
     const x1 = _('c1').getContext('2d'), x2 = _('c2').getContext('2d'), l = Object.values(O);
     let v1 = { p: [0,0,0,0,0,0], n: [0,0,0,0,0,0] }, v2 = { p: [0,0,0,0,0,0], n: [0,0,0,0,0,0] }, tp = 0, tn = 0;
 
@@ -284,6 +298,79 @@ function U() {
     
     if (a) a.destroy();
     a = new Chart(x2, { type: 'bar', data: { labels: l, datasets: [{ label: 'Positivo (+)', data: v2.p, backgroundColor: P.b }, { label: 'Negativo (-)', data: v2.n, backgroundColor: P.o }] }, options: { ...K, plugins: { title: { display: true, text: 'TOTAL PARTIDO' } } } });
+
+    // CÁLCULO DE CUADRO DE HONOR Y DISTINCIÓN MVP / ALL-STAR TOTAL PARTIDO
+    renderCuadroHonor();
+}
+
+function renderCuadroHonor() {
+    const grid = _('cuadroHonorGrid');
+    let dPartido = {};
+
+    Roster.forEach(p => {
+        dPartido[p.key] = { p: 0, n: 0, total: 0, efectividad: 0, name: p.name, num: p.num };
+    });
+
+    M.forEach(l => {
+        let k = dPartido[l.playerKey];
+        if (k) {
+            let v = N[l.action];
+            if (v > 0) k.p++; else k.n++;
+            k.total++;
+        }
+    });
+
+    Object.values(dPartido).forEach(k => {
+        k.efectividad = k.total > 0 ? Math.round((k.p / k.total) * 100) : 0;
+    });
+
+    // Ordenar Top 4 del Partido con al menos 1 acción
+    const topCuadro = Object.values(dPartido)
+        .filter(x => x.total > 0)
+        .sort((a, b) => {
+            if (b.efectividad !== a.efectividad) return b.efectividad - a.efectividad;
+            return (b.p - b.n) - (a.p - a.n);
+        })
+        .slice(0, 4);
+
+    if (!topCuadro.length) {
+        grid.innerHTML = '<p class="col-span-full text-center text-slate-400 text-xs py-4 italic">Se requieren acciones registradas en el partido para determinar los reconocimientos.</p>';
+        return;
+    }
+
+    grid.innerHTML = '';
+    topCuadro.forEach((k, idx) => {
+        let badgeStyle = "bg-slate-100 text-slate-700 border-slate-200";
+        let badgeText = `Top #${idx + 1}`;
+        let iconHtml = '<i class="fas fa-medal text-slate-400"></i>';
+
+        if (idx === 0) {
+            badgeStyle = "bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md border-amber-300";
+            badgeText = "🏆 MVP DEL PARTIDO";
+            iconHtml = '<i class="fas fa-crown text-amber-300 animate-bounce"></i>';
+        } else if (idx === 1) {
+            badgeStyle = "bg-gradient-to-r from-blue-600 to-sky-500 text-white shadow-md border-blue-300";
+            badgeText = "⭐ ALL-STAR";
+            iconHtml = '<i class="fas fa-star text-sky-200"></i>';
+        }
+
+        grid.innerHTML += `
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-2 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md border ${badgeStyle} flex items-center gap-1.5">
+                        ${iconHtml} ${badgeText}
+                    </span>
+                    <span class="text-xs font-black text-emerald-600 font-mono">${k.efectividad}% Ef.</span>
+                </div>
+                <div>
+                    <div class="text-xs font-black text-slate-900 truncate">#${k.num} ${k.name}</div>
+                    <div class="text-[10px] text-slate-500 font-semibold mt-0.5">
+                        Puntos (+): <span class="text-brand-electric font-bold">${k.p}</span> | Errores (-): <span class="text-brand-orange font-bold">${k.n}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
 }
 
 _('rs').onclick = () => {
