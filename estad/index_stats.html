@@ -35,14 +35,20 @@
 
     <main class="max-w-5xl mx-auto space-y-6">
         
-        <!-- BARRA SUPERIOR (Oculta en PDF) -->
+        <!-- BARRA SUPERIOR (CON BOTÓN EXPORTAR PDF PEQUEÑO ARRIBA) -->
         <div class="flex items-center justify-between print:hidden">
             <a href="../index_menu.html" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition border border-slate-200">
                 <i class="fas fa-arrow-left text-brand-electric"></i> Volver al Menú
             </a>
-            <span id="userEmail" class="text-xs font-bold text-slate-500">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Cargando club...
-            </span>
+            
+            <div class="flex items-center gap-3">
+                <span id="userEmail" class="text-xs font-bold text-slate-500 hidden sm:inline-block">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Cargando club...
+                </span>
+                <button type="button" id="btnExportarPdf" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition cursor-pointer">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+            </div>
         </div>
 
         <!-- BANNER SUPERIOR CON GLOW -->
@@ -220,13 +226,6 @@
                     <i class="fas fa-trash-can"></i> Eliminar Juego / Reset
                 </button>
             </div>
-        </div>
-
-        <!-- BOTÓN DE EXPORTAR PDF (Destacado y listo para impresión) -->
-        <div class="glass-card p-4 rounded-3xl text-center print:hidden">
-            <button type="button" id="btnExportarPdf" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-3.5 rounded-2xl text-xs font-black transition shadow-lg cursor-pointer flex items-center justify-center gap-2">
-                <i class="fas fa-file-pdf text-base"></i> Exportar Reporte a PDF / Imprimir
-            </button>
         </div>
 
         <!-- 4. RENDIMIENTO Y GRÁFICAS -->
