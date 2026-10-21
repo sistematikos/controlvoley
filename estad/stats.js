@@ -407,4 +407,9 @@ _('ra').onclick = () => {
     }
 };
 
+// EXPORTAR REPORTE A PDF
+_('btnExportarPdf').onclick = () => {
+    window.print();
+};
+
 init();
