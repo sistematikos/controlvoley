@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Panel de Gestión Maestro (Supabase Licencias)</title>
+    <title>Control Voley | Panel Maestro Unificado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -55,8 +55,8 @@
             <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric mx-auto mb-3">
                 <i class="fas fa-key text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel Maestro de Licencias</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Supabase Maestro (licencias_clubes)</p>
+            <h1 class="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel Maestro de Licencias (Unificado)</h1>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Base de Datos Única Supabase Multiclub</p>
         </div>
 
         <div class="glass-card p-6 sm:p-8 rounded-3xl shadow-glass border border-slate-200/80 space-y-6">
@@ -84,12 +84,12 @@
             <!-- CONFIGURACIÓN DEL CLUB -->
             <div>
                 <h3 class="text-xs font-black uppercase tracking-wider text-brand-electric mb-4 flex items-center gap-2">
-                    <i class="fas fa-volleyball-ball"></i> Configuración General del Club
+                    <i class="fas fa-volleyball-ball"></i> Datos de la Licencia del Club
                 </h3>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Activación (Único)</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">ID del Club / Código de Licencia (Único)</label>
                         <input type="text" id="empresaID" placeholder="Ej: YCDEP-CIAR" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm uppercase">
                     </div>
 
@@ -129,78 +129,43 @@
                 </div>
             </div>
 
-            <!-- SUPABASE CONFIGURACIÓN Y STORAGE -->
-            <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                <h3 class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                    <i class="fas fa-database text-brand-electric"></i> Supabase del Club (Datos y Fotos)
-                </h3>
-                <p class="text-[11px] text-slate-500 font-semibold leading-relaxed">Pega aquí los datos de Supabase del proyecto independiente del club.</p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Project URL (General / API)</label>
-                        <input type="text" id="supaUrl" placeholder="https://zgkbjpesmgqiprvfowju.supabase.co" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Bucket Name (Storage)</label>
-                        <input type="text" id="supaBucket" placeholder="Ej: YCDEP-CIAR" value="YCDEP-CIAR" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Publishable key (API Keys)</label>
-                    <input type="text" id="supaKey" placeholder="sb_publishable_..." class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-brand-electric outline-none shadow-sm">
-                </div>
-            </div>
-
             <button id="btnGuardar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-                <i class="fas fa-save"></i> Guardar en Supabase y Generar Licencia
+                <i class="fas fa-save"></i> Generar Licencia Multiclub
             </button>
             <div id="status" class="text-center font-bold text-xs text-emerald-600"></div>
 
             <!-- TOKEN RESULTADO -->
             <div id="resultBox" class="hidden p-4 bg-white border border-slate-200 rounded-2xl relative shadow-sm">
                 <button onclick="copiarToken()" class="absolute right-4 top-4 bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition cursor-pointer">Copiar</button>
-                <p class="text-xs font-bold text-slate-700 mb-2"><i class="fas fa-key text-brand-electric"></i> Token de Licencia Generado</p>
+                <p class="text-xs font-bold text-slate-700 mb-2"><i class="fas fa-key text-brand-electric"></i> Token de Licencia Activado</p>
                 <textarea id="tokenResult" readonly class="w-full h-20 bg-slate-50 border border-slate-200 rounded-xl p-2 font-mono text-[11px] text-slate-600 resize-none outline-none"></textarea>
             </div>
 
         </div>
     </div>
 
-    <!-- MÓDULO SUPABASE MAESTRO -->
+    <!-- MÓDULO SUPABASE UNIFICADO -->
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales de tu Supabase Maestro (licencias_clubes)
-        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
-        const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
+        // CREDENCIALES ÚNICAS DE TU PROYECTO PRINCIPAL DE SUPABASE
+        const SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
+        const BUCKET_GENERAL = "control-voley"; // Nombre estándar de tu bucket principal
 
-        const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
+        const supabase = createClient(SUPA_URL, SUPA_KEY);
         let cacheEmpresas = [];
 
         async function cargarCacheEmpresas() {
             try {
-                const { data, error } = await supabaseMaster.from('licencias').select('*');
+                const { data, error } = await supabase.from('licencias').select('*');
                 if (error) throw error;
                 cacheEmpresas = data || [];
             } catch (e) {
-                console.error("Error al precargar empresas desde Supabase Maestro:", e);
+                console.error("Error al precargar licencias:", e);
             }
         }
         cargarCacheEmpresas();
-
-        // Autoguardado local para recordar datos previos si se recarga la página
-        const camposForm = ['empresaID', 'nombreEmpresa', 'ciudad', 'email', 'telefono', 'limite', 'supaUrl', 'supaBucket', 'supaKey'];
-        camposForm.forEach(id => {
-            const el = document.getElementById(id);
-            if (localStorage.getItem('draft_' + id)) {
-                el.value = localStorage.getItem('draft_' + id);
-            }
-            el.addEventListener('input', () => {
-                localStorage.setItem('draft_' + id, el.value);
-            });
-        });
 
         const inputBusqueda = document.getElementById('busquedaInput');
         const listaResultados = document.getElementById('lista-resultados-busqueda');
@@ -225,7 +190,7 @@
                 `).join('');
             } else {
                 listaResultados.style.display = 'block';
-                listaResultados.innerHTML = `<div class="p-3 text-slate-400 text-xs">No se encontraron empresas.</div>`;
+                listaResultados.innerHTML = `<div class="p-3 text-slate-400 text-xs">No se encontraron clubes.</div>`;
             }
         });
 
@@ -234,7 +199,7 @@
             inputBusqueda.value = id;
 
             const emp = cacheEmpresas.find(x => x.id === id);
-            if (!emp) return alert("Empresa no encontrada en caché.");
+            if (!emp) return alert("Club no encontrado.");
 
             document.getElementById('empresaID').value = emp.id;
             document.getElementById('nombreEmpresa').value = emp.nombre || "";
@@ -242,18 +207,12 @@
             document.getElementById('email').value = emp.email || "";
             document.getElementById('telefono').value = emp.telefono || "";
             document.getElementById('limite').value = emp.limite_dispositivos || "3";
-            document.getElementById('supaUrl').value = emp.supabase_url || "";
-            document.getElementById('supaKey').value = emp.supabase_key || "";
-            document.getElementById('supaBucket').value = emp.bucket || id;
-
-            // Guardar también en borrador local
-            camposForm.forEach(fid => localStorage.setItem('draft_' + fid, document.getElementById(fid).value));
 
             if (emp.licencia_token) {
                 document.getElementById('tokenResult').value = emp.licencia_token;
                 document.getElementById('resultBox').classList.remove('hidden');
             }
-            document.getElementById('status').innerText = "✅ Datos del club cargados desde la tabla licencias.";
+            document.getElementById('status').innerText = "✅ Datos del club cargados desde Supabase.";
         };
 
         document.addEventListener('click', (e) => {
@@ -267,13 +226,9 @@
             document.getElementById('email').value = "";
             document.getElementById('telefono').value = "";
             document.getElementById('limite').value = "3";
-            document.getElementById('supaUrl').value = "";
-            document.getElementById('supaKey').value = "";
-            document.getElementById('supaBucket').value = "YCDEP-CIAR";
             document.getElementById('resultBox').classList.add('hidden');
             inputBusqueda.value = "";
-            camposForm.forEach(fid => localStorage.removeItem('draft_' + fid));
-            document.getElementById('status').innerText = "✨ Ingrese los datos para el nuevo club.";
+            document.getElementById('status').innerText = "✨ Ingrese los datos para registrar un nuevo club.";
         });
 
         document.getElementById('btnGuardar').addEventListener('click', async () => {
@@ -284,22 +239,18 @@
             const telefono = document.getElementById('telefono').value.trim();
             const limite = document.getElementById('limite').value;
 
-            const supaUrl = document.getElementById('supaUrl').value.trim();
-            const supaKey = document.getElementById('supaKey').value.trim();
-            const supaBucket = document.getElementById('supaBucket').value.trim();
-
-            if (!id || !nombre || !supaUrl || !supaKey) {
-                return alert("El ID del Club, el Nombre y las credenciales de Supabase son obligatorios.");
+            if (!id || !nombre) {
+                return alert("El ID del Club y el Nombre son obligatorios.");
             }
 
-            // Generar Token unificado con Supabase
+            // Generar Token de Licencia Unificado
             const tokenData = {
                 clubId: id,
                 clubNombre: nombre,
                 limite: limite,
-                supabaseUrl: supaUrl,
-                supabaseKey: supaKey,
-                bucket: supaBucket || id
+                supabaseUrl: SUPA_URL,
+                supabaseKey: SUPA_KEY,
+                bucket: BUCKET_GENERAL
             };
             const tokenBase64 = btoa(JSON.stringify(tokenData));
 
@@ -310,30 +261,30 @@
                 email: email,
                 telefono: telefono,
                 limite_dispositivos: limite,
-                supabase_url: supaUrl,
-                supabase_key: supaKey,
-                bucket: supaBucket || id,
+                supabase_url: SUPA_URL,
+                supabase_key: SUPA_KEY,
+                bucket: BUCKET_GENERAL,
                 licencia_token: tokenBase64,
                 updated_at: new Date().toISOString()
             };
 
             const btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando en Supabase...`;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
 
             try {
-                const { error } = await supabaseMaster.from('licencias').upsert(datosGuardar);
+                const { error } = await supabase.from('licencias').upsert(datosGuardar);
                 if (error) throw error;
 
                 cargarCacheEmpresas();
                 document.getElementById('tokenResult').value = tokenBase64;
                 document.getElementById('resultBox').classList.remove('hidden');
-                document.getElementById('status').innerText = "🚀 ¡Guardado en la tabla licencias con éxito!";
+                document.getElementById('status').innerText = "🚀 ¡Licencia generada y guardada con éxito!";
             } catch (err) {
                 alert("Error al guardar en Supabase: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-save"></i> Guardar en Supabase y Generar Licencia`;
+                btn.innerHTML = `<i class="fas fa-save"></i> Generar Licencia Multiclub`;
             }
         });
 
