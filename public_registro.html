@@ -91,8 +91,8 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad</label>
-                            <input type="text" id="cedulaIdentidad" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium" placeholder="Ej: V-30123456">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula de Identidad (Solo números)</label>
+                            <input type="text" id="cedulaIdentidad" required inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium" placeholder="Ej: 30123456">
                         </div>
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Teléfono</label>
@@ -156,8 +156,8 @@
                             <input type="text" id="nombreRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula Representante</label>
-                            <input type="text" id="cedulaRepresentante" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Cédula Representante (Solo números)</label>
+                            <input type="text" id="cedulaRepresentante" required inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium" placeholder="Ej: 12345678">
                         </div>
                     </div>
 
