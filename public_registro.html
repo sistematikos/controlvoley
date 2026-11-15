@@ -119,7 +119,7 @@
                                 <option value="U15">U15</option>
                                 <option value="U17">U17</option>
                                 <option value="U19">U19</option>
-                                <option value="Senior">Libre</option>
+                                <option value="Libre">Libre</option>
                             </select>
                         </div>
                     </div>
@@ -189,7 +189,7 @@ const MASTER_SUPA_URL = "https://ajdimbmptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
 const urlParams = new URLSearchParams(window.location.search);
-const clubID = urlParams.get('club') || localStorage.getItem('control_voley_club_id') || 'YCDEP-CIAR';
+const clubID = urlParams.get('club') || localStorage.getItem('control_voley_club_id');
 
 let supabaseClub = null;
 let supaBucket = 'control-voley';
@@ -221,7 +221,21 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
 async function verificarEstadoPortal() {
     try {
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
-        const { data: licencia, error } = await supabaseMaster.from('licencias').select('*').eq('id', clubID).maybeSingle();
+        let licencia = null;
+
+        // Si se pasa un club por URL o está en localStorage, lo busca específicamente
+        if (clubID) {
+            const { data } = await supabaseMaster.from('licencias').select('*').eq('id', clubID).maybeSingle();
+            licencia = data;
+        }
+
+        // Si no hay parámetro, toma automáticamente el primer club que tenga el portal abierto en Supabase
+        if (!licencia) {
+            const { data: listado } = await supabaseMaster.from('licencias').select('*').eq('portal_abierto', true).limit(1);
+            if (listado && listado.length > 0) {
+                licencia = listado[0];
+            }
+        }
 
         _0xa('estadoCargando').classList.add('hidden');
         let estaAbierto = false;
@@ -247,6 +261,7 @@ async function verificarEstadoPortal() {
             _0xa('estadoAbierto').classList.add('hidden');
         }
     } catch (err) {
+        console.error(err);
         _0xa('estadoCargando').classList.add('hidden');
         _0xa('estadoCerrado').classList.remove('hidden');
     }
