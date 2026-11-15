@@ -266,13 +266,31 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
 
     const btn = _0xa('btnEnviarRegistro');
     btn.disabled = true;
-    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo...`;
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Verificando cédula...`;
 
     const cedula = _0xa('cedulaIdentidad').value.trim();
     const archivo = _0xa('fotoAtleta').files[0];
     const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
 
     try {
+        // VALIDACIÓN ANTI-DUPLICADOS POR CÉDULA EN SUPABASE
+        const { data: existente, error: errorBusqueda } = await supabaseClub
+            .from('atletas')
+            .select('id')
+            .eq('cedulaIdentidad', cedula)
+            .maybeSingle();
+
+        if (errorBusqueda) throw errorBusqueda;
+
+        if (existente) {
+            alert('¡Atención! Ya existe un atleta registrado con la cédula número: ' + cedula);
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-paper-plane"></i> Enviar Inscripción al Club`;
+            return;
+        }
+
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo foto y datos...`;
+
         let urlFoto = "";
         if (archivo) {
             const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
