@@ -97,7 +97,6 @@ if (aForm) {
         const archivo = inputArchivo ? inputArchivo.files[0] : null;
         const sedeAtleta = _0xa('sede') ? _0xa('sede').value : '';
         
-        // Capturar la Sede Club manual y el Estatus administrativo
         const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
         const estatusAtleta = _0xa('estatus') ? _0xa('estatus').value : 'Activo';
         
@@ -136,6 +135,7 @@ if (aForm) {
                 sede_club: sedeClubManual,
                 estatus: estatusAtleta, 
                 categoria: _0xa('categoria').value,
+                genero: _0xa('genero') ? _0xa('genero').value : '',
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
                 talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
@@ -272,6 +272,9 @@ window.editAtleta = (id) => {
   if (_0xa('estatus')) {
       _0xa('estatus').value = k.estatus || 'Activo';
   }
+  if (_0xa('genero')) {
+      _0xa('genero').value = k.genero || '';
+  }
 
   _0xa('categoria').value = k.categoria || '';
   _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
@@ -314,6 +317,7 @@ window.resetForm = () => {
   _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
   if (_0xa('estatus')) _0xa('estatus').value = 'Activo';
+  if (_0xa('genero')) _0xa('genero').value = '';
   
   const fT = _0xa('fT');
   const bS = _0xa('bS');
