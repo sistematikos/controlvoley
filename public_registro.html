@@ -330,7 +330,9 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
         _0xa('estadoAbierto').classList.add('hidden');
         _0xa('estadoExito').classList.remove('hidden');
     } catch (err) {
-        alert("ERROR AL ENVIAR: " + err.message);
+        console.error(err);
+        const mensajeError = err.message || err.error_description || (typeof err === 'object' ? JSON.stringify(err) : err) || 'ERROR DESCONOCIDO';
+        alert("ERROR AL ENVIAR: " + mensajeError);
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> ENVIAR INSCRIPCIÓN AL CLUB`;
     }
