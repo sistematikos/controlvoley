@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Voley | Activación del Sistema</title>
+    <title>Control Voley | Activación y Bloqueo Web</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -65,12 +65,23 @@
             return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         }
 
-        // VALIDACIÓN AUTOMÁTICA DE SESIÓN PREVIA -> index_menu.html
+        // VALIDACIÓN DE BLOQUEO WEB: Si no es PWA instalada, bloquea la interfaz y muestra aviso de requerir instalación
         document.addEventListener('DOMContentLoaded', () => {
+            const avisoWeb = document.getElementById('avisoBloqueoWeb');
+            const contenidoLicencia = document.getElementById('contenidoLicenciaContainer');
+
+            if (!esPWAInstalada()) {
+                // Bloquea el uso web mostrando el aviso y ocultando el formulario
+                if (avisoWeb) avisoWeb.classList.remove('hidden');
+                if (contenidoLicencia) contenidoLicencia.classList.add('hidden');
+                return;
+            }
+
+            // Si ya está instalada, valida sesión previa
             const licenciaValidada = localStorage.getItem('licencia_validada');
             const empresaID = localStorage.getItem('youcontrol_empresa_id');
 
-            if (licenciaValidada === 'true' && empresaID && esPWAInstalada()) {
+            if (licenciaValidada === 'true' && empresaID) {
                 window.location.replace('index_menu.html');
             }
         });
@@ -92,25 +103,40 @@
 
         <div>
             <h1 class="text-xl font-black text-slate-900 uppercase tracking-tight">Control Voley</h1>
-            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Activación del Sistema (Supabase)</p>
+            <p class="text-xs font-bold text-brand-electric uppercase tracking-widest mt-1">Protección de Aplicación Exclusiva</p>
         </div>
 
-        <div class="text-left space-y-2">
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Pega tu código de licencia:</label>
-            <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
-        </div>
-
-        <!-- MENSAJE DE BIENVENIDA -->
-        <div class="bg-brand-50 border border-brand-electric/20 rounded-2xl p-4 text-center">
-            <p class="text-xs font-bold text-slate-700 leading-relaxed">
-                ¡Para comenzar a disfrutar de todo el contenido de <strong class="text-brand-electric uppercase">YOU CONTROL VOLEY</strong>, instala la aplicación en tu dispositivo!
+        <!-- BLOQUEO WEB: Se muestra únicamente si se abre en navegador web convencional -->
+        <div id="avisoBloqueoWeb" class="hidden bg-rose-50 border border-rose-200 rounded-2xl p-5 text-center space-y-3">
+            <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-sm font-bold">
+                <i class="fas fa-ban"></i>
+            </div>
+            <h2 class="text-xs font-black uppercase tracking-wider text-rose-900">Acceso Web Bloqueado</h2>
+            <p class="text-xs font-medium text-rose-700 leading-relaxed">
+                Este sistema no permite su uso a través de navegadores web comunes. Es obligatorio tener la aplicación instalada en tu dispositivo como App (PWA).
             </p>
+            <button id="btnInstalarDirecto" class="w-full py-3 px-4 bg-slate-900 hover:bg-slate-950 text-white font-black rounded-xl shadow-md transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fas fa-download text-sm"></i> Instalar Aplicación Ahora
+            </button>
         </div>
 
-        <!-- ÚNICO BOTÓN DE INSTALACIÓN Y ACTIVACIÓN -->
-        <button id="btnActivarEInstalar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
-            <i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar
-        </button>
+        <!-- CONTENEDOR DE LICENCIA (Visible solo cuando se ejecuta dentro de la PWA instalada) -->
+        <div id="contenidoLicenciaContainer" class="space-y-6">
+            <div class="text-left space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Pega tu código de licencia:</label>
+                <textarea id="tokenInput" placeholder="Pega el código aquí..." class="w-full h-28 p-3.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-electric shadow-sm resize-none"></textarea>
+            </div>
+
+            <div class="bg-brand-50 border border-brand-electric/20 rounded-2xl p-4 text-center">
+                <p class="text-xs font-bold text-slate-700 leading-relaxed">
+                    ¡Aplicación verificada! Ingresa tu código de licencia para activar <strong class="text-brand-electric uppercase">CONTROL VOLEY PRO</strong>.
+                </p>
+            </div>
+
+            <button id="btnActivarEInstalar" class="w-full py-4 px-4 bg-brand-electric hover:bg-brand-600 text-white font-black rounded-xl shadow-electric transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fas fa-key text-sm"></i> Activar Licencia y Acceder
+            </button>
+        </div>
 
         <div id="statusMsg" class="text-xs font-bold text-slate-500"></div>
     </div>
@@ -118,14 +144,35 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        // Credenciales de tu Supabase Maestro (licencias_clubes) con la llave real integrada
-        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_URL = "https://ajdimbmptzoeqzrrioywt.supabase.co";
         const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
         const getHardwareID = () => btoa(navigator.userAgent + navigator.language);
 
-        async function procesarActivacionEInstalacion() {
+        // Disparador del botón de instalación manual en caso de estar en navegador
+        const btnInstalar = document.getElementById('btnInstalarDirecto');
+        if (btnInstalar) {
+            btnInstalar.addEventListener('click', async () => {
+                if (window.deferredPrompt) {
+                    window.deferredPrompt.prompt();
+                    const choiceResult = await window.deferredPrompt.userChoice;
+                    if (choiceResult.outcome === 'accepted') {
+                        window.location.reload();
+                    }
+                    window.deferredPrompt = null;
+                } else {
+                    alert("Para instalar la aplicación, abre el menú de opciones de tu navegador (los tres puntos en Chrome o el botón Compartir en Safari) y selecciona 'Agregar a la pantalla principal' o 'Instalar aplicación'.");
+                }
+            });
+        }
+
+        async function procesarActivacion() {
+            if (!esPWAInstalada()) {
+                alert("Debes instalar la aplicación en tu dispositivo para poder activarla y usarla.");
+                return;
+            }
+
             const rawToken = document.getElementById('tokenInput').value.trim();
             const statusDiv = document.getElementById('statusMsg');
             if (!rawToken) return alert("Por favor, pega el código de licencia primero.");
@@ -143,7 +190,6 @@
                     throw new Error("El token no contiene un ID de club válido.");
                 }
 
-                // Consultar directamente en el Supabase Maestro (tabla 'licencias')
                 const { data: empresaData, error: empresaError } = await supabaseMaster
                     .from('licencias')
                     .select('*')
@@ -158,15 +204,13 @@
                 let limiteStr = empresaData.limite_dispositivos || data.limite || "3";
                 let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
 
-                // Validar límite de dispositivos
                 if (!equiposLicencia.includes(hwID) && equiposLicencia.length >= limiteLicencia) {
                     alert("Error: Se ha alcanzado el límite de dispositivos permitidos para esta licencia.");
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
+                    btn.innerHTML = `<i class="fas fa-key text-sm"></i> Activar Licencia y Acceder`;
                     return;
                 }
 
-                // Registrar equipo si es nuevo en la lista
                 if (!equiposLicencia.includes(hwID)) {
                     equiposLicencia.push(hwID);
                     await supabaseMaster
@@ -175,7 +219,6 @@
                         .eq('id', activationId);
                 }
 
-                // Guardar configuraciones de Supabase en el localStorage para los módulos de atletas
                 localStorage.setItem('control_voley_supa_url', empresaData.supabase_url || data.supabaseUrl);
                 localStorage.setItem('control_voley_supa_key', empresaData.supabase_key || data.supabaseKey);
                 localStorage.setItem('control_voley_supa_bucket', empresaData.bucket || data.bucket || activationId);
@@ -184,42 +227,29 @@
                     localStorage.setItem('control_voley_club_nombre', empresaData.nombre || data.clubNombre);
                 }
 
-                // Guardar sesión local de acceso
                 localStorage.setItem('youcontrol_empresa_id', activationId);
                 localStorage.setItem('licencia_validada', 'true');
 
                 statusDiv.className = "text-xs font-bold text-emerald-600";
-                statusDiv.innerText = "¡Licencia válida! Iniciando instalación...";
+                statusDiv.innerText = "¡Licencia válida! Ingresando al sistema...";
 
-                // DISPARAR INSTALACIÓN PWA
-                if (window.deferredPrompt) {
-                    window.deferredPrompt.prompt();
-                    const userChoice = await window.deferredPrompt.userChoice;
-                    window.deferredPrompt = null;
-
-                    if (userChoice.outcome === 'accepted') {
-                        window.location.replace('index_menu.html');
-                    } else {
-                        alert("Es necesario instalar la aplicación para ingresar.");
-                        btn.disabled = false;
-                        btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
-                        statusDiv.innerText = "";
-                    }
-                } else {
-                    // Si ya está en modo app o instalada previamente
+                setTimeout(() => {
                     window.location.replace('index_menu.html');
-                }
+                }, 800);
                 
             } catch (e) {
                 console.error("Error al procesar activación:", e);
                 alert("Código de licencia inválido o error en la conexión: " + e.message);
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-download text-sm"></i> Instalar Aplicación y Comenzar`;
+                btn.innerHTML = `<i class="fas fa-key text-sm"></i> Activar Licencia y Acceder`;
                 statusDiv.innerText = "";
             }
         }
 
-        document.getElementById('btnActivarEInstalar').addEventListener('click', procesarActivacionEInstalacion);
+        const btnActivar = document.getElementById('btnActivarEInstalar');
+        if (btnActivar) {
+            btnActivar.addEventListener('click', procesarActivacion);
+        }
     </script>
 </body>
 </html>
