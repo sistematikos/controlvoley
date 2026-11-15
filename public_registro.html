@@ -100,7 +100,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Nacimiento</label>
                             <input type="date" id="fechaNacimiento" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-medium">
@@ -120,6 +120,14 @@
                                 <option value="U17">U17</option>
                                 <option value="U19">U19</option>
                                 <option value="Libre">Libre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Género</label>
+                            <select id="genero" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
+                                <option value="">Seleccione...</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
                             </select>
                         </div>
                     </div>
@@ -286,6 +294,7 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             estatus: 'Activo',
             sede_club: sedeClubManual,
             categoria: _0xa('categoria').value,
+            genero: _0xa('genero').value,
             nroCamiseta: _0xa('nroCamiseta').value.trim(),
             peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
             talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
