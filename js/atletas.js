@@ -123,15 +123,18 @@ if (aForm) {
                 urlFoto = publicURLData.publicUrl;
             }
 
+            const fechaNacVal = _0xa('fechaNacimiento').value;
+            const fechaUltPagoVal = _0xa('fechaUltimoPago').value;
+
             const atletaData = {
                 nombre: _0xa('nombre').value.trim(),
                 apellido: _0xa('apellido').value.trim(),
                 cedulaIdentidad: cedula,
                 telefono: _0xa('telefono').value.trim(),
-                fechaNacimiento: _0xa('fechaNacimiento').value || null,
+                fechaNacimiento: fechaNacVal ? fechaNacVal : null,
                 sede: sedeAtleta,
                 sede_club: sedeClubManual,
-                estatus: estatusAtleta,
+                estatus: estatusAtleta, 
                 categoria: _0xa('categoria').value,
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
@@ -141,7 +144,7 @@ if (aForm) {
                 telefonoRepresentante: _0xa('telefonoRepresentante').value.trim(),
                 frecuenciaPago: _0xa('frecuenciaPago').value,
                 montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
-                fechaUltimoPago: _0xa('fechaUltimoPago').value || null,
+                fechaUltimoPago: fechaUltPagoVal ? fechaUltPagoVal : null,
                 fotoUrl: urlFoto
             };
 
