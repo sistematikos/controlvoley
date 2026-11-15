@@ -71,7 +71,6 @@
             const contenidoLicencia = document.getElementById('contenidoLicenciaContainer');
 
             if (!esPWAInstalada()) {
-                // Bloquea el uso web mostrando el aviso y ocultando el formulario
                 if (avisoWeb) avisoWeb.classList.remove('hidden');
                 if (contenidoLicencia) contenidoLicencia.classList.add('hidden');
                 return;
@@ -144,7 +143,7 @@
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-        const MASTER_SUPA_URL = "https://ajdimbmptzoeqzrrioywt.supabase.co";
+        const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
         const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
         const supabaseMaster = createClient(MASTER_SUPA_URL, MASTER_SUPA_KEY);
@@ -184,22 +183,26 @@
             try {
                 const data = JSON.parse(atob(rawToken));
                 const hwID = getHardwareID();
-                const activationId = data.clubId || data.activation_id;
+                
+                // Extraemos el identificador del club o nombre del token
+                const clubIdentificador = data.clubId || data.activation_id || data.clubNombre;
 
-                if (!activationId) {
-                    throw new Error("El token no contiene un ID de club válido.");
+                if (!clubIdentificador) {
+                    throw new Error("El token no contiene un identificador de club válido.");
                 }
 
+                // Consultamos en Supabase Maestro buscando por id o nombre de forma flexible
                 const { data: empresaData, error: empresaError } = await supabaseMaster
                     .from('licencias')
                     .select('*')
-                    .eq('id', activationId)
+                    .or(`id.eq.${clubIdentificador},nombre.eq.${clubIdentificador}`)
                     .single();
 
                 if (empresaError || !empresaData) {
                     throw new Error("La empresa o licencia no se encuentra registrada en el sistema central.");
                 }
 
+                const activationId = empresaData.id;
                 let equiposLicencia = Array.isArray(empresaData.equipos) ? empresaData.equipos : [];
                 let limiteStr = empresaData.limite_dispositivos || data.limite || "3";
                 let limiteLicencia = (limiteStr === "Ilimitado") ? 999 : (parseInt(limiteStr) || 3);
