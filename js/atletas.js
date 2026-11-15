@@ -154,7 +154,7 @@ if (aForm) {
             } else {
                 const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
                 if (existente) {
-                    alert('¡ATENCIÓN! YA EXISTE UN ATLETA REGISTRADO CON LA CÉDULA: ' + cedula);
+                    alert('YA EXISTE UN ATLETA REGISTRADO CON LA CÉDULA: ' + cedula);
                     if (btnSubmit) {
                         btnSubmit.disabled = false;
                         btnSubmit.innerHTML = textoOriginalBtn;
@@ -203,6 +203,7 @@ function renderTable(arr) {
     const rep = (k.nombreRepresentante || 'N/A').toUpperCase();
     const sedeClubVal = (k.sede_club || k.sedeClub || 'N/A').toUpperCase();
     const estatusVal = (k.estatus || 'ACTIVO').toUpperCase();
+    const categoriaVal = (k.categoria || 'N/A').toUpperCase();
 
     let estatusBadge = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-[10px] border border-emerald-200">ACTIVO</span>`;
     if (estatusVal === 'INACTIVO') {
@@ -225,7 +226,7 @@ function renderTable(arr) {
       </td>
       <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
       <td class="px-4 py-3 text-brand-electric font-bold cursor-pointer" onclick="verFicha('${k.id}')">${cedula}</td>
-      <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${(k.categoria || 'N/A').toUpperCase()}</span></td>
+      <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${categoriaVal}</span></td>
       <td class="px-4 py-3 text-slate-700 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${sedeClubVal}</td>
       <td class="px-4 py-3 text-slate-600 cursor-pointer" onclick="verFicha('${k.id}')">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
