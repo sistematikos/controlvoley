@@ -4,7 +4,7 @@ const _0xa = i => document.getElementById(i);
 let _aL = [];
 
 const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
-const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'Club Voley';
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'CLUB VOLEY';
 
 let supaUrl = localStorage.getItem('control_voley_supa_url');
 let supaKey = localStorage.getItem('control_voley_supa_key');
@@ -14,13 +14,13 @@ if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
 if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
 
 if (!empresaID || !supaUrl || !supaKey) {
-    alert("Sesión no autorizada o credenciales de Supabase faltantes. Por favor, active el sistema nuevamente.");
+    alert("SESIÓN NO AUTORIZADA O CREDENCIALES DE SUPABASE FALTANTES. POR FAVOR, ACTIVE EL SISTEMA NUEVAMENTE.");
     window.location.href = 'index.html';
 }
 
 const userEmailEl = _0xa('userEmail');
 if (userEmailEl) {
-    userEmailEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Club: ${clubNombre}`;
+    userEmailEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> CLUB: ${clubNombre.toUpperCase()}`;
 }
 
 const supabase = createClient(supaUrl, supaKey);
@@ -49,7 +49,7 @@ async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
         ctx.drawImage(img, startX, startY, minDim, minDim, 0, 0, size, size);
 
         canvas.toBlob((blob) => {
-          if (!blob) { reject(new Error('Error al comprimir la imagen')); return; }
+          if (!blob) { reject(new Error('ERROR AL COMPRIMIR LA IMAGEN')); return; }
           const compressedFile = new File([blob], `${Date.now()}_atleta.jpg`, { type: 'image/jpeg' });
           resolve(compressedFile);
         }, 'image/jpeg', quality);
@@ -71,10 +71,10 @@ async function cargarAtletas() {
         _aL = data || [];
         filterNomina();
     } catch (err) {
-        console.error("Error al cargar atletas de Supabase:", err.message);
+        console.error("ERROR AL CARGAR ATLETAS DE SUPABASE:", err.message);
         const nTB = _0xa('nTB');
         if (nTB) {
-            nTB.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-rose-500 font-bold">Error al conectar con la base de datos de Supabase. Verifica que la tabla 'atletas' exista.</td></tr>`;
+            nTB.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-rose-500 font-bold">ERROR AL CONECTAR CON LA BASE DE DATOS DE SUPABASE.</td></tr>`;
         }
     }
 }
@@ -84,27 +84,27 @@ if (aForm) {
     aForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btnSubmit = _0xa('bS');
-        const textoOriginalBtn = btnSubmit ? btnSubmit.innerHTML : 'Guardar Atleta';
+        const textoOriginalBtn = btnSubmit ? btnSubmit.innerHTML : 'GUARDAR ATLETA';
 
         if (btnSubmit) {
             btnSubmit.disabled = true;
-            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
+            btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> GUARDANDO...`;
         }
 
         const idRegistro = _0xa('aId').value;
         const cedula = _0xa('cedulaIdentidad').value.trim();
         const inputArchivo = _0xa('fotoAtleta');
         const archivo = inputArchivo ? inputArchivo.files[0] : null;
-        const sedeAtleta = _0xa('sede') ? _0xa('sede').value : '';
+        const sedeAtleta = _0xa('sede') ? _0xa('sede').value.trim().toUpperCase() : '';
         
-        const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim() : '';
-        const estatusAtleta = _0xa('estatus') ? _0xa('estatus').value : 'Activo';
+        const sedeClubManual = _0xa('sedeClub') ? _0xa('sedeClub').value.trim().toUpperCase() : '';
+        const estatusAtleta = _0xa('estatus') ? _0xa('estatus').value.toUpperCase() : 'ACTIVO';
         
         let urlFoto = _0xa('fotoUrlActual').value;
 
         try {
             if (archivo) {
-                if (btnSubmit) btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Subiendo Foto...`;
+                if (btnSubmit) btnSubmit.innerHTML = `<i class="fas fa-spinner fa-spin"></i> SUBIENDO FOTO...`;
                 const archivoOptimizado = await comprimirYRecortarImagen(archivo, 300, 0.65);
                 const sedeLimpia = (sedeAtleta || 'general').toLowerCase().replace(/[^a-z0-9]/g, '_');
                 const fileName = `${sedeLimpia}/${cedula}_${Date.now()}.jpg`;
@@ -126,23 +126,23 @@ if (aForm) {
             const fechaUltPagoVal = _0xa('fechaUltimoPago').value;
 
             const atletaData = {
-                nombre: _0xa('nombre').value.trim(),
-                apellido: _0xa('apellido').value.trim(),
+                nombre: _0xa('nombre').value.trim().toUpperCase(),
+                apellido: _0xa('apellido').value.trim().toUpperCase(),
                 cedulaIdentidad: cedula,
-                telefono: _0xa('telefono').value.trim(),
+                telefono: _0xa('telefono').value.trim().toUpperCase(),
                 fechaNacimiento: fechaNacVal ? fechaNacVal : null,
                 sede: sedeAtleta,
                 sede_club: sedeClubManual,
                 estatus: estatusAtleta, 
-                categoria: _0xa('categoria').value,
-                genero: _0xa('genero') ? _0xa('genero').value : '',
+                categoria: _0xa('categoria').value.toUpperCase(),
+                genero: _0xa('genero') ? _0xa('genero').value.toUpperCase() : '',
                 nroCamiseta: _0xa('nroCamiseta').value.trim(),
                 peso: _0xa('peso').value ? parseFloat(_0xa('peso').value) : 0,
                 talla: _0xa('talla').value ? parseFloat(_0xa('talla').value) : 0,
-                nombreRepresentante: _0xa('nombreRepresentante').value.trim(),
+                nombreRepresentante: _0xa('nombreRepresentante').value.trim().toUpperCase(),
                 cedulaRepresentante: _0xa('cedulaRepresentante').value.trim(),
-                telefonoRepresentante: _0xa('telefonoRepresentante').value.trim(),
-                frecuenciaPago: _0xa('frecuenciaPago').value,
+                telefonoRepresentante: _0xa('telefonoRepresentante').value.trim().toUpperCase(),
+                frecuenciaPago: _0xa('frecuenciaPago').value.toUpperCase(),
                 montoPago: _0xa('montoPago').value ? parseFloat(_0xa('montoPago').value) : 0,
                 fechaUltimoPago: fechaUltPagoVal ? fechaUltPagoVal : null,
                 fotoUrl: urlFoto
@@ -154,7 +154,7 @@ if (aForm) {
             } else {
                 const { data: existente } = await supabase.from('atletas').select('id').eq('cedulaIdentidad', cedula).maybeSingle();
                 if (existente) {
-                    alert('Ya existe un atleta registrado con la cédula: ' + cedula);
+                    alert('¡ATENCIÓN! YA EXISTE UN ATLETA REGISTRADO CON LA CÉDULA: ' + cedula);
                     if (btnSubmit) {
                         btnSubmit.disabled = false;
                         btnSubmit.innerHTML = textoOriginalBtn;
@@ -168,10 +168,10 @@ if (aForm) {
 
             window.resetForm();
             cargarAtletas();
-            alert('¡Atleta guardado con éxito en Supabase!');
+            alert('¡ATLETA GUARDADO CON ÉXITO EN SUPABASE!');
         } catch (err) {
-            console.error("Error al guardar:", err);
-            alert('Error al guardar el atleta: ' + (err.message || err));
+            console.error("ERROR AL GUARDAR:", err);
+            alert('ERROR AL GUARDAR EL ATLETA: ' + (err.message || err));
         } finally {
             if (btnSubmit) {
                 btnSubmit.disabled = false;
@@ -187,7 +187,7 @@ function renderTable(arr) {
   tb.innerHTML = '';
   
   if (!arr.length) { 
-      tb.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-slate-400 italic font-semibold">No hay atletas registrados en este club.</td></tr>'; 
+      tb.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-slate-400 italic font-semibold">NO HAY ATLETAS REGISTRADOS EN ESTE CLUB.</td></tr>'; 
       return; 
   }
 
@@ -196,19 +196,19 @@ function renderTable(arr) {
     tr.className = "row-atleta border-b border-slate-100 transition";
     
     const foto = k.fotoUrl || k.foto_url;
-    const nombre = k.nombre || '';
-    const apellido = k.apellido || '';
+    const nombre = (k.nombre || '').toUpperCase();
+    const apellido = (k.apellido || '').toUpperCase();
     const cedula = k.cedulaIdentidad || 'N/A';
     const fechaNac = k.fechaNacimiento || k.fecha_nacimiento || 'N/A';
-    const rep = k.nombreRepresentante || 'N/A';
-    const sedeClubVal = k.sede_club || k.sedeClub || 'N/A';
-    const estatusVal = k.estatus || 'Activo';
+    const rep = (k.nombreRepresentante || 'N/A').toUpperCase();
+    const sedeClubVal = (k.sede_club || k.sedeClub || 'N/A').toUpperCase();
+    const estatusVal = (k.estatus || 'ACTIVO').toUpperCase();
 
-    let estatusBadge = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-[10px] border border-emerald-200">Activo</span>`;
-    if (estatusVal === 'Inactivo') {
-        estatusBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg font-bold text-[10px] border border-amber-200">Inactivo</span>`;
-    } else if (estatusVal === 'Retirado') {
-        estatusBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-lg font-bold text-[10px] border border-rose-200">Retirado</span>`;
+    let estatusBadge = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-[10px] border border-emerald-200">ACTIVO</span>`;
+    if (estatusVal === 'INACTIVO') {
+        estatusBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg font-bold text-[10px] border border-amber-200">INACTIVO</span>`;
+    } else if (estatusVal === 'RETIRADO') {
+        estatusBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-lg font-bold text-[10px] border border-rose-200">RETIRADO</span>`;
     }
 
     const avatar = foto 
@@ -225,12 +225,12 @@ function renderTable(arr) {
       </td>
       <td class="px-4 py-3 text-slate-600 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${fechaNac}</td>
       <td class="px-4 py-3 text-brand-electric font-bold cursor-pointer" onclick="verFicha('${k.id}')">${cedula}</td>
-      <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${k.categoria || 'N/A'}</span></td>
+      <td class="px-4 py-3 cursor-pointer" onclick="verFicha('${k.id}')"><span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-xs border border-brand-electric/20">${(k.categoria || 'N/A').toUpperCase()}</span></td>
       <td class="px-4 py-3 text-slate-700 font-semibold cursor-pointer" onclick="verFicha('${k.id}')">${sedeClubVal}</td>
       <td class="px-4 py-3 text-slate-600 cursor-pointer" onclick="verFicha('${k.id}')">${rep}</td>
       <td class="px-4 py-3 text-center space-x-2">
-        <button onclick="event.stopPropagation(); editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">Editar</button>
-        <button onclick="event.stopPropagation(); deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">Eliminar</button>
+        <button onclick="event.stopPropagation(); editAtleta('${k.id}')" class="font-bold text-xs px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition shadow-sm">EDITAR</button>
+        <button onclick="event.stopPropagation(); deleteAtleta('${k.id}')" class="text-rose-600 hover:text-rose-900 font-bold text-xs bg-rose-50 px-3 py-1.5 rounded-lg hover:bg-rose-100 transition shadow-sm">ELIMINAR</button>
       </td>`;
     tb.appendChild(tr);
   });
@@ -259,31 +259,31 @@ window.editAtleta = (id) => {
   const k = _aL.find(x => x.id == id);
   if (!k) return;
   _0xa('aId').value = k.id;
-  _0xa('nombre').value = k.nombre || '';
-  _0xa('apellido').value = k.apellido || '';
+  _0xa('nombre').value = (k.nombre || '').toUpperCase();
+  _0xa('apellido').value = (k.apellido || '').toUpperCase();
   _0xa('cedulaIdentidad').value = k.cedulaIdentidad || '';
-  _0xa('telefono').value = k.telefono || '';
+  _0xa('telefono').value = (k.telefono || '').toUpperCase();
   _0xa('fechaNacimiento').value = k.fechaNacimiento || k.fecha_nacimiento || '';
-  if (_0xa('sede')) _0xa('sede').value = k.sede || '';
+  if (_0xa('sede')) _0xa('sede').value = (k.sede || '').toUpperCase();
   
   if (_0xa('sedeClub')) {
-      _0xa('sedeClub').value = k.sede_club || k.sedeClub || '';
+      _0xa('sedeClub').value = (k.sede_club || k.sedeClub || '').toUpperCase();
   }
   if (_0xa('estatus')) {
-      _0xa('estatus').value = k.estatus || 'Activo';
+      _0xa('estatus').value = (k.estatus || 'ACTIVO').toUpperCase();
   }
   if (_0xa('genero')) {
-      _0xa('genero').value = k.genero || '';
+      _0xa('genero').value = (k.genero || '').toUpperCase();
   }
 
-  _0xa('categoria').value = k.categoria || '';
+  _0xa('categoria').value = (k.categoria || '').toUpperCase();
   _0xa('nroCamiseta').value = k.nroCamiseta || k.nro_camiseta || '';
   _0xa('peso').value = k.peso || '';
   _0xa('talla').value = k.talla || '';
-  _0xa('nombreRepresentante').value = k.nombreRepresentante || k.nombre_representante || '';
+  _0xa('nombreRepresentante').value = (k.nombreRepresentante || k.nombre_representante || '').toUpperCase();
   _0xa('cedulaRepresentante').value = k.cedulaRepresentante || k.cedula_representante || '';
-  _0xa('telefonoRepresentante').value = k.telefonoRepresentante || k.telefono_representante || '';
-  _0xa('frecuenciaPago').value = k.frecuenciaPago || k.frecuencia_pago || 'mensual';
+  _0xa('telefonoRepresentante').value = (k.telefonoRepresentante || k.telefono_representante || '').toUpperCase();
+  _0xa('frecuenciaPago').value = (k.frecuenciaPago || k.frecuencia_pago || 'MENSUAL').toUpperCase();
   _0xa('montoPago').value = k.montoPago || k.monto_pago || '';
   _0xa('fechaUltimoPago').value = k.fechaUltimoPago || k.fecha_ultimo_pago || '';
   _0xa('fotoUrlActual').value = k.fotoUrl || k.foto_url || '';
@@ -292,21 +292,21 @@ window.editAtleta = (id) => {
   const bS = _0xa('bS');
   const bC = _0xa('bC');
 
-  if (fT) fT.innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> Editar Atleta';
-  if (bS) bS.innerText = 'Actualizar Atleta';
+  if (fT) fT.innerHTML = '<i class="fas fa-user-pen text-brand-electric"></i> EDITAR ATLETA';
+  if (bS) bS.innerText = 'ACTUALIZAR ATLETA';
   if (bC) bC.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.deleteAtleta = async (id) => {
-  if (confirm('¿Seguro que deseas eliminar este atleta de Supabase?')) {
+  if (confirm('¿SEGURO QUE DESEAS ELIMINAR ESTE ATLETA DE SUPABASE?')) {
     try {
       const { error } = await supabase.from('atletas').delete().eq('id', id);
       if (error) throw error;
       cargarAtletas();
     } catch (e) { 
       console.error(e); 
-      alert('Error al eliminar: ' + e.message); 
+      alert('ERROR AL ELIMINAR: ' + e.message); 
     }
   }
 };
@@ -316,15 +316,15 @@ window.resetForm = () => {
   if (aForm) aForm.reset();
   _0xa('aId').value = '';
   _0xa('fotoUrlActual').value = '';
-  if (_0xa('estatus')) _0xa('estatus').value = 'Activo';
+  if (_0xa('estatus')) _0xa('estatus').value = 'ACTIVO';
   if (_0xa('genero')) _0xa('genero').value = '';
   
   const fT = _0xa('fT');
   const bS = _0xa('bS');
   const bC = _0xa('bC');
 
-  if (fT) fT.innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> Registrar Nuevo Atleta';
-  if (bS) bS.innerText = 'Guardar Atleta';
+  if (fT) fT.innerHTML = '<i class="fas fa-user-plus text-brand-electric"></i> REGISTRAR NUEVO ATLETA';
+  if (bS) bS.innerText = 'GUARDAR ATLETA';
   if (bC) bC.classList.add('hidden');
 };
 
