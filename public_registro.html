@@ -113,11 +113,13 @@
                             <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">Categoría</label>
                             <select id="categoria" required class="mt-1 block w-full border border-slate-200 rounded-xl p-3 text-sm outline-none bg-white font-semibold">
                                 <option value="">Seleccione...</option>
+                                <option value="U9">U9</option>
+                                <option value="U11">U11</option>
                                 <option value="U13">U13</option>
                                 <option value="U15">U15</option>
                                 <option value="U17">U17</option>
                                 <option value="U19">U19</option>
-                                <option value="Senior">libre</option>
+                                <option value="Senior">Libre</option>
                             </select>
                         </div>
                     </div>
@@ -183,7 +185,7 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const _0xa = i => document.getElementById(i);
-const MASTER_SUPA_URL = "https://ajdimbptzoeqzrrioywt.supabase.co";
+const MASTER_SUPA_URL = "https://ajdimbmptzoeqzrrioywt.supabase.co";
 const MASTER_SUPA_KEY = "sb_publishable_aVydbrj88elb7XVq1yopFw_2U4MHgHv";
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -281,7 +283,7 @@ _0xa('formRegistroAtleta').addEventListener('submit', async (e) => {
             cedulaIdentidad: cedula,
             telefono: _0xa('telefono').value.trim(),
             fechaNacimiento: _0xa('fechaNacimiento').value,
-            estatus: 'Activo', // Por defecto los nuevos registros entran como Activos
+            estatus: 'Activo',
             sede_club: sedeClubManual,
             categoria: _0xa('categoria').value,
             nroCamiseta: _0xa('nroCamiseta').value.trim(),
