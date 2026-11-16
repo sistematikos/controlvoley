@@ -2,6 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const _0xa = i => document.getElementById(i); 
 let _aL = [];
+let ordenActual = { columna: 'nombre', ascendente: true };
 
 const empresaID = (localStorage.getItem('youcontrol_empresa_id') || '').trim();
 const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'CLUB VOLEY';
@@ -207,7 +208,7 @@ function renderTable(arr) {
 
     let estatusBadge = `<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg font-bold text-[10px] border border-emerald-200">ACTIVO</span>`;
     if (estatusVal === 'INACTIVO') {
-        estatusBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg font-bold text-[10px] border border-amber-200">INACTIVO</span>`;
+        estatusBadge = `<span class="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-lg font-bold text-[10px] border border-emerald-200">INACTIVO</span>`;
     } else if (estatusVal === 'RETIRADO') {
         estatusBadge = `<span class="px-2 py-0.5 bg-rose-50 text-rose-700 rounded-lg font-bold text-[10px] border border-rose-200">RETIRADO</span>`;
     }
@@ -253,7 +254,39 @@ window.filterNomina = () => {
     const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t) || sedeClubTexto.includes(t) || estatusTexto.includes(t);
     return coincideSede && coincideTexto;
   });
+
+  // Aplicar ordenamiento dinámico
+  f.sort((a, b) => {
+    let valorA = "";
+    let valorB = "";
+
+    if (ordenActual.columna === 'nombre') {
+        valorA = ((a.nombre || '') + ' ' + (a.apellido || '')).toUpperCase();
+        valorB = ((b.nombre || '') + ' ' + (b.apellido || '')).toUpperCase();
+    } else if (ordenActual.columna === 'categoria') {
+        valorA = (a.categoria || '').toUpperCase();
+        valorB = (b.categoria || '').toUpperCase();
+    } else {
+        valorA = ((a.nombre || '') + ' ' + (a.apellido || '')).toUpperCase();
+        valorB = ((b.nombre || '') + ' ' + (b.apellido || '')).toUpperCase();
+    }
+
+    if (valorA < valorB) return ordenActual.ascendente ? -1 : 1;
+    if (valorA > valorB) return ordenActual.ascendente ? 1 : -1;
+    return 0;
+  });
+
   renderTable(f);
+};
+
+window.ordenarPor = function(columna) {
+    if (ordenActual.columna === columna) {
+        ordenActual.ascendente = !ordenActual.ascendente;
+    } else {
+        ordenActual.columna = columna;
+        ordenActual.ascendente = true;
+    }
+    filterNomina();
 };
 
 window.editAtleta = (id) => {
