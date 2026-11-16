@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Voley | Cumpleaños del Mes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+        colors: {
+          brand: {
+            50: '#f0f6ff', 100: '#e0edff', 500: '#0066ff', 600: '#0052cc', 700: '#003db3',
+            electric: '#0055FF', cyan: '#00D2FF', dark: '#030B1E'
+          }
+        },
+        boxShadow: {
+          'electric': '0 10px 30px -5px rgba(0, 85, 255, 0.3)',
+          'glow-cyan': '0 0 20px rgba(0, 210, 255, 0.4)',
+          'glass': '0 20px 40px rgba(0, 31, 63, 0.05)',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; text-transform: uppercase; }
+  .bg-sports-pattern { background-color: #F1F5F9; background-image: radial-gradient(at 0% 0%, rgba(0, 85, 255, 0.08) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(0, 210, 255, 0.08) 0px, transparent 50%); }
+  .glass-card { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.8); }
+  .card-hover-effect { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .card-hover-effect:hover { transform: translateY(-4px); }
+</style>
+</head>
+<body class="bg-sports-pattern min-h-screen flex flex-col justify-between text-slate-800 antialiased" oncontextmenu="return false">
+
+    <div>
+        <!-- HEADER SUPERIOR TIPO APP -->
+        <header class="sticky top-0 z-50 px-4 sm:px-8 py-3 glass-card border-b border-slate-200/80 shadow-sm">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <a href="index_menu.html" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-electric flex items-center justify-center transition border border-slate-200" title="Volver al Menú">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-electric to-brand-cyan flex items-center justify-center text-white shadow-electric">
+                        <i class="fas fa-cake-candles text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-base sm:text-lg font-black text-slate-900 leading-none">Cumpleaños</h1>
+                            <span class="text-[10px] font-extrabold px-2 py-0.5 bg-brand-50 text-brand-electric rounded-full border border-brand-electric/20">PRO</span>
+                        </div>
+                        <div id="userEmail" class="text-[11px] font-black text-brand-electric mt-1 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> CARGANDO CLUB...
+                        </div>
+                    </div>
+                </div>
+                <a href="index_menu.html" class="py-2.5 px-4 bg-brand-electric hover:bg-brand-600 text-white font-bold rounded-xl text-xs shadow-electric transition flex items-center gap-2">
+                    <i class="fas fa-th-large"></i> <span class="hidden sm:inline">Menú Principal</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+
+            <!-- BANNER Y CONTROLES DE FILTRO -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-glass border border-slate-200/80 mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div>
+                        <span class="text-brand-electric text-xs font-black tracking-widest flex items-center gap-2 mb-1">
+                            <i class="fas fa-calendar-check"></i> CALENDARIO DE ANIVERSARIOS
+                        </span>
+                        <h2 id="tituloMesActivo" class="text-2xl sm:text-3xl font-black text-slate-900">CUMPLEAÑEROS DEL MES</h2>
+                        <p class="text-xs font-semibold text-slate-500 mt-1">ATLETAS ACTIVOS QUE CELEBRAN SU CUMPLEAÑOS EN EL MES SELECCIONADO.</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <!-- SELECTOR DE MES -->
+                        <div class="relative">
+                            <select id="selectorMes" onchange="filtrarCumpleaneros()" class="w-full sm:w-52 bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-black text-slate-800 outline-none focus:border-brand-electric shadow-sm cursor-pointer">
+                                <option value="0">ENERO</option>
+                                <option value="1">FEBRERO</option>
+                                <option value="2">MARZO</option>
+                                <option value="3">ABRIL</option>
+                                <option value="4">MAYO</option>
+                                <option value="5">JUNIO</option>
+                                <option value="6">JULIO</option>
+                                <option value="7">AGOSTO</option>
+                                <option value="8">SEPTIEMBRE</option>
+                                <option value="9">OCTUBRE</option>
+                                <option value="10">NOVIEMBRE</option>
+                                <option value="11">DICIEMBRE</option>
+                            </select>
+                        </div>
+
+                        <!-- BUSCADOR RÁPIDO -->
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="buscadorCumple" oninput="filtrarCumpleaneros()" placeholder="BUSCAR ATLETA O CAT..." class="w-full sm:w-60 bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-3 text-xs font-bold text-slate-800 outline-none focus:border-brand-electric shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BARRA DE RESUMEN -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-200/70">
+                    <div class="bg-brand-50/70 rounded-2xl p-3.5 border border-brand-electric/15">
+                        <span class="text-[10px] font-extrabold text-slate-500 block">TOTAL DEL MES</span>
+                        <span id="statTotalMes" class="text-xl font-black text-brand-electric">0</span>
+                    </div>
+                    <div class="bg-emerald-50/80 rounded-2xl p-3.5 border border-emerald-200">
+                        <span class="text-[10px] font-extrabold text-emerald-700 block">CUMPLEN HOY</span>
+                        <span id="statCumplenHoy" class="text-xl font-black text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-cyan-50/80 rounded-2xl p-3.5 border border-cyan-200">
+                        <span class="text-[10px] font-extrabold text-cyan-800 block">PRÓXIMOS DÍAS</span>
+                        <span id="statProximos" class="text-xl font-black text-cyan-700">0</span>
+                    </div>
+                    <div class="bg-slate-100/80 rounded-2xl p-3.5 border border-slate-200">
+                        <span class="text-[10px] font-extrabold text-slate-500 block">CELEBRADOS</span>
+                        <span id="statCelebrados" class="text-xl font-black text-slate-700">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DE TARJETAS DE CUMPLEAÑEROS -->
+            <div id="gridCumpleanos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="col-span-full glass-card rounded-3xl p-12 text-center">
+                    <i class="fas fa-spinner fa-spin text-3xl text-brand-electric mb-3"></i>
+                    <p class="text-xs font-bold text-slate-500">CARGANDO CUMPLEAÑEROS DEL CLUB...</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer class="w-full bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 font-semibold mt-12">
+        <p>&copy; 2026 Control Voley — Desarrollado por Sistematikos</p>
+    </footer>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const _0xa = i => document.getElementById(i);
+let atletasGlobal = [];
+
+const mesesNombres = [
+    "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+    "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+];
+
+const empresaID = (localStorage.getItem('youcontrol_empresa_id') || localStorage.getItem('control_voley_club_id') || '').trim();
+const clubNombre = localStorage.getItem('control_voley_club_nombre') || empresaID || 'CLUB VOLEY';
+
+let supaUrl = localStorage.getItem('control_voley_supa_url');
+let supaKey = localStorage.getItem('control_voley_supa_key');
+
+if (supaUrl) supaUrl = supaUrl.replace(/[\[\]]/g, '').trim();
+if (supaKey) supaKey = supaKey.replace(/[\[\]]/g, '').trim();
+
+if (!empresaID || !supaUrl || !supaKey) {
+    alert("SESIÓN NO AUTORIZADA O CREDENCIALES FALTANTES. POR FAVOR, INICIE SESIÓN NUEVAMENTE.");
+    window.location.href = 'index.html';
+}
+
+const userEmailEl = _0xa('userEmail');
+if (userEmailEl) {
+    userEmailEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span> CLUB: ${clubNombre.toUpperCase()}`;
+}
+
+const supabase = createClient(supaUrl, supaKey);
+
+// Inicializar selector en el mes actual
+const hoy = new Date();
+const mesActual = hoy.getMonth();
+const diaActual = hoy.getDate();
+_0xa('selectorMes').value = mesActual.toString();
+
+function normalizarTexto(texto) {
+    if (!texto) return '';
+    return texto.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+function calcularEdadQueCumple(fechaNacStr) {
+    if (!fechaNacStr) return null;
+    const partes = fechaNacStr.split('-');
+    if (partes.length < 3) return null;
+    const anioNac = parseInt(partes[0], 10);
+    return hoy.getFullYear() - anioNac;
+}
+
+async function cargarDatosCumpleanos() {
+    try {
+        const { data, error } = await supabase
+            .from('atletas')
+            .select('*');
+
+        if (error) throw error;
+        atletasGlobal = (data || []).filter(a => (a.estatus || 'ACTIVO').toUpperCase() !== 'RETIRADO');
+        filtrarCumpleaneros();
+    } catch (err) {
+        console.error("ERROR AL CARGAR CUMPLEAÑOS:", err);
+        _0xa('gridCumpleanos').innerHTML = `
+            <div class="col-span-full glass-card rounded-3xl p-10 text-center border border-rose-200">
+                <i class="fas fa-exclamation-triangle text-3xl text-rose-500 mb-3"></i>
+                <p class="text-xs font-black text-rose-600">ERROR AL CONECTAR CON LA BASE DE DATOS.</p>
+            </div>`;
+    }
+}
+
+window.filtrarCumpleaneros = function() {
+    const mesSeleccionado = parseInt(_0xa('selectorMes').value, 10);
+    const busqueda = normalizarTexto(_0xa('buscadorCumple').value);
+
+    _0xa('tituloMesActivo').textContent = `CUMPLEAÑEROS DE ${mesesNombres[mesSeleccionado]}`;
+
+    const cumpleaneros = atletasGlobal.filter(atleta => {
+        const fechaStr = atleta.fechaNacimiento || atleta.fecha_nacimiento;
+        if (!fechaStr || !fechaStr.includes('-')) return false;
+
+        const partes = fechaStr.split('-');
+        const mesNac = parseInt(partes[1], 10) - 1;
+        if (mesNac !== mesSeleccionado) return false;
+
+        if (!busqueda) return true;
+        const nombreCompleto = normalizarTexto(`${atleta.nombre || ''} ${atleta.apellido || ''}`);
+        const cat = normalizarTexto(atleta.categoria || '');
+        const sede = normalizarTexto(atleta.sede_club || atleta.sedeClub || '');
+        return nombreCompleto.includes(busqueda) || cat.includes(busqueda) || sede.includes(busqueda);
+    });
+
+    // Ordenar por día del mes ascendente
+    cumpleaneros.sort((a, b) => {
+        const diaA = parseInt((a.fechaNacimiento || a.fecha_nacimiento).split('-')[2], 10);
+        const diaB = parseInt((b.fechaNacimiento || b.fecha_nacimiento).split('-')[2], 10);
+        return diaA - diaB;
+    });
+
+    renderizarTarjetas(cumpleaneros, mesSeleccionado);
+};
+
+function renderizarTarjetas(lista, mesSeleccionado) {
+    const grid = _0xa('gridCumpleanos');
+    grid.innerHTML = '';
+
+    let totalHoy = 0;
+    let totalProximos = 0;
+    let totalCelebrados = 0;
+
+    lista.forEach(k => {
+        const fechaStr = k.fechaNacimiento || k.fecha_nacimiento;
+        const diaNac = parseInt(fechaStr.split('-')[2], 10);
+        if (mesSeleccionado === mesActual) {
+            if (diaNac === diaActual) totalHoy++;
+            else if (diaNac > diaActual) totalProximos++;
+            else totalCelebrados++;
+        } else if (mesSeleccionado > mesActual) {
+            totalProximos++;
+        } else {
+            totalCelebrados++;
+        }
+    });
+
+    _0xa('statTotalMes').textContent = lista.length;
+    _0xa('statCumplenHoy').textContent = totalHoy;
+    _0xa('statProximos').textContent = totalProximos;
+    _0xa('statCelebrados').textContent = totalCelebrados;
+
+    if (!lista.length) {
+        grid.innerHTML = `
+            <div class="col-span-full glass-card rounded-3xl p-12 text-center border border-slate-200/80">
+                <div class="w-16 h-16 rounded-2xl bg-brand-50 text-brand-electric flex items-center justify-center text-2xl mx-auto mb-4">
+                    <i class="fas fa-calendar-xmark"></i>
+                </div>
+                <h3 class="text-base font-black text-slate-900 mb-1">SIN CUMPLEAÑEROS REGISTRADOS</h3>
+                <p class="text-xs font-semibold text-slate-500">NO HAY ATLETAS QUE CUMPLAN AÑOS EN ${mesesNombres[mesSeleccionado]} CON ESE FILTRO.</p>
+            </div>`;
+        return;
+    }
+
+    lista.forEach(k => {
+        const fechaStr = k.fechaNacimiento || k.fecha_nacimiento;
+        const diaNac = parseInt(fechaStr.split('-')[2], 10);
+        const diaFormateado = diaNac < 10 ? `0${diaNac}` : diaNac;
+        const edad = calcularEdadQueCumple(fechaStr);
+
+        const nombre = (k.nombre || '').toUpperCase();
+        const apellido = (k.apellido || '').toUpperCase();
+        const categoria = (k.categoria || 'N/A').toUpperCase();
+        const sedeClub = (k.sede_club || k.sedeClub || clubNombre).toUpperCase();
+        const foto = k.fotoUrl || k.foto_url;
+
+        const esHoy = (mesSeleccionado === mesActual && diaNac === diaActual);
+        const yaPaso = (mesSeleccionado < mesActual) || (mesSeleccionado === mesActual && diaNac < diaActual);
+
+        let badgeEstado = `<span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-brand-50 text-brand-electric border border-brand-electric/20">PRÓXIMO</span>`;
+        let bordeTarjeta = "border-slate-200/80 hover:border-brand-electric/50";
+
+        if (esHoy) {
+            badgeEstado = `<span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500 text-white shadow-sm animate-bounce flex items-center gap-1"><i class="fas fa-gift"></i> ¡CUMPLE HOY!</span>`;
+            bordeTarjeta = "border-2 border-emerald-400 bg-gradient-to-br from-white via-emerald-50/40 to-brand-50/40 shadow-electric";
+        } else if (yaPaso) {
+            badgeEstado = `<span class="text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200">CELEBRADO</span>`;
+        }
+
+        const avatar = foto
+            ? `<img src="${foto}" class="w-16 h-16 rounded-2xl object-cover border-2 ${esHoy ? 'border-emerald-400' : 'border-brand-cyan'} shadow-sm shrink-0">`
+            : `<div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-electric to-brand-cyan text-white flex items-center justify-center font-black text-lg shadow-sm shrink-0">${(nombre[0] || '') + (apellido[0] || '')}</div>`;
+
+        const card = document.createElement('div');
+        card.className = `glass-card rounded-2xl p-5 card-hover-effect border ${bordeTarjeta} flex flex-col justify-between`;
+        card.innerHTML = `
+            <div>
+                <div class="flex items-start justify-between gap-2 mb-4">
+                    <div class="flex items-center gap-2 bg-brand-dark text-white px-3 py-1.5 rounded-xl shadow-sm">
+                        <i class="fas fa-cake-candles text-brand-cyan text-xs"></i>
+                        <span class="text-xs font-black tracking-wider">${diaFormateado} ${mesesNombres[mesSeleccionado].slice(0, 3)}</span>
+                    </div>
+                    ${badgeEstado}
+                </div>
+
+                <div class="flex items-center gap-4">
+                    ${avatar}
+                    <div class="min-w-0">
+                        <h4 class="text-sm font-black text-slate-900 truncate">${nombre} ${apellido}</h4>
+                        <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <span class="px-2 py-0.5 bg-brand-50 text-brand-electric rounded-lg font-extrabold text-[10px] border border-brand-electric/20">${categoria}</span>
+                            ${edad !== null ? `<span class="px-2 py-0.5 bg-cyan-50 text-cyan-800 rounded-lg font-extrabold text-[10px] border border-cyan-200">${edad} AÑOS</span>` : ''}
+                        </div>
+                        <p class="text-[10px] font-bold text-slate-500 mt-1.5 truncate"><i class="fas fa-shield-halved text-brand-electric mr-1"></i> ${sedeClub}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3.5 border-t border-slate-100">
+                <a href="index_ficha.html?id=${k.id}" class="w-full py-2.5 px-3.5 bg-brand-50 hover:bg-brand-electric text-brand-electric hover:text-white font-black rounded-xl text-[11px] transition border border-brand-electric/20 flex items-center justify-center gap-1.5">
+                    <i class="fas fa-id-card"></i> VER FICHA DEL ATLETA
+                </a>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+cargarDatosCumpleanos();
+</script>
+
+<!-- PROTECCIÓN ANTICURIOUS -->
+<script>
+  document.addEventListener('contextmenu', event => event.preventDefault());
+  document.addEventListener('keydown', function(event) {
+    if (
+      event.key === 'F12' || 
+      (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J' || event.key === 'C')) || 
+      (event.ctrlKey && event.key === 'U')
+    ) {
+      event.preventDefault();
+      return false;
+    }
+  });
+</script>
+</body>
+</html>
