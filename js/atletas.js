@@ -26,6 +26,16 @@ if (userEmailEl) {
 
 const supabase = createClient(supaUrl, supaKey);
 
+// Función auxiliar para normalizar textos (eliminar tildes para búsquedas y comparaciones robustas)
+function normalizarTexto(texto) {
+    if (!texto) return '';
+    return texto
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+}
+
 async function comprimirYRecortarImagen(file, size = 300, quality = 0.65) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -241,17 +251,25 @@ function renderTable(arr) {
 window.filterNomina = () => {
   const sAt = _0xa('sAt');
   const filtroSedeEl = _0xa('filtroSede');
-  const t = sAt ? sAt.value.toLowerCase() : '';
+  const textoBuscado = sAt ? normalizarTexto(sAt.value) : '';
   const sedeFiltro = filtroSedeEl ? filtroSedeEl.value : 'todos';
   
   const f = _aL.filter(x => {
     const coincideSede = (sedeFiltro === 'todos' || x.sede === sedeFiltro);
-    const nom = ((x.nombre || '') + ' ' + (x.apellido || '')).toLowerCase();
-    const ci = (x.cedulaIdentidad || '').toString().toLowerCase();
-    const rep = (x.nombreRepresentante || '').toLowerCase();
-    const sedeClubTexto = (x.sede_club || x.sedeClub || '').toLowerCase();
-    const estatusTexto = (x.estatus || '').toLowerCase();
-    const coincideTexto = nom.includes(t) || ci.includes(t) || rep.includes(t) || sedeClubTexto.includes(t) || estatusTexto.includes(t);
+    
+    // Normalizamos todos los campos para que la búsqueda ignore tildes y acentos
+    const nom = normalizarTexto((x.nombre || '') + ' ' + (x.apellido || ''));
+    const ci = normalizarTexto(x.cedulaIdentidad || '');
+    const rep = normalizarTexto(x.nombreRepresentante || '');
+    const sedeClubTexto = normalizarTexto(x.sede_club || x.sedeClub || '');
+    const estatusTexto = normalizarTexto(x.estatus || '');
+    
+    const coincideTexto = nom.includes(textoBuscado) || 
+                          ci.includes(textoBuscado) || 
+                          rep.includes(textoBuscado) || 
+                          sedeClubTexto.includes(textoBuscado) || 
+                          estatusTexto.includes(textoBuscado);
+                          
     return coincideSede && coincideTexto;
   });
 
